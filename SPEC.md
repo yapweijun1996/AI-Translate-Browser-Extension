@@ -20,6 +20,7 @@ Icon-first flow (user's chosen design — deliberately different from the refere
 3. User clicks the icon → a **modal/tooltip box** opens anchored to the selection:
    - Shows original text + translation (translation starts loading on icon click, not on selection — no wasted API calls when the user is just copying text).
    - Contains an **"Explain" button**: on click, expands an in-box learner explanation (definition, part of speech, CEFR level, graded examples, collocations, synonyms, memory tip).
+   - Desktop only: draggable from any of its 4 edges to resize (min 260×160px, can't be dragged past the viewport edge). The chosen size is remembered and reused for future translations on any site, until resized again.
 4. Clicking outside the box, pressing Esc, or clicking × closes it. New selection replaces the old icon.
 5. Mobile / narrow viewport (< 640px): box renders as a bottom sheet with drag-to-dismiss instead of an anchored tooltip.
 

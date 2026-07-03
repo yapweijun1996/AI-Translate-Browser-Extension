@@ -19,6 +19,9 @@ const EDGE_MARGIN = 12;
 const GAP = 8;
 const MOBILE_BREAKPOINT = 640;
 const DISMISS_DRAG_THRESHOLD = 80;
+const RESIZE_HANDLE_THICKNESS = 8;
+const MIN_BOX_WIDTH = 260;
+const MIN_BOX_HEIGHT = 160;
 
 const MODAL_CSS = `
   .modal {
@@ -27,14 +30,9 @@ const MODAL_CSS = `
     width: ${BOX_WIDTH}px;
     max-width: calc(100vw - ${EDGE_MARGIN * 2}px);
     max-height: calc(100vh - ${EDGE_MARGIN * 2}px);
-    overflow-y: auto;
     background: #fff;
-    color: #1a1a1a;
     border-radius: 10px;
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
-    padding: 14px 16px;
-    font-size: 14px;
-    line-height: 1.45;
     transition: transform 0.2s ease;
   }
   .modal.visible {
@@ -48,6 +46,24 @@ const MODAL_CSS = `
     bottom: 0;
     top: auto;
     border-radius: 14px 14px 0 0;
+  }
+  /* The scrollable card content, separate from .modal itself — .modal stays
+     overflow:visible so the resize handles below (deliberately positioned
+     straddling its edges) stay hit-testable; overflow:hidden/auto on .modal
+     directly would clip them the same way it clipped the upsell-buttons
+     hidden-attribute bug earlier in this file's history. */
+  .modal-content {
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    overflow: hidden auto;
+    border-radius: inherit;
+    color: #1a1a1a;
+    padding: 14px 16px;
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .modal.is-sheet .modal-content {
     padding-top: 20px;
     padding-bottom: max(14px, env(safe-area-inset-bottom));
   }
@@ -65,6 +81,39 @@ const MODAL_CSS = `
   }
   .modal.is-sheet .modal-handle {
     display: block;
+  }
+  .modal-resize {
+    position: absolute;
+    touch-action: none;
+  }
+  .modal-resize-top,
+  .modal-resize-bottom {
+    left: 0;
+    right: 0;
+    height: ${RESIZE_HANDLE_THICKNESS}px;
+    cursor: ns-resize;
+  }
+  .modal-resize-top {
+    top: -${RESIZE_HANDLE_THICKNESS / 2}px;
+  }
+  .modal-resize-bottom {
+    bottom: -${RESIZE_HANDLE_THICKNESS / 2}px;
+  }
+  .modal-resize-left,
+  .modal-resize-right {
+    top: 0;
+    bottom: 0;
+    width: ${RESIZE_HANDLE_THICKNESS}px;
+    cursor: ew-resize;
+  }
+  .modal-resize-left {
+    left: -${RESIZE_HANDLE_THICKNESS / 2}px;
+  }
+  .modal-resize-right {
+    right: -${RESIZE_HANDLE_THICKNESS / 2}px;
+  }
+  .modal.is-sheet .modal-resize {
+    display: none;
   }
   .modal-close {
     position: absolute;
@@ -266,6 +315,33 @@ let upsellSettingsBtn = null;
 let upsellOnDeviceBtn = null;
 let upsellDismissBtn = null;
 
+// Manual resize (desktop only — the mobile is-sheet variant keeps its own
+// drag-to-dismiss handle instead, see wireDragToDismiss). Size is restored
+// once per page load via setSavedSize() (called by main.js after reading
+// chrome.storage.local — this module stays chrome-API-free, same rule as
+// everywhere else in this file) and reported back via onModalResize()'s
+// callback so main.js can persist whatever the user last dragged it to.
+let pendingSavedSize = null;
+let resizeCb = null;
+
+/**
+ * Restore the user's last manually-chosen box size, applied the next time
+ * the box is created on this page. Call once at content-script startup.
+ * @param {{width: number, height: number}|null} size
+ */
+export function setSavedSize(size) {
+  pendingSavedSize = size;
+}
+
+/**
+ * Register a callback fired (with {width, height}) whenever the user
+ * finishes dragging a resize handle, so the caller can persist it.
+ * @param {(size: {width: number, height: number}) => void} cb
+ */
+export function onModalResize(cb) {
+  resizeCb = cb;
+}
+
 function ensureBox() {
   if (box) return box;
   const shadow = getShadowRoot();
@@ -327,10 +403,36 @@ function ensureBox() {
 
   upsellActions.append(upsellSettingsBtn, upsellOnDeviceBtn, upsellDismissBtn);
 
-  box.append(handle, closeBtn, sourceEl, targetEl, explainBtn, explainBody, upsellActions);
+  const resizeTop = document.createElement('div');
+  resizeTop.className = 'modal-resize modal-resize-top';
+  resizeTop.setAttribute('aria-hidden', 'true'); // mouse/touch-only affordance, no keyboard equivalent
+  const resizeRight = document.createElement('div');
+  resizeRight.className = 'modal-resize modal-resize-right';
+  resizeRight.setAttribute('aria-hidden', 'true');
+  const resizeBottom = document.createElement('div');
+  resizeBottom.className = 'modal-resize modal-resize-bottom';
+  resizeBottom.setAttribute('aria-hidden', 'true');
+  const resizeLeft = document.createElement('div');
+  resizeLeft.className = 'modal-resize modal-resize-left';
+  resizeLeft.setAttribute('aria-hidden', 'true');
+
+  const content = document.createElement('div');
+  content.className = 'modal-content';
+  content.append(handle, closeBtn, sourceEl, targetEl, explainBtn, explainBody, upsellActions);
+
+  box.append(content, resizeTop, resizeRight, resizeBottom, resizeLeft);
   shadow.appendChild(box);
 
   wireDragToDismiss(handle);
+  wireResize(resizeTop, 'top');
+  wireResize(resizeRight, 'right');
+  wireResize(resizeBottom, 'bottom');
+  wireResize(resizeLeft, 'left');
+
+  if (pendingSavedSize?.width && pendingSavedSize?.height) {
+    box.style.width = `${pendingSavedSize.width}px`;
+    box.style.height = `${pendingSavedSize.height}px`;
+  }
 
   document.addEventListener('mousedown', (e) => {
     if (isModalVisible() && !isInsideHost(e.target)) hideModal();
@@ -357,6 +459,11 @@ function position(rect) {
     box.classList.add('is-sheet');
     box.style.left = '';
     box.style.top = '';
+    // A prior desktop resize may have left inline width/height/left set —
+    // those would win over .is-sheet's CSS (author inline beats class rules
+    // regardless of viewport), breaking the full-width bottom-sheet layout.
+    box.style.width = '';
+    box.style.height = '';
     box.classList.add('visible');
     return;
   }
@@ -434,6 +541,76 @@ function wireDragToDismiss(handle) {
   handle.addEventListener('touchmove', onMove, { passive: true });
   handle.addEventListener('touchend', onEnd);
   handle.addEventListener('mousedown', onStart);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onEnd);
+}
+
+/**
+ * Wire one edge of the box (top/right/bottom/left) to manual resize —
+ * desktop only, the handle elements are display:none in .is-sheet mode
+ * (mobile keeps its own drag-to-dismiss handle instead). Resizing from
+ * top/left moves that edge and adjusts the opposite dimension so the box
+ * grows/shrinks from the edge being dragged, like a real window border.
+ * Once the user resizes, the box keeps an explicit width/height from then
+ * on (in place of the auto content-driven size) — .modal's max-height CSS
+ * and position()'s per-open cap still apply on top, so a user-chosen size
+ * still can't push the box off-screen; it just scrolls internally instead.
+ * @param {HTMLElement} handleEl
+ * @param {'top'|'right'|'bottom'|'left'} edge
+ */
+function wireResize(handleEl, edge) {
+  let dragging = false;
+  let startX = 0;
+  let startY = 0;
+  let startRect = null;
+
+  const pointX = (e) => e.touches?.[0]?.clientX ?? e.clientX;
+  const pointY = (e) => e.touches?.[0]?.clientY ?? e.clientY;
+
+  const onStart = (e) => {
+    dragging = true;
+    startX = pointX(e);
+    startY = pointY(e);
+    startRect = box.getBoundingClientRect();
+    box.style.transition = 'none';
+    e.preventDefault?.();
+  };
+
+  const onMove = (e) => {
+    if (!dragging) return;
+    const dx = pointX(e) - startX;
+    const dy = pointY(e) - startY;
+
+    if (edge === 'right') {
+      const width = Math.min(window.innerWidth - startRect.left - EDGE_MARGIN, Math.max(MIN_BOX_WIDTH, startRect.width + dx));
+      box.style.width = `${width}px`;
+    } else if (edge === 'left') {
+      const maxWidth = startRect.right - EDGE_MARGIN;
+      const width = Math.min(maxWidth, Math.max(MIN_BOX_WIDTH, startRect.width - dx));
+      box.style.width = `${width}px`;
+      box.style.left = `${startRect.right - width}px`;
+    } else if (edge === 'bottom') {
+      const height = Math.min(window.innerHeight - startRect.top - EDGE_MARGIN, Math.max(MIN_BOX_HEIGHT, startRect.height + dy));
+      box.style.height = `${height}px`;
+    } else if (edge === 'top') {
+      const maxHeight = startRect.bottom - EDGE_MARGIN;
+      const height = Math.min(maxHeight, Math.max(MIN_BOX_HEIGHT, startRect.height - dy));
+      box.style.height = `${height}px`;
+      box.style.top = `${startRect.bottom - height}px`;
+    }
+  };
+
+  const onEnd = () => {
+    if (!dragging) return;
+    dragging = false;
+    box.style.transition = '';
+    resizeCb?.({ width: Math.round(box.getBoundingClientRect().width), height: Math.round(box.getBoundingClientRect().height) });
+  };
+
+  handleEl.addEventListener('touchstart', onStart, { passive: false });
+  handleEl.addEventListener('touchmove', onMove, { passive: true });
+  handleEl.addEventListener('touchend', onEnd);
+  handleEl.addEventListener('mousedown', onStart);
   window.addEventListener('mousemove', onMove);
   window.addEventListener('mouseup', onEnd);
 }

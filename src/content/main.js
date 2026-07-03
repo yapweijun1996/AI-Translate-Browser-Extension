@@ -15,7 +15,21 @@ import {
   showExplainLoading,
   showExplainResult,
   showExplainError,
+  setSavedSize,
+  onModalResize,
 } from './modal.js';
+
+// Only read/written here — a single-file setting, so it doesn't belong in
+// shared/settings-keys.js (that file is for settings more than one
+// unrelated context reads, e.g. the worker + options page).
+const MODAL_SIZE_STORAGE_KEY = 'modalSize';
+
+chrome.storage.local.get(MODAL_SIZE_STORAGE_KEY).then((stored) => {
+  if (stored[MODAL_SIZE_STORAGE_KEY]) setSavedSize(stored[MODAL_SIZE_STORAGE_KEY]);
+});
+onModalResize((size) => {
+  chrome.storage.local.set({ [MODAL_SIZE_STORAGE_KEY]: size });
+});
 
 // Content script entry: selection → trigger icon → modal. Translation is
 // requested for real over the message protocol (docs/ARCHITECTURE.md) and
