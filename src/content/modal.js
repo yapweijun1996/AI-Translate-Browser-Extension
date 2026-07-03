@@ -39,7 +39,6 @@ const MODAL_CSS = `
     display: none;
     width: ${BOX_WIDTH}px;
     max-width: calc(100vw - ${EDGE_MARGIN * 2}px);
-    max-height: calc(100vh - ${EDGE_MARGIN * 2}px);
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
@@ -65,7 +64,17 @@ const MODAL_CSS = `
   .modal-content {
     box-sizing: border-box;
     width: 100%;
-    height: 100%;
+    /* No height here — a percentage height wouldn't reliably resolve
+       against .modal anyway, since .modal is only ever given a max-height,
+       never an explicit height, and a max-height-clamped 'auto' height
+       doesn't count as "definite" for a child's height:100% to resolve
+       against per the CSS spec. This module used to rely on that
+       percentage and it silently stopped containing overflow once
+       .modal-content was split out for the resize handles. It owns its
+       max-height directly instead now (position()/wireResize set it via
+       inline style; this is just the passive pre-JS default), so there's
+       no indirection left to get wrong. */
+    max-height: calc(100vh - ${EDGE_MARGIN * 2}px);
     overflow: hidden auto;
     border-radius: inherit;
     color: #1a1a1a;
@@ -379,6 +388,7 @@ const MODAL_CSS = `
 `;
 
 let box = null;
+let contentEl = null;
 let sourceEl = null;
 let sourceTextEl = null;
 let sourceSpeakBtn = null;
@@ -559,11 +569,11 @@ function ensureBox() {
   resizeLeft.className = 'modal-resize modal-resize-left';
   resizeLeft.setAttribute('aria-hidden', 'true');
 
-  const content = document.createElement('div');
-  content.className = 'modal-content';
-  content.append(handle, closeBtn, sourceEl, targetEl, explainBtn, explainBody, upsellActions);
+  contentEl = document.createElement('div');
+  contentEl.className = 'modal-content';
+  contentEl.append(handle, closeBtn, sourceEl, targetEl, explainBtn, explainBody, upsellActions);
 
-  box.append(content, resizeTop, resizeRight, resizeBottom, resizeLeft);
+  box.append(contentEl, resizeTop, resizeRight, resizeBottom, resizeLeft);
   shadow.appendChild(box);
 
   wireDragToDismiss(handle);
@@ -597,8 +607,11 @@ function position(rect) {
   // Any leftover drag transform from a previous open must not carry over.
   box.style.transform = '';
   // Reset before measuring — a stale cap from a previous open would
-  // otherwise clip the natural-size measurement below.
-  box.style.maxHeight = '';
+  // otherwise clip the natural-size measurement below. The cap lives on
+  // contentEl (the element that actually scrolls), not box — see
+  // .modal-content's CSS comment for why box's max-height alone can't
+  // reliably contain it.
+  contentEl.style.maxHeight = '';
 
   if (isMobileViewport()) {
     box.classList.add('is-sheet');
@@ -640,13 +653,13 @@ function position(rect) {
   // the box past the viewport edge with no way to reach the rest of it. Cap
   // strictly to the room available below this top (no floor — a floor would
   // reintroduce the exact overflow this exists to prevent) so growth always
-  // scrolls inside the box (via .modal's overflow-y) instead of running
+  // scrolls inside contentEl (via its own overflow-y) instead of running
   // off-screen, even in the worst case of a selection right at the edge.
   // If the user has also manually dragged a height cap (userHeightCap), the
   // effective limit is whichever is smaller — the box never grows past the
   // viewport even if the user's chosen cap would technically allow more.
   const viewportCap = window.innerHeight - top - EDGE_MARGIN;
-  box.style.maxHeight = `${userHeightCap != null ? Math.min(viewportCap, userHeightCap) : viewportCap}px`;
+  contentEl.style.maxHeight = `${userHeightCap != null ? Math.min(viewportCap, userHeightCap) : viewportCap}px`;
 
   box.style.left = `${left}px`;
   box.style.top = `${top}px`;
@@ -773,7 +786,7 @@ function wireResize(handleEl, edge) {
       // tall the user is willing to let it get for a future longer payload.
       userHeightCap = Math.round(box.getBoundingClientRect().height);
       box.style.height = '';
-      box.style.maxHeight = `${userHeightCap}px`;
+      contentEl.style.maxHeight = `${userHeightCap}px`;
     }
     resizeCb?.({ width: Math.round(box.getBoundingClientRect().width), height: userHeightCap ?? Math.round(box.getBoundingClientRect().height) });
   };
@@ -797,6 +810,11 @@ function wireResize(handleEl, edge) {
 export function showModal(sourceText, rect, { closeLabel, loadingLabel, speakLabel, onSpeakSource, onStopSpeaking }) {
   if (!rect) return;
   ensureBox();
+  // The box is reused across translations (not recreated) — if the user
+  // scrolled down while reading a previous long Explain payload, that
+  // scroll position would otherwise carry over and make this fresh
+  // translation look cut off at the top instead of starting from it.
+  contentEl.scrollTop = 0;
   box.querySelector('.modal-close').setAttribute('aria-label', closeLabel);
   sourceTextEl.textContent = sourceText;
   if (onSpeakSource) {
@@ -953,6 +971,9 @@ export function showExplainError(message) {
 export function showExplainResult(headword, payload, sectionLabels) {
   if (!explainBody) return;
   explainBtn.disabled = false;
+  // Same reasoning as showModal()'s reset: show the explanation starting
+  // from its own top, not wherever the container happened to be scrolled.
+  contentEl.scrollTop = 0;
 
   const block = (body, opts = {}) =>
     body
