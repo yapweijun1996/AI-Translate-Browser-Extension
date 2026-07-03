@@ -5,9 +5,6 @@
   "ext_description": {
     "message": "어떤 페이지에서든 텍스트를 선택하면 즉시 AI 번역과 학습자 친화적인 설명을 볼 수 있습니다."
   },
-  "popup_status_ready": {
-    "message": "확장 프로그램 스켈레톤이 실행 중입니다."
-  },
   "options_heading": {
     "message": "설정"
   },
@@ -62,19 +59,31 @@
   "options_ui_lang_note": {
     "message": "이 확장 프로그램 자체의 인터페이스는 브라우저 언어를 따릅니다. 변경하려면 Chrome 설정에서 언어 순서를 조정하세요."
   },
-  "options_engine_label_trial_gateway": {
+  "engine_label_trial_gateway": {
     "message": "무료 체험 (내장)"
   },
-  "options_engine_label_on_device": {
+  "engine_label_on_device": {
     "message": "온디바이스 (비공개)"
   },
-  "options_engine_label_gemini": {
+  "engine_label_gemini": {
     "message": "Gemini (내 API 키)"
   },
-  "options_engine_label_openai": {
+  "engine_label_openai": {
     "message": "OpenAI (내 API 키)"
   },
   "options_openai_key_label": {
     "message": "OpenAI API 키"
+  },
+  "popup_current_engine_label": {
+    "message": "현재 사용 중:"
+  },
+  "popup_settings_button": {
+    "message": "설정"
+  },
+  "popup_usage_hint": {
+    "message": "아무 페이지에서나 텍스트를 선택한 다음 나타나는 아이콘을 클릭하면 번역됩니다."
+  },
+  "popup_no_engine": {
+    "message": "아직 사용 가능한 번역 엔진이 없습니다."
   }
 }

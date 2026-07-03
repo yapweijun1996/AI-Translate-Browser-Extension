@@ -5,9 +5,6 @@
   "ext_description": {
     "message": "在任意网页选中文字,立即获得 AI 翻译和易懂的学习讲解。"
   },
-  "popup_status_ready": {
-    "message": "扩展骨架运行中。"
-  },
   "options_heading": {
     "message": "设置"
   },
@@ -62,19 +59,31 @@
   "options_ui_lang_note": {
     "message": "此扩展的界面语言跟随浏览器语言设置。如需更改,请在 Chrome 的语言设置中调整语言顺序。"
   },
-  "options_engine_label_trial_gateway": {
+  "engine_label_trial_gateway": {
     "message": "免费试用(内置)"
   },
-  "options_engine_label_on_device": {
+  "engine_label_on_device": {
     "message": "设备端(隐私)"
   },
-  "options_engine_label_gemini": {
+  "engine_label_gemini": {
     "message": "Gemini(你的API密钥)"
   },
-  "options_engine_label_openai": {
+  "engine_label_openai": {
     "message": "OpenAI(你的API密钥)"
   },
   "options_openai_key_label": {
     "message": "OpenAI API 密钥"
+  },
+  "popup_current_engine_label": {
+    "message": "当前使用:"
+  },
+  "popup_settings_button": {
+    "message": "设置"
+  },
+  "popup_usage_hint": {
+    "message": "在任意网页选中文字,点击出现的图标即可翻译。"
+  },
+  "popup_no_engine": {
+    "message": "暂无可用的翻译引擎。"
   }
 }

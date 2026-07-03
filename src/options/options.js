@@ -2,6 +2,7 @@ import { applyI18n } from '../shared/i18n.js';
 import { MSG } from '../shared/messages.js';
 import { ENGINE_ID_STORAGE_KEY } from '../shared/settings-keys.js';
 import { TARGET_LANGUAGES, DEFAULT_TARGET_LANGUAGE, TARGET_LANG_STORAGE_KEY } from '../shared/languages.js';
+import { engineLabel } from '../shared/engine-labels.js';
 import { GEMINI_API_KEY_KEY } from '../background/engines/gemini.js';
 import { OPENAI_API_KEY_KEY } from '../background/engines/openai.js';
 
@@ -17,27 +18,12 @@ const targetLangEl = document.getElementById('targetLang');
 // its FALLBACK_ORDER).
 const AUTO_VALUE = '__auto__';
 
-// i18n label per known engine id; unrecognized ids (a future engine this
-// page hasn't been updated for) fall back to the raw id rather than
-// crashing or showing a blank label.
-const ENGINE_LABEL_KEYS = {
-  'trial-gateway': 'options_engine_label_trial_gateway',
-  'on-device': 'options_engine_label_on_device',
-  gemini: 'options_engine_label_gemini',
-  openai: 'options_engine_label_openai',
-};
-
 // Data-driven BYOK key fields — adding a new BYOK engine (T-018 DeepSeek)
 // means adding one entry here, not another near-duplicate HTML/JS block.
 const BYOK_KEY_FIELDS = [
   { storageKey: GEMINI_API_KEY_KEY, labelKey: 'options_gemini_key_label' },
   { storageKey: OPENAI_API_KEY_KEY, labelKey: 'options_openai_key_label' },
 ];
-
-function engineLabel(id) {
-  const key = ENGINE_LABEL_KEYS[id];
-  return key ? chrome.i18n.getMessage(key) : id;
-}
 
 function populateTargetLanguages() {
   for (const { code, label } of TARGET_LANGUAGES) {
