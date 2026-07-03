@@ -6,11 +6,9 @@ import { showTriggerIcon, hideTriggerIcon, isTriggerIconVisible } from './trigge
 import { showModal, showResult, showError } from './modal.js';
 
 // Content script entry: selection → trigger icon → modal. Translation is
-// requested for real over the message protocol (docs/ARCHITECTURE.md). The
-// worker routes TRANSLATE through the engine registry (T-013), but no
-// engines are registered yet (that's T-014/T-015/T-016..T-018), so today
-// every click surfaces the registry's "no_engine_available" error in the
-// modal — that's expected until those land.
+// requested for real over the message protocol (docs/ARCHITECTURE.md) and
+// routed through the engine registry (T-013) to the trial gateway (T-014) —
+// real translations now render in the modal.
 
 console.log('[ai-translate:content] content script loaded on', location.origin);
 

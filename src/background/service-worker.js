@@ -1,10 +1,13 @@
 import { MSG, ok, err } from '../shared/messages.js';
-import { translate, explain, getActiveEngine } from './engines/registry.js';
+import { registerEngine, translate, explain, getActiveEngine } from './engines/registry.js';
+import { trialGatewayAdapter } from './engines/trial-gateway.js';
 
-// Engine adapters (trial gateway T-014, on-device T-015, BYOK T-016..T-018)
-// and the cache (T-020) aren't registered yet — every TRANSLATE/EXPLAIN
-// currently resolves through the registry to a "no engine available" error,
-// which is the honest state until those land. See docs/ENGINES.md.
+// On-device (T-015) and BYOK (T-016..T-018) adapters, and the cache (T-020),
+// aren't registered yet. The trial gateway (T-014) is the first real engine —
+// translate() now returns real results; explain() still resolves through the
+// registry to "no engine available" until an engine with explain capability
+// lands (T-024). See docs/ENGINES.md.
+registerEngine(trialGatewayAdapter);
 
 console.log('[ai-translate:worker] service worker loaded');
 
