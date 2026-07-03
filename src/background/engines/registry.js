@@ -1,0 +1,86 @@
+// Engine adapter registry — the seam between the worker's message handlers
+// and the concrete translation engines (trial gateway T-014, on-device
+// T-015, BYOK T-016..T-018). None are registered yet; this task only builds
+// the interface + selection logic, so every call currently resolves to
+// EngineError('no_engine_available', ...) — the honest state until those
+// land. See docs/ENGINES.md for the adapter shape and per-engine notes.
+
+import { EngineError } from './errors.js';
+
+/**
+ * @typedef {object} EngineAdapter
+ * @property {string} id stable id stored in settings, e.g. 'trial-gateway'
+ * @property {() => Promise<boolean>} isAvailable feature-detect / key present?
+ * @property {() => {translate: boolean, explain: boolean, streaming: boolean}} capabilities
+ * @property {(text: string, targetLang: string, opts: {context?: string, signal?: AbortSignal}) => Promise<string>} translate
+ * @property {(phrase: string, targetLang: string, opts: {context?: string, signal?: AbortSignal}) => Promise<object>} [explain]
+ *   Only required when capabilities().explain is true.
+ */
+
+const SETTINGS_KEY = 'engineId';
+// Order to try when the user hasn't picked an engine, or their pick isn't
+// available right now (SPEC §4: on-device is the free/private fallback).
+const FALLBACK_ORDER = ['trial-gateway', 'on-device'];
+
+/** @type {Map<string, EngineAdapter>} */
+const engines = new Map();
+
+/** Register an engine adapter. Later calls with the same id replace the earlier one. */
+export function registerEngine(adapter) {
+  engines.set(adapter.id, adapter);
+}
+
+/** @returns {EngineAdapter[]} every registered adapter, for the options page engine picker (T-019). */
+export function listEngines() {
+  return [...engines.values()];
+}
+
+/** Remove all registered engines. Test-only — production code never needs this. */
+export function _resetEngines() {
+  engines.clear();
+}
+
+async function getPreferredEngineId() {
+  const stored = await chrome.storage.local.get(SETTINGS_KEY);
+  return stored?.[SETTINGS_KEY];
+}
+
+/**
+ * Resolve which engine should handle the next request: the user's saved
+ * preference if it's registered and available, else the first available
+ * engine in FALLBACK_ORDER.
+ * @returns {Promise<EngineAdapter|null>} null when nothing is available.
+ */
+export async function getActiveEngine() {
+  const preferred = await getPreferredEngineId();
+  const order = preferred ? [preferred, ...FALLBACK_ORDER] : FALLBACK_ORDER;
+  const tried = new Set();
+  for (const id of order) {
+    if (tried.has(id)) continue; // preferred id may already be in FALLBACK_ORDER
+    tried.add(id);
+    const adapter = engines.get(id);
+    if (adapter && (await adapter.isAvailable())) return adapter;
+  }
+  return null;
+}
+
+/** @param {string} text @param {string} targetLang @param {{context?: string, signal?: AbortSignal}} [opts] */
+export async function translate(text, targetLang, opts = {}) {
+  const engine = await getActiveEngine();
+  if (!engine) {
+    throw new EngineError('no_engine_available', 'No translation engine is configured or available.');
+  }
+  return engine.translate(text, targetLang, opts);
+}
+
+/** @param {string} phrase @param {string} targetLang @param {{context?: string, signal?: AbortSignal}} [opts] */
+export async function explain(phrase, targetLang, opts = {}) {
+  const engine = await getActiveEngine();
+  if (!engine) {
+    throw new EngineError('no_engine_available', 'No translation engine is configured or available.');
+  }
+  if (!engine.capabilities().explain) {
+    throw new EngineError('explain_unsupported', 'The active translation engine does not support Explain.');
+  }
+  return engine.explain(phrase, targetLang, opts);
+}
