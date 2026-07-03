@@ -94,5 +94,13 @@
   "options_engine_label_gemini": {
     "message": "Gemini (your API key)",
     "description": "Display name for the Gemini BYOK engine in the picker."
+  },
+  "options_engine_label_openai": {
+    "message": "OpenAI (your API key)",
+    "description": "Display name for the OpenAI BYOK engine in the picker."
+  },
+  "options_openai_key_label": {
+    "message": "OpenAI API key",
+    "description": "Label for the OpenAI API key input field."
   }
 }

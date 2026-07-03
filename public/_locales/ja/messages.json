@@ -70,5 +70,11 @@
   },
   "options_engine_label_gemini": {
     "message": "Gemini(あなたのAPIキー)"
+  },
+  "options_engine_label_openai": {
+    "message": "OpenAI(あなたのAPIキー)"
+  },
+  "options_openai_key_label": {
+    "message": "OpenAI APIキー"
   }
 }

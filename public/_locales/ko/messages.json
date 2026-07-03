@@ -70,5 +70,11 @@
   },
   "options_engine_label_gemini": {
     "message": "Gemini (내 API 키)"
+  },
+  "options_engine_label_openai": {
+    "message": "OpenAI (내 API 키)"
+  },
+  "options_openai_key_label": {
+    "message": "OpenAI API 키"
   }
 }

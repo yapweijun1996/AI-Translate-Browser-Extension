@@ -70,5 +70,11 @@
   },
   "options_engine_label_gemini": {
     "message": "Gemini (kunci API anda)"
+  },
+  "options_engine_label_openai": {
+    "message": "OpenAI (kunci API anda)"
+  },
+  "options_openai_key_label": {
+    "message": "Kunci API OpenAI"
   }
 }

@@ -70,5 +70,11 @@
   },
   "options_engine_label_gemini": {
     "message": "Gemini (khóa API của bạn)"
+  },
+  "options_engine_label_openai": {
+    "message": "OpenAI (khóa API của bạn)"
+  },
+  "options_openai_key_label": {
+    "message": "Khóa API OpenAI"
   }
 }

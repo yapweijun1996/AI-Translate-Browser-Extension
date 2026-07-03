@@ -70,5 +70,11 @@
   },
   "options_engine_label_gemini": {
     "message": "Gemini(你的API密钥)"
+  },
+  "options_engine_label_openai": {
+    "message": "OpenAI(你的API密钥)"
+  },
+  "options_openai_key_label": {
+    "message": "OpenAI API 密钥"
   }
 }

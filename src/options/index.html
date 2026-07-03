@@ -60,6 +60,12 @@
         color: #777;
         font-size: 12px;
       }
+      .key-field {
+        margin-bottom: 16px;
+      }
+      .key-field:last-child {
+        margin-bottom: 0;
+      }
       .key-row {
         display: flex;
         gap: 8px;
@@ -98,14 +104,7 @@
 
     <section>
       <h2 data-i18n="options_keys_section_heading"></h2>
-      <div>
-        <label for="geminiApiKey" data-i18n="options_gemini_key_label"></label>
-        <div class="key-row">
-          <input type="password" id="geminiApiKey" data-i18n-placeholder="options_key_input_placeholder" autocomplete="off" />
-          <button type="button" id="saveGeminiKey" data-i18n="options_save_button"></button>
-          <span class="save-note" id="geminiKeySavedNote" hidden data-i18n="options_saved_confirmation"></span>
-        </div>
-      </div>
+      <div id="keyFields"><!-- rendered by options.js from BYOK_KEY_FIELDS --></div>
     </section>
 
     <section>

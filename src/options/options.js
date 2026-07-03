@@ -3,15 +3,14 @@ import { MSG } from '../shared/messages.js';
 import { ENGINE_ID_STORAGE_KEY } from '../shared/settings-keys.js';
 import { TARGET_LANGUAGES, DEFAULT_TARGET_LANGUAGE, TARGET_LANG_STORAGE_KEY } from '../shared/languages.js';
 import { GEMINI_API_KEY_KEY } from '../background/engines/gemini.js';
+import { OPENAI_API_KEY_KEY } from '../background/engines/openai.js';
 
 console.log('[ai-translate:options] options page opened');
 applyI18n(document);
 
 const enginePickerEl = document.getElementById('enginePicker');
+const keyFieldsEl = document.getElementById('keyFields');
 const targetLangEl = document.getElementById('targetLang');
-const geminiKeyInput = document.getElementById('geminiApiKey');
-const saveGeminiKeyBtn = document.getElementById('saveGeminiKey');
-const geminiSavedNote = document.getElementById('geminiKeySavedNote');
 
 // Sentinel for the "Automatic" radio's value — never written to storage;
 // selecting it instead REMOVES the stored preference (registry.js then uses
@@ -25,7 +24,15 @@ const ENGINE_LABEL_KEYS = {
   'trial-gateway': 'options_engine_label_trial_gateway',
   'on-device': 'options_engine_label_on_device',
   gemini: 'options_engine_label_gemini',
+  openai: 'options_engine_label_openai',
 };
+
+// Data-driven BYOK key fields — adding a new BYOK engine (T-018 DeepSeek)
+// means adding one entry here, not another near-duplicate HTML/JS block.
+const BYOK_KEY_FIELDS = [
+  { storageKey: GEMINI_API_KEY_KEY, labelKey: 'options_gemini_key_label' },
+  { storageKey: OPENAI_API_KEY_KEY, labelKey: 'options_openai_key_label' },
+];
 
 function engineLabel(id) {
   const key = ENGINE_LABEL_KEYS[id];
@@ -41,10 +48,68 @@ function populateTargetLanguages() {
   }
 }
 
+function buildKeyField({ storageKey, labelKey }) {
+  const wrap = document.createElement('div');
+  wrap.className = 'key-field';
+
+  const inputId = `key-${storageKey}`;
+  const label = document.createElement('label');
+  label.htmlFor = inputId;
+  label.textContent = chrome.i18n.getMessage(labelKey);
+
+  const row = document.createElement('div');
+  row.className = 'key-row';
+
+  const input = document.createElement('input');
+  input.type = 'password';
+  input.id = inputId;
+  input.autocomplete = 'off';
+  input.placeholder = chrome.i18n.getMessage('options_key_input_placeholder');
+
+  const saveBtn = document.createElement('button');
+  saveBtn.type = 'button';
+  saveBtn.textContent = chrome.i18n.getMessage('options_save_button');
+
+  const savedNote = document.createElement('span');
+  savedNote.className = 'save-note';
+  savedNote.hidden = true;
+  savedNote.textContent = chrome.i18n.getMessage('options_saved_confirmation');
+
+  saveBtn.addEventListener('click', async () => {
+    await chrome.storage.local.set({ [storageKey]: input.value.trim() });
+    savedNote.hidden = false;
+    setTimeout(() => {
+      savedNote.hidden = true;
+    }, 2000);
+    // Adding/clearing a key changes that engine's availability — re-render
+    // so the picker's status badge and enabled/disabled state stay accurate.
+    await renderEnginePicker();
+  });
+
+  row.append(input, saveBtn, savedNote);
+  wrap.append(label, row);
+  return { wrap, input };
+}
+
+const keyInputsByStorageKey = new Map();
+
+function renderKeyFields() {
+  keyFieldsEl.innerHTML = '';
+  keyInputsByStorageKey.clear();
+  for (const field of BYOK_KEY_FIELDS) {
+    const { wrap, input } = buildKeyField(field);
+    keyFieldsEl.appendChild(wrap);
+    keyInputsByStorageKey.set(field.storageKey, input);
+  }
+}
+
 async function loadSettingsIntoForm() {
-  const stored = await chrome.storage.local.get([TARGET_LANG_STORAGE_KEY, GEMINI_API_KEY_KEY]);
+  const keys = [TARGET_LANG_STORAGE_KEY, ...BYOK_KEY_FIELDS.map((f) => f.storageKey)];
+  const stored = await chrome.storage.local.get(keys);
   targetLangEl.value = stored[TARGET_LANG_STORAGE_KEY] || DEFAULT_TARGET_LANGUAGE;
-  geminiKeyInput.value = stored[GEMINI_API_KEY_KEY] || '';
+  for (const [storageKey, input] of keyInputsByStorageKey) {
+    input.value = stored[storageKey] || '';
+  }
 }
 
 function buildEngineRow({ value, label, hint, available, checked }) {
@@ -124,19 +189,9 @@ targetLangEl.addEventListener('change', async () => {
   await chrome.storage.local.set({ [TARGET_LANG_STORAGE_KEY]: targetLangEl.value });
 });
 
-saveGeminiKeyBtn.addEventListener('click', async () => {
-  await chrome.storage.local.set({ [GEMINI_API_KEY_KEY]: geminiKeyInput.value.trim() });
-  geminiSavedNote.hidden = false;
-  setTimeout(() => {
-    geminiSavedNote.hidden = true;
-  }, 2000);
-  // Adding/clearing a key changes that engine's availability — re-render so
-  // the picker's status badge and enabled/disabled state stay accurate.
-  await renderEnginePicker();
-});
-
 async function init() {
   populateTargetLanguages();
+  renderKeyFields();
   await loadSettingsIntoForm();
   await renderEnginePicker();
 }
