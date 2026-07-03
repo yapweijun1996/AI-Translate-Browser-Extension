@@ -12,10 +12,11 @@ Scaffold a loadable MV3 extension with build tooling and all 6 locale dirs.
 
 ## E2 — Selection UX (MVP M2)
 
-The icon-first select→icon→modal experience, fully working with a mock translator.
+The icon-first select→icon→modal experience.
 
-- Scope: debounced selection detection, floating trigger icon (Shadow DOM), modal box anchored to selection, Esc/outside-click/× dismissal, mobile bottom-sheet variant, context capture (surrounding paragraph), mock translate responder in the service worker
-- Exit criteria: works on 10 diverse real sites (news, docs, GitHub, SPA apps); icon never appears for <2-char or collapsed selections; page CSS never breaks our UI; no interference with normal copy/paste.
+- Scope: debounced selection detection, floating trigger icon (Shadow DOM), modal box anchored to selection, Esc/outside-click/× dismissal, mobile bottom-sheet variant, context capture (surrounding paragraph)
+- The mock-translator step was DROPPED (2026-07-03, user decision) — the modal sends the real `TRANSLATE` message and correctly surfaces an "unimplemented" error until E3's real engines land. See task.jsonl T-011 (dropped) / T-013 (now depends on T-003, not T-011).
+- Exit criteria (T-012): works on 10 diverse real sites (news, docs, GitHub, SPA apps) with actual translation results; icon never appears for <2-char or collapsed selections; page CSS never breaks our UI; no interference with normal copy/paste. Because there's no mock, T-012 now depends on T-023 (real engines wired in) — E2's UI work is done at T-010, but its exit-criteria QA pass happens after E3 lands.
 - SPEC: §2, §3
 
 ## E3 — Engines & settings (MVP M3)

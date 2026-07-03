@@ -135,7 +135,7 @@ Rules:
 ## 11. Milestones
 
 1. **M1 — Skeleton**: manifest + build tooling (Vite + CRXJS or esbuild), empty service worker/content script/popup/options wired and loadable unpacked. `_locales/` scaffolded for all 6 locales from day one (`default_locale: "en"`).
-2. **M2 — Selection → icon → box**: full content-script UX with a mock translator (no real API), Shadow DOM styling, Esc/outside-click dismiss, bottom sheet on mobile widths.
+2. **M2 — Selection → icon → box**: full content-script UX (Shadow DOM styling, Esc/outside-click dismiss, bottom sheet on mobile widths, context capture) wired to the real message protocol. The mock-translator step was dropped (2026-07-03) — M2's UI work exercises the real `TRANSLATE` message end-to-end and surfaces the honest "not implemented yet" error until M3's real engines land.
 3. **M3 — Real engines**: trial gateway path (REFERENCE-SNIPPETS §3) + Chrome Translator API path + one BYO-key LLM path (Gemini or OpenAI), options page for key/target language, service-worker cache, quota→upsell flow.
 4. **M4 — Explain**: LLM explain call + rendering, explain cache, engine-capability gating.
 5. **M5 — Polish**: error messages, context menu ("Translate selection"), i18n completeness pass (all 6 locales translated, no English placeholders left — see §8), Web Store listing prep (privacy policy: what text is sent where; localized store listing for the 6 languages).
