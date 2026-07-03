@@ -126,6 +126,9 @@ const MODAL_CSS = `
     gap: 6px;
     margin-top: 10px;
   }
+  .modal-upsell-actions[hidden] {
+    display: none;
+  }
   .modal-upsell-btn {
     border: 1px solid #d0d0d0;
     background: #f7f7f8;
