@@ -1,5 +1,5 @@
 import { MSG, ok, err } from '../shared/messages.js';
-import { registerEngine, translate, explain, getActiveEngine } from './engines/registry.js';
+import { registerEngine, listEngines, translate, explain, getActiveEngine } from './engines/registry.js';
 import { trialGatewayAdapter } from './engines/trial-gateway.js';
 import { onDeviceAdapter } from './engines/on-device.js';
 import { geminiAdapter } from './engines/gemini.js';
@@ -48,6 +48,20 @@ async function handleGetCapabilities(sendResponse) {
   );
 }
 
+/** For the options page's engine picker (T-019) — includes each engine's
+ * live availability, since that can depend on things (a configured key, an
+ * on-device model being downloadable) the options page can't check itself. */
+async function handleListEngines(sendResponse) {
+  const engines = await Promise.all(
+    listEngines().map(async (engine) => ({
+      id: engine.id,
+      available: await engine.isAvailable(),
+      capabilities: engine.capabilities(),
+    })),
+  );
+  sendResponse(ok({ engines }));
+}
+
 chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
   switch (message?.type) {
     case MSG.PING:
@@ -61,6 +75,9 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       return true;
     case MSG.GET_CAPABILITIES:
       handleGetCapabilities(sendResponse);
+      return true;
+    case MSG.LIST_ENGINES:
+      handleListEngines(sendResponse);
       return true;
     default:
       // OD_MSG.* (CHECK_SUPPORT/TRANSLATE) are the worker's own messages TO

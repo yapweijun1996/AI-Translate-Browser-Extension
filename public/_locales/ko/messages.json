@@ -11,9 +11,6 @@
   "options_heading": {
     "message": "설정"
   },
-  "options_skeleton_note": {
-    "message": "번역 엔진 및 언어 설정은 이후 버전에서 여기에 표시됩니다."
-  },
   "modal_trigger_label": {
     "message": "선택한 텍스트 번역"
   },
@@ -25,5 +22,53 @@
   },
   "modal_error_generic": {
     "message": "문제가 발생했습니다. 다시 시도해 주세요."
+  },
+  "options_engine_section_heading": {
+    "message": "번역 엔진"
+  },
+  "options_engine_auto_label": {
+    "message": "자동 (권장)"
+  },
+  "options_engine_auto_hint": {
+    "message": "기본적으로 무료 체험 엔진을 사용하며, 필요할 때 온디바이스 엔진을 사용합니다."
+  },
+  "options_status_available": {
+    "message": "사용 가능"
+  },
+  "options_status_unavailable": {
+    "message": "사용 불가"
+  },
+  "options_keys_section_heading": {
+    "message": "API 키 (선택 사항)"
+  },
+  "options_gemini_key_label": {
+    "message": "Gemini API 키"
+  },
+  "options_key_input_placeholder": {
+    "message": "API 키를 붙여넣으세요"
+  },
+  "options_save_button": {
+    "message": "저장"
+  },
+  "options_saved_confirmation": {
+    "message": "저장됨"
+  },
+  "options_target_lang_heading": {
+    "message": "번역 대상 언어"
+  },
+  "options_ui_lang_heading": {
+    "message": "확장 프로그램 언어"
+  },
+  "options_ui_lang_note": {
+    "message": "이 확장 프로그램 자체의 인터페이스는 브라우저 언어를 따릅니다. 변경하려면 Chrome 설정에서 언어 순서를 조정하세요."
+  },
+  "options_engine_label_trial_gateway": {
+    "message": "무료 체험 (내장)"
+  },
+  "options_engine_label_on_device": {
+    "message": "온디바이스 (비공개)"
+  },
+  "options_engine_label_gemini": {
+    "message": "Gemini (내 API 키)"
   }
 }

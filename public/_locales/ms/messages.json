@@ -11,9 +11,6 @@
   "options_heading": {
     "message": "Tetapan"
   },
-  "options_skeleton_note": {
-    "message": "Tetapan enjin dan bahasa akan dipaparkan di sini dalam versi akan datang."
-  },
   "modal_trigger_label": {
     "message": "Terjemah teks yang dipilih"
   },
@@ -25,5 +22,53 @@
   },
   "modal_error_generic": {
     "message": "Sesuatu tidak kena. Sila cuba lagi."
+  },
+  "options_engine_section_heading": {
+    "message": "Enjin Terjemahan"
+  },
+  "options_engine_auto_label": {
+    "message": "Automatik (disyorkan)"
+  },
+  "options_engine_auto_hint": {
+    "message": "Menggunakan enjin percubaan percuma secara lalai, dan enjin dalam peranti apabila diperlukan."
+  },
+  "options_status_available": {
+    "message": "Tersedia"
+  },
+  "options_status_unavailable": {
+    "message": "Tidak tersedia"
+  },
+  "options_keys_section_heading": {
+    "message": "Kunci API (pilihan)"
+  },
+  "options_gemini_key_label": {
+    "message": "Kunci API Gemini"
+  },
+  "options_key_input_placeholder": {
+    "message": "Tampal kunci API anda"
+  },
+  "options_save_button": {
+    "message": "Simpan"
+  },
+  "options_saved_confirmation": {
+    "message": "Disimpan"
+  },
+  "options_target_lang_heading": {
+    "message": "Terjemah kepada"
+  },
+  "options_ui_lang_heading": {
+    "message": "Bahasa sambungan"
+  },
+  "options_ui_lang_note": {
+    "message": "Antara muka sambungan ini mengikut bahasa pelayar anda. Untuk menukarnya, laraskan susunan bahasa dalam tetapan Chrome."
+  },
+  "options_engine_label_trial_gateway": {
+    "message": "Percubaan percuma (terbina dalam)"
+  },
+  "options_engine_label_on_device": {
+    "message": "Dalam peranti (peribadi)"
+  },
+  "options_engine_label_gemini": {
+    "message": "Gemini (kunci API anda)"
   }
 }

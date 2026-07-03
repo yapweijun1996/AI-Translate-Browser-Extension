@@ -53,10 +53,11 @@ Content script behavior on this code (SPEC §9): show the upsell — "free quota
 
 ## Engines 3–5 — BYOK: Gemini (T-016), OpenAI (T-017), DeepSeek (T-018)
 
-- Key from `chrome.storage.local` (options page writes it, worker reads it, masked in UI, never sent to content script).
-- Gemini: `generateContent` REST. OpenAI: `/v1/chat/completions` (or `/v1/responses`). DeepSeek: OpenAI-compatible endpoint.
+- Key from `chrome.storage.local` (options page writes it, worker reads it, masked in UI, never sent to content script). Each engine file owns and exports its own storage-key constants (e.g. `gemini.js` exports `GEMINI_API_KEY_KEY`, `GEMINI_MODEL_KEY`) — options.js (T-019) imports them directly rather than the storage schema being centralized, so each BYOK engine stays a self-contained, cloneable file (see the "clone pattern" note at the top of this section).
+- Gemini: `generateContent` REST (confirmed against ai.google.dev 2026-07-03 — key as a query param, not a header; response text at `candidates[0].content.parts[0].text`). OpenAI: `/v1/chat/completions` (or `/v1/responses`). DeepSeek: OpenAI-compatible endpoint.
 - All three power translate + explain. Auth failure maps to `code: 'auth'` → UI points at options page.
 - Once a BYOK engine is selected, the trial gateway is not called at all for that user.
+- The options page's engine picker asks the worker for the live list via `LIST_ENGINES` (docs/ARCHITECTURE.md) rather than hardcoding engine ids — a BYOK engine only becomes selectable once its key makes `isAvailable()` true. Engine selection itself is `chrome.storage.local` key `engineId` (`shared/settings-keys.js`, `ENGINE_ID_STORAGE_KEY`) — absent/removed means "Automatic" (registry.js `FALLBACK_ORDER`); BYOK engines are deliberately never in that fallback order, since they must only run when the user explicitly picks them.
 
 ## Prompts
 

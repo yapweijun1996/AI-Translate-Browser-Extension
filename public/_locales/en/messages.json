@@ -15,10 +15,6 @@
     "message": "Settings",
     "description": "Options page main heading."
   },
-  "options_skeleton_note": {
-    "message": "Engine and language settings will appear here in a later milestone.",
-    "description": "Temporary note on the options page during early development (M1); replaced by real settings in M3."
-  },
   "modal_trigger_label": {
     "message": "Translate selection",
     "description": "Accessible label + tooltip of the floating trigger icon that appears next to a text selection."
@@ -34,5 +30,69 @@
   "modal_error_generic": {
     "message": "Something went wrong. Please try again.",
     "description": "Fallback error text in the translation modal when no specific error message is available."
+  },
+  "options_engine_section_heading": {
+    "message": "Translation Engine",
+    "description": "Section heading for the engine picker on the options page."
+  },
+  "options_engine_auto_label": {
+    "message": "Automatic (recommended)",
+    "description": "Option that lets the extension pick an engine automatically instead of a fixed choice."
+  },
+  "options_engine_auto_hint": {
+    "message": "Uses the free trial engine by default, and the on-device engine when needed.",
+    "description": "Explains what Automatic engine selection does."
+  },
+  "options_status_available": {
+    "message": "Available",
+    "description": "Status label shown next to an engine that can be used right now."
+  },
+  "options_status_unavailable": {
+    "message": "Unavailable",
+    "description": "Status label shown next to an engine that cannot be used right now."
+  },
+  "options_keys_section_heading": {
+    "message": "API Keys (optional)",
+    "description": "Section heading for BYOK provider key fields."
+  },
+  "options_gemini_key_label": {
+    "message": "Gemini API key",
+    "description": "Label for the Gemini API key input field."
+  },
+  "options_key_input_placeholder": {
+    "message": "Paste your API key",
+    "description": "Placeholder text inside an API key input field."
+  },
+  "options_save_button": {
+    "message": "Save",
+    "description": "Button that saves an API key field."
+  },
+  "options_saved_confirmation": {
+    "message": "Saved",
+    "description": "Brief confirmation shown after saving an API key."
+  },
+  "options_target_lang_heading": {
+    "message": "Translate into",
+    "description": "Section heading for the target-language picker."
+  },
+  "options_ui_lang_heading": {
+    "message": "Extension language",
+    "description": "Section heading explaining the extension UI language."
+  },
+  "options_ui_lang_note": {
+    "message": "This extension's own interface follows your browser's language. To change it, adjust the language order in Chrome's settings.",
+    "description": "Note explaining that UI language is not independently switchable in the MVP."
+  },
+  "options_engine_label_trial_gateway": {
+    "message": "Free trial (built-in)",
+    "description": "Display name for the trial-gateway engine in the picker."
+  },
+  "options_engine_label_on_device": {
+    "message": "On-device (private)",
+    "description": "Display name for the on-device engine in the picker."
+  },
+  "options_engine_label_gemini": {
+    "message": "Gemini (your API key)",
+    "description": "Display name for the Gemini BYOK engine in the picker."
   }
 }

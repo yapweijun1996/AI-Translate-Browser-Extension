@@ -8,19 +8,116 @@
         margin: 40px auto;
         padding: 0 16px;
         font-family: system-ui, sans-serif;
+        color: #1a1a1a;
       }
       h1 {
         font-size: 20px;
       }
+      h2 {
+        font-size: 15px;
+        margin: 0 0 8px;
+      }
+      section {
+        margin: 28px 0;
+        padding-top: 20px;
+        border-top: 1px solid #e5e5e5;
+      }
+      section:first-of-type {
+        border-top: none;
+      }
       p {
         color: #555;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+      .engine-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 6px 0;
+        font-size: 14px;
+      }
+      .engine-row label {
+        flex: 1;
+      }
+      .engine-status {
+        font-size: 12px;
+        padding: 2px 8px;
+        border-radius: 10px;
+        background: #eee;
+        color: #555;
+      }
+      .engine-status.is-available {
+        background: #e3f4e6;
+        color: #1e7a34;
+      }
+      .engine-status.is-unavailable {
+        background: #f4e3e3;
+        color: #a02525;
+      }
+      .engine-hint {
+        margin: 2px 0 10px 24px;
+        color: #777;
+        font-size: 12px;
+      }
+      .key-row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        margin-top: 6px;
+      }
+      .key-row input {
+        flex: 1;
+        padding: 6px 8px;
+        font-size: 13px;
+      }
+      .key-row button {
+        padding: 6px 12px;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .save-note {
+        font-size: 12px;
+        color: #1e7a34;
+        margin-left: 4px;
+      }
+      select {
+        padding: 6px 8px;
+        font-size: 13px;
+        min-width: 220px;
       }
     </style>
   </head>
   <body>
-    <!-- Text is filled from _locales via options.js — no hardcoded UI strings. -->
     <h1 data-i18n="options_heading"></h1>
-    <p data-i18n="options_skeleton_note"></p>
+
+    <section>
+      <h2 data-i18n="options_engine_section_heading"></h2>
+      <div id="enginePicker"><!-- rendered by options.js from LIST_ENGINES --></div>
+    </section>
+
+    <section>
+      <h2 data-i18n="options_keys_section_heading"></h2>
+      <div>
+        <label for="geminiApiKey" data-i18n="options_gemini_key_label"></label>
+        <div class="key-row">
+          <input type="password" id="geminiApiKey" data-i18n-placeholder="options_key_input_placeholder" autocomplete="off" />
+          <button type="button" id="saveGeminiKey" data-i18n="options_save_button"></button>
+          <span class="save-note" id="geminiKeySavedNote" hidden data-i18n="options_saved_confirmation"></span>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 data-i18n="options_target_lang_heading"></h2>
+      <select id="targetLang"><!-- populated by options.js from shared/languages.js --></select>
+    </section>
+
+    <section>
+      <h2 data-i18n="options_ui_lang_heading"></h2>
+      <p data-i18n="options_ui_lang_note"></p>
+    </section>
+
     <script type="module" src="./options.js"></script>
   </body>
 </html>

@@ -6,6 +6,7 @@
 // land. See docs/ENGINES.md for the adapter shape and per-engine notes.
 
 import { EngineError } from './errors.js';
+import { ENGINE_ID_STORAGE_KEY } from '../../shared/settings-keys.js';
 
 /**
  * @typedef {object} EngineAdapter
@@ -17,7 +18,7 @@ import { EngineError } from './errors.js';
  *   Only required when capabilities().explain is true.
  */
 
-const SETTINGS_KEY = 'engineId';
+const SETTINGS_KEY = ENGINE_ID_STORAGE_KEY;
 // Order to try when the user hasn't picked an engine, or their pick isn't
 // available right now (SPEC §4: on-device is the free/private fallback).
 const FALLBACK_ORDER = ['trial-gateway', 'on-device'];

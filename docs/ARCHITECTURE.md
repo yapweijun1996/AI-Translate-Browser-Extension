@@ -51,6 +51,7 @@ All messages are `{type, payload}` objects over `chrome.runtime.sendMessage`. Re
 | `EXPLAIN` | content → worker | `{phrase, context, targetLang}` | explain payload (SPEC §5 schema) |
 | `GET_CAPABILITIES` | content → worker | `{}` | `{canTranslate, canExplain, engine}` |
 | `OPEN_OPTIONS` | content → worker | `{}` | — (worker calls `chrome.runtime.openOptionsPage()`) |
+| `LIST_ENGINES` | options → worker | `{}` | `{engines: [{id, available, capabilities}]}` — options page's engine picker (T-019); availability is live runtime state the options page can't read itself |
 
 Error codes the content script must handle: `trial_quota_exhausted` (render BYOK upsell — SPEC §9), `auth` (bad key → point at options), `network`, `timeout`, `unknown` (generic message + retry button).
 

@@ -1,4 +1,5 @@
-// Tiny data-i18n walker: fills every [data-i18n] element's textContent from
+// Tiny data-i18n walker: fills every [data-i18n] element's textContent, and
+// every [data-i18n-placeholder] element's placeholder attribute, from
 // _locales messages. Also sets <title> from ext_name when the page has none.
 // Usable in popup/options/content-script UI alike.
 
@@ -8,6 +9,15 @@ export function applyI18n(root) {
     const msg = chrome.i18n.getMessage(key);
     if (msg) {
       el.textContent = msg;
+    } else {
+      console.warn('[ai-translate:i18n] missing message key:', key);
+    }
+  }
+  for (const el of root.querySelectorAll('[data-i18n-placeholder]')) {
+    const key = el.dataset.i18nPlaceholder;
+    const msg = chrome.i18n.getMessage(key);
+    if (msg) {
+      el.placeholder = msg;
     } else {
       console.warn('[ai-translate:i18n] missing message key:', key);
     }

@@ -1,4 +1,5 @@
 import { MSG } from '../shared/messages.js';
+import { TARGET_LANG_STORAGE_KEY } from '../shared/languages.js';
 import { onSelection } from './selection.js';
 import { captureContext } from './context.js';
 import { isInsideHost } from './ui-host.js';
@@ -29,11 +30,13 @@ async function translateSelection(text, context) {
     loadingLabel: chrome.i18n.getMessage('modal_loading_text'),
   });
   try {
-    // targetLang defaults to the browser's language until real settings
-    // land in T-019.
+    // Settings-driven target language (T-019 options page), falling back to
+    // the browser's own language if the user hasn't picked one.
+    const stored = await chrome.storage.local.get(TARGET_LANG_STORAGE_KEY);
+    const targetLang = stored[TARGET_LANG_STORAGE_KEY] || navigator.language?.split('-')[0] || 'en';
     const res = await chrome.runtime.sendMessage({
       type: MSG.TRANSLATE,
-      payload: { text, context, targetLang: navigator.language?.split('-')[0] || 'en' },
+      payload: { text, context, targetLang },
     });
     if (res?.ok) {
       showResult(res.data.translated);

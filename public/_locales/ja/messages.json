@@ -11,9 +11,6 @@
   "options_heading": {
     "message": "設定"
   },
-  "options_skeleton_note": {
-    "message": "翻訳エンジンと言語の設定は今後のバージョンでここに表示されます。"
-  },
   "modal_trigger_label": {
     "message": "選択したテキストを翻訳"
   },
@@ -25,5 +22,53 @@
   },
   "modal_error_generic": {
     "message": "問題が発生しました。もう一度お試しください。"
+  },
+  "options_engine_section_heading": {
+    "message": "翻訳エンジン"
+  },
+  "options_engine_auto_label": {
+    "message": "自動(推奨)"
+  },
+  "options_engine_auto_hint": {
+    "message": "デフォルトでは無料の試用エンジンを使用し、必要に応じてオンデバイスエンジンを使用します。"
+  },
+  "options_status_available": {
+    "message": "利用可能"
+  },
+  "options_status_unavailable": {
+    "message": "利用不可"
+  },
+  "options_keys_section_heading": {
+    "message": "APIキー(任意)"
+  },
+  "options_gemini_key_label": {
+    "message": "Gemini APIキー"
+  },
+  "options_key_input_placeholder": {
+    "message": "APIキーを貼り付けてください"
+  },
+  "options_save_button": {
+    "message": "保存"
+  },
+  "options_saved_confirmation": {
+    "message": "保存しました"
+  },
+  "options_target_lang_heading": {
+    "message": "翻訳先言語"
+  },
+  "options_ui_lang_heading": {
+    "message": "拡張機能の表示言語"
+  },
+  "options_ui_lang_note": {
+    "message": "この拡張機能自体の表示言語は、ブラウザの言語設定に従います。変更するには、Chromeの設定で言語の順序を調整してください。"
+  },
+  "options_engine_label_trial_gateway": {
+    "message": "無料お試し(組み込み)"
+  },
+  "options_engine_label_on_device": {
+    "message": "オンデバイス(プライベート)"
+  },
+  "options_engine_label_gemini": {
+    "message": "Gemini(あなたのAPIキー)"
   }
 }
