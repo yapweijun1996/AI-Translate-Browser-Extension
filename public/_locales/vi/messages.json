@@ -11,6 +11,9 @@
   "modal_trigger_label": {
     "message": "Dịch văn bản đã chọn"
   },
+  "menu_translate_selection": {
+    "message": "Dịch văn bản đã chọn"
+  },
   "modal_close_label": {
     "message": "Đóng"
   },

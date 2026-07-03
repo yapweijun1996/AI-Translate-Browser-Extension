@@ -11,6 +11,9 @@
   "modal_trigger_label": {
     "message": "翻译所选文字"
   },
+  "menu_translate_selection": {
+    "message": "翻译所选文字"
+  },
   "modal_close_label": {
     "message": "关闭"
   },

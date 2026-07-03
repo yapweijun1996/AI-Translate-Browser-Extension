@@ -11,6 +11,9 @@
   "modal_trigger_label": {
     "message": "Terjemah teks yang dipilih"
   },
+  "menu_translate_selection": {
+    "message": "Terjemah teks yang dipilih"
+  },
   "modal_close_label": {
     "message": "Tutup"
   },

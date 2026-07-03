@@ -15,8 +15,32 @@ registerEngine(deepseekAdapter);
 
 console.log('[ai-translate:worker] service worker loaded');
 
+const MENU_ID_TRANSLATE_SELECTION = 'translate-selection';
+
 chrome.runtime.onInstalled.addListener((details) => {
   console.log('[ai-translate:worker] onInstalled:', details.reason);
+  // removeAll first: onInstalled can fire again (browser/extension update)
+  // without the menu ever having been cleared, and create() throws on a
+  // duplicate id — this keeps registration idempotent regardless of prior state.
+  chrome.contextMenus.removeAll(() => {
+    chrome.contextMenus.create({
+      id: MENU_ID_TRANSLATE_SELECTION,
+      title: chrome.i18n.getMessage('menu_translate_selection'),
+      contexts: ['selection'],
+    });
+  });
+});
+
+// T-029: relay a context-menu click into the SAME translateSelection()
+// pipeline the trigger icon uses (docs/ARCHITECTURE.md MENU_TRANSLATE_SELECTION)
+// — targeted at just the tab that was clicked via chrome.tabs.sendMessage,
+// not the extension-wide chrome.runtime.sendMessage broadcast.
+chrome.contextMenus.onClicked.addListener((info, tab) => {
+  if (info.menuItemId !== MENU_ID_TRANSLATE_SELECTION || !tab?.id) return;
+  chrome.tabs.sendMessage(tab.id, {
+    type: MSG.MENU_TRANSLATE_SELECTION,
+    payload: { text: info.selectionText },
+  });
 });
 
 async function handleTranslate(payload, sendResponse) {

@@ -11,6 +11,9 @@
   "modal_trigger_label": {
     "message": "선택한 텍스트 번역"
   },
+  "menu_translate_selection": {
+    "message": "선택한 텍스트 번역"
+  },
   "modal_close_label": {
     "message": "닫기"
   },

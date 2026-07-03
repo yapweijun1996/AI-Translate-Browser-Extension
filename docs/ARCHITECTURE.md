@@ -43,15 +43,17 @@ The offscreen document is created on demand by `background/engines/on-device.js`
 
 ## Message protocol
 
-All messages are `{type, payload}` objects over `chrome.runtime.sendMessage`. Responses are `{ok: true, data}` or `{ok: false, error: {code, message}}`.
+Most messages are `{type, payload}` objects sent content/options → worker over `chrome.runtime.sendMessage` (extension-wide broadcast — every registered `onMessage` listener sees every message; handlers must switch on `type` and ignore what isn't theirs). Responses are `{ok: true, data}` or `{ok: false, error: {code, message}}`.
 
 | type | direction | payload | data |
 |---|---|---|---|
 | `TRANSLATE` | content → worker | `{text, context, targetLang, engineOverride?}` | `{translated, engine, cached}` |
-| `EXPLAIN` | content → worker | `{phrase, context, targetLang}` | explain payload (SPEC §5 schema) |
+| `EXPLAIN` | content → worker | `{phrase, context, targetLang, origin}` | explain payload (SPEC §5 schema) |
 | `GET_CAPABILITIES` | content → worker | `{}` | `{canTranslate, canExplain, engine}` |
-| `OPEN_OPTIONS` | content → worker | `{}` | — (worker calls `chrome.runtime.openOptionsPage()`) |
 | `LIST_ENGINES` | options **and content** → worker | `{}` | `{engines: [{id, available, capabilities}]}` — options page's engine picker (T-019) and the content script's trial-quota upsell (T-022, checking whether on-device is available for the fallback button); availability is live runtime state neither caller can read itself |
+| `MENU_TRANSLATE_SELECTION` | worker → content (T-029) | `{text}` (the menu-captured `info.selectionText`) | — (fire-and-forget; content script re-enters `translateSelection()`, the same pipeline the trigger icon uses) |
+
+`MENU_TRANSLATE_SELECTION` is the one message type that goes the other direction, and it deliberately does NOT use the broadcast `chrome.runtime.sendMessage` — the worker sends it via `chrome.tabs.sendMessage(tab.id, ...)` so only the tab the user right-clicked in receives it, not every tab's content script.
 
 `engineOverride` (optional, `TRANSLATE` only): bypasses the normal preference/fallback resolution to force one specific engine id for that single call, without touching the user's persistent settings — used only by T-022's "use on-device instead" upsell button (`registry.js`'s `resolveOverrideEngine`).
 

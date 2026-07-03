@@ -11,6 +11,9 @@
   "modal_trigger_label": {
     "message": "選択したテキストを翻訳"
   },
+  "menu_translate_selection": {
+    "message": "選択したテキストを翻訳"
+  },
   "modal_close_label": {
     "message": "閉じる"
   },

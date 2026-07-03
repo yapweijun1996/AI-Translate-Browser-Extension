@@ -15,6 +15,10 @@
     "message": "Translate selection",
     "description": "Accessible label + tooltip of the floating trigger icon that appears next to a text selection."
   },
+  "menu_translate_selection": {
+    "message": "Translate selection",
+    "description": "Native right-click context menu item (contexts: ['selection']) that translates the currently selected text, same pipeline as the trigger icon."
+  },
   "modal_close_label": {
     "message": "Close",
     "description": "Accessible label for the × button that closes the translation modal."

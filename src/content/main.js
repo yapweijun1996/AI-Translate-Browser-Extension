@@ -204,3 +204,24 @@ document.addEventListener('selectionchange', () => {
   if ((!sel || sel.isCollapsed) && isTriggerIconVisible()) hideTriggerIcon();
 });
 document.addEventListener('scroll', () => hideTriggerIcon(), { capture: true, passive: true });
+
+// T-029: "Translate selection" in the native right-click menu re-enters the
+// exact same pipeline the trigger icon uses. The worker targets only this
+// tab (chrome.tabs.sendMessage), but every content script's onMessage
+// listener still sees every OTHER message broadcast extension-wide via
+// chrome.runtime.sendMessage — hence the exact-type check below.
+chrome.runtime.onMessage.addListener((message) => {
+  if (message?.type !== MSG.MENU_TRANSLATE_SELECTION) return;
+  const sel = window.getSelection();
+  if (!sel || sel.isCollapsed) return;
+  const text = message.payload?.text || sel.toString().trim();
+  if (!text) return;
+  let rect;
+  try {
+    rect = sel.getRangeAt(0).getBoundingClientRect();
+  } catch {
+    return; // no rect to anchor the modal to (showModal is a no-op without one, same as onSelection above)
+  }
+  lastRect = rect;
+  translateSelection(text, captureContext(text));
+});
