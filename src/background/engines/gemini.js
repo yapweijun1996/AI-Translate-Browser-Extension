@@ -7,6 +7,7 @@
 // no shared abstraction, so each is easy to read end-to-end on its own.
 
 import { EngineError } from './errors.js';
+import { mapHttpError, mapNetworkError, extractErrorMessage } from '../error-mapper.js';
 
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 const DEFAULT_MODEL = 'gemini-2.0-flash';
@@ -51,25 +52,15 @@ async function callGemini(prompt, { apiKey, model, signal }) {
       signal: withTimeout(signal),
     });
   } catch (cause) {
-    if (cause?.name === 'AbortError' || cause?.name === 'TimeoutError') {
-      throw new EngineError('timeout', 'Gemini request timed out or was cancelled.');
-    }
-    throw new EngineError('network', cause?.message || 'Network error contacting Gemini.');
+    throw mapNetworkError(cause, 'Gemini');
   }
 
   if (!res.ok) {
-    // Interim mapping by HTTP status only (same honesty caveat as
-    // trial-gateway.js) — classification never trusts response-body content,
-    // only its own display text does. Refine once real error responses have
-    // been observed against a live key.
-    let apiMessage;
-    try {
-      apiMessage = (await res.json())?.error?.message;
-    } catch {
-      /* body wasn't JSON — fall back to the generic message below */
-    }
-    const code = res.status === 401 || res.status === 403 ? 'auth' : res.status === 429 ? 'quota' : 'gateway_error';
-    throw new EngineError(code, apiMessage || `Gemini error (HTTP ${res.status}).`);
+    const bodyMessage = await extractErrorMessage(res);
+    // isTrialGateway defaults to false — a BYOK user's own quota/rate-limit
+    // maps to plain 'quota' (shown as a normal message), never the trial
+    // upsell (SPEC §9).
+    throw mapHttpError({ status: res.status, bodyMessage, providerName: 'Gemini' });
   }
 
   const data = await res.json();

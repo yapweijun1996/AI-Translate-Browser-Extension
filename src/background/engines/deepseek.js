@@ -6,6 +6,7 @@
 // own request builder, own error mapping, own translate prompt copy.
 
 import { EngineError } from './errors.js';
+import { mapHttpError, mapNetworkError, extractErrorMessage } from '../error-mapper.js';
 
 const API_URL = 'https://api.deepseek.com/chat/completions';
 // DeepSeek's legacy 'deepseek-chat'/'deepseek-reasoner' model names are
@@ -61,24 +62,15 @@ async function callDeepSeek(prompt, { apiKey, model, signal }) {
       signal: withTimeout(signal),
     });
   } catch (cause) {
-    if (cause?.name === 'AbortError' || cause?.name === 'TimeoutError') {
-      throw new EngineError('timeout', 'DeepSeek request timed out or was cancelled.');
-    }
-    throw new EngineError('network', cause?.message || 'Network error contacting DeepSeek.');
+    throw mapNetworkError(cause, 'DeepSeek');
   }
 
   if (!res.ok) {
-    // Interim mapping by HTTP status only — same honesty caveat as
-    // trial-gateway.js/gemini.js/openai.js. Never trusts response-body
-    // content for classification, only uses it for display text.
-    let apiMessage;
-    try {
-      apiMessage = (await res.json())?.error?.message;
-    } catch {
-      /* body wasn't JSON — fall back to the generic message below */
-    }
-    const code = res.status === 401 || res.status === 403 ? 'auth' : res.status === 429 ? 'quota' : 'gateway_error';
-    throw new EngineError(code, apiMessage || `DeepSeek error (HTTP ${res.status}).`);
+    const bodyMessage = await extractErrorMessage(res);
+    // isTrialGateway defaults to false — a BYOK user's own quota/rate-limit
+    // maps to plain 'quota' (shown as a normal message), never the trial
+    // upsell (SPEC §9).
+    throw mapHttpError({ status: res.status, bodyMessage, providerName: 'DeepSeek' });
   }
 
   const data = await res.json();

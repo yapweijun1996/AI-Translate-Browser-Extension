@@ -8,6 +8,7 @@
 // to this adapter — translate() alone is what T-014 delivers.
 
 import { EngineError } from './errors.js';
+import { mapHttpError, mapNetworkError, extractErrorMessage } from '../error-mapper.js';
 
 const GATEWAY_URL = 'https://gpt.yapweijun1996.com/v1/responses';
 const DEFAULT_MODEL = 'gpt-5.4-mini';
@@ -76,18 +77,16 @@ async function callGateway(prompt, { reasoningEffort = 'low', maxOutputTokens, s
       signal: withTimeout(signal),
     });
   } catch (cause) {
-    if (cause?.name === 'AbortError' || cause?.name === 'TimeoutError') {
-      throw new EngineError('timeout', 'Trial gateway request timed out or was cancelled.');
-    }
-    throw new EngineError('network', cause?.message || 'Network error contacting the trial gateway.');
+    throw mapNetworkError(cause, 'Trial gateway');
   }
 
   if (!res.ok) {
-    // Interim mapping — T-021 probes the live gateway's exact quota-error
-    // shape and adds trial_quota_exhausted detection; until then this is
-    // an honest best-effort classification by HTTP status only.
-    const code = res.status === 401 || res.status === 403 ? 'auth' : res.status === 429 ? 'quota' : 'gateway_error';
-    throw new EngineError(code, `Trial gateway error (HTTP ${res.status}).`);
+    const bodyMessage = await extractErrorMessage(res);
+    // isTrialGateway:true — a 429 here means the free daily allowance ran
+    // out, which must trigger the BYOK upsell (SPEC §4/§9), unlike a BYOK
+    // engine's own quota (see gemini.js/openai.js/deepseek.js, which don't
+    // pass this flag).
+    throw mapHttpError({ status: res.status, bodyMessage, providerName: 'Trial gateway', isTrialGateway: true });
   }
   if (!res.body) {
     throw new EngineError('network', 'Trial gateway returned an empty response body.');

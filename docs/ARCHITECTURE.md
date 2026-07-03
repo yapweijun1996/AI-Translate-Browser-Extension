@@ -53,7 +53,7 @@ All messages are `{type, payload}` objects over `chrome.runtime.sendMessage`. Re
 | `OPEN_OPTIONS` | content → worker | `{}` | — (worker calls `chrome.runtime.openOptionsPage()`) |
 | `LIST_ENGINES` | options → worker | `{}` | `{engines: [{id, available, capabilities}]}` — options page's engine picker (T-019); availability is live runtime state the options page can't read itself |
 
-Error codes the content script must handle: `trial_quota_exhausted` (render BYOK upsell — SPEC §9), `auth` (bad key → point at options), `network`, `timeout`, `unknown` (generic message + retry button).
+Error codes (produced by `background/error-mapper.js`, T-021 — every engine adapter's HTTP failures funnel through it instead of each duplicating status-code logic): `trial_quota_exhausted` (trial gateway's own daily limit → render BYOK upsell, SPEC §9 — T-022 wires this), `quota` (a BYOK user's own provider quota/rate-limit → plain message, never the upsell — the `isTrialGateway` flag on `mapHttpError()` is what keeps these two apart), `auth` (bad/missing key → point at options), `network`, `timeout`, `gateway_error`/`unknown` (generic message + retry button). `no_engine_available` / `explain_unsupported` come from the registry itself, not a provider.
 
 Add new message types to this table in the same PR that introduces them.
 

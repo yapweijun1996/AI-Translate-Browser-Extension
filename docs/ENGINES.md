@@ -17,7 +17,7 @@ export const adapter = {
 };
 ```
 
-Registry (`background/engines/index.js`) resolves the active adapter from settings, with fallback order: user-selected → trial gateway → on-device.
+Registry (`background/engines/registry.js`) resolves the active adapter from settings, with fallback order: user-selected → trial gateway → on-device.
 
 ## Engine 1 — Trial gateway (shipped default)
 
@@ -29,13 +29,11 @@ Registry (`background/engines/index.js`) resolves the active adapter from settin
 
 ### Quota error → upsell (the important part)
 
-When the daily limit is hit the gateway returns an error (**exact status/body: probe the live gateway in T-021 and document it here**). The error mapper must translate it to:
+`background/error-mapper.js` (T-021) is the single place every engine's HTTP failures get classified: `mapHttpError({status, bodyMessage, providerName, isTrialGateway})` maps a `429` to `trial_quota_exhausted` when `isTrialGateway: true` (trial-gateway.js is the only adapter that passes it), or to plain `quota` otherwise. Every engine calls this instead of duplicating status-code judgment calls — see `trial-gateway.js`/`gemini.js`/`openai.js`/`deepseek.js` for the (now nearly identical) call sites.
 
-```js
-{ code: 'trial_quota_exhausted', message: <i18n key ref> }
-```
+**Deliberately not verified against a live 429 (owner decision, 2026-07-03):** the gateway's exact daily-limit response shape was NOT probed by deliberately exhausting real quota — the owner already has quota-handling logic server-side and forcing it from here isn't this project's job. The classification above assumes standard HTTP semantics (`429 Too Many Requests`), which is how virtually every rate-limited API signals this. If the live gateway ever turns out to use a different status or a distinguishable body shape for "daily limit" vs. some other `429` cause, `mapHttpError`'s `isTrialGateway` branch is the one place to refine.
 
-Content script behavior on this code (SPEC §9): show the upsell — "free quota used up today" + [Set up your own API key] (opens options) + [Try again tomorrow] + on-device fallback offer when available. **A BYOK user's own provider quota error maps to `quota`, not `trial_quota_exhausted`** — they must never see the upsell.
+Content script behavior on `trial_quota_exhausted` (SPEC §9, wired by T-022): show the upsell — "free quota used up today" + [Set up your own API key] (opens options) + [Try again tomorrow] + on-device fallback offer when available. A BYOK user's own provider quota error maps to `quota`, not `trial_quota_exhausted` — they must never see the upsell.
 
 ## Engine 2 — Chrome on-device Translator (free/private path)
 
