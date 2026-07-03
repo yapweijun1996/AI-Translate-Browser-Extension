@@ -2,13 +2,16 @@ import { MSG, ok, err } from '../shared/messages.js';
 import { registerEngine, translate, explain, getActiveEngine } from './engines/registry.js';
 import { trialGatewayAdapter } from './engines/trial-gateway.js';
 import { onDeviceAdapter } from './engines/on-device.js';
+import { geminiAdapter } from './engines/gemini.js';
 import { OD_MSG } from './engines/on-device-protocol.js';
 
-// BYOK adapters (T-016..T-018) and the cache (T-020) aren't registered yet.
-// explain() still resolves through the registry to "no engine available"
-// until an engine with explain capability lands (T-024). See docs/ENGINES.md.
+// OpenAI/DeepSeek BYOK adapters (T-017/T-018) and the cache (T-020) aren't
+// registered yet. explain() still resolves through the registry to "no
+// engine available" until an engine with explain capability lands (T-024).
+// See docs/ENGINES.md.
 registerEngine(trialGatewayAdapter);
 registerEngine(onDeviceAdapter);
+registerEngine(geminiAdapter);
 
 console.log('[ai-translate:worker] service worker loaded');
 
