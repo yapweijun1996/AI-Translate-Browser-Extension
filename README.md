@@ -17,6 +17,8 @@ Chrome/Edge extension, Manifest V3. Ships with a free trial engine (zero setup) 
 | [docs/I18N.md](docs/I18N.md) | How to add/modify UI strings — 6 locales, no hardcoded text. |
 | [docs/ENGINES.md](docs/ENGINES.md) | Translation engine adapters: trial gateway, BYOK providers, on-device API. |
 | [docs/REFERENCE-SNIPPETS.md](docs/REFERENCE-SNIPPETS.md) | Working code from the proven reference project — copy when a task says "port". |
+| [docs/store/](docs/store/) | Privacy policy (all 6 locales) + Chrome Web Store listing copy (all 6 locales) + Developer Dashboard submission notes (T-031). |
+| [docs/qa/](docs/qa/) | Manual QA checklists that need a real loaded browser to execute (T-012). |
 | [ROADMAP.md](ROADMAP.md) | Where this project is going (MVP → production → business). |
 | [EPICS.md](EPICS.md) | Epic definitions — every task belongs to an epic. |
 | [task.jsonl](task.jsonl) | **Your work queue.** One task per line. See format below. |

@@ -11,7 +11,7 @@ M1 skeleton done (2026-07-03): MV3 extension builds and loads unpacked (Vite + C
 - [ROADMAP.md](ROADMAP.md) — v0.x MVP → v1.0 production → v2.0 business
 - [EPICS.md](EPICS.md) — E1–E8 with exit criteria
 - [task.jsonl](task.jsonl) — T-001…T-032 work queue (one JSON per line; never delete lines)
-- docs/ — [ARCHITECTURE](docs/ARCHITECTURE.md), [DEVELOPMENT](docs/DEVELOPMENT.md), [CODING-STANDARDS](docs/CODING-STANDARDS.md), [I18N](docs/I18N.md), [ENGINES](docs/ENGINES.md), [REFERENCE-SNIPPETS](docs/REFERENCE-SNIPPETS.md)
+- docs/ — [ARCHITECTURE](docs/ARCHITECTURE.md), [DEVELOPMENT](docs/DEVELOPMENT.md), [CODING-STANDARDS](docs/CODING-STANDARDS.md), [I18N](docs/I18N.md), [ENGINES](docs/ENGINES.md), [REFERENCE-SNIPPETS](docs/REFERENCE-SNIPPETS.md), [store/](docs/store/) (privacy policy + Web Store listing, 6 locales), [qa/](docs/qa/) (manual QA checklists)
 - [LICENSE](LICENSE) — MIT
 
 When a decision changes: update SPEC.md first, then the affected docs/ file, then task.jsonl, in the same change.
@@ -23,7 +23,7 @@ A browser extension that translates web content using AI — bilingual page tran
 ## Key architecture decisions (research done 2026-07-03)
 
 - **Manifest V3 only.** Service worker (background), content scripts (DOM access), popup UI, options page. No remotely hosted or `eval`'d code — disallowed by MV3 and Chrome Web Store policy.
-- **Permissions kept minimal.** `permissions`: `storage`, `contextMenus`, `scripting`, `activeTab`, `offscreen` (the last one exists solely because the on-device Translator API needs a real Document — the service worker can't host it, see docs/ENGINES.md "Engine 2"). `host_permissions` scoped to what's actually needed, not `<all_urls>` unless a feature requires it.
+- **Permissions kept minimal.** `permissions`: `storage`, `contextMenus`, `offscreen` (the last one exists solely because the on-device Translator API needs a real Document — the service worker can't host it, see docs/ENGINES.md "Engine 2"). `host_permissions` scoped to what's actually needed, not `<all_urls>` unless a feature requires it. (`scripting`/`activeTab` were requested through T-030 but never actually used — removed in T-031.)
 - **Translation engine — dual path:**
   - Default: Chrome's built-in on-device **Translator API** + **Language Detector API** (free, private, no network call, no API key). Chrome desktop 138+ only.
   - Optional "bring your own API key": DeepL, Google Cloud Translate, OpenAI, Gemini, Claude — for higher quality, cross-browser support, or nuanced/LLM-style translation.

@@ -85,13 +85,14 @@ Port the reference explain design ([REFERENCE-SNIPPETS §5](docs/REFERENCE-SNIPP
 ## 7. Permissions (minimal)
 
 ```json
-"permissions": ["storage", "contextMenus", "scripting", "activeTab", "offscreen"],
+"permissions": ["storage", "contextMenus", "offscreen"],
 "host_permissions": []
 ```
 
-- The content script is declared with `"matches": ["<all_urls>"]` — required for the core UX (selection must be detectable on any page without the user clicking the toolbar icon first). This triggers the "read data on all websites" install warning; the privacy policy must explain it (M5).
+- The content script is declared with `"matches": ["<all_urls>"]` — required for the core UX (selection must be detectable on any page without the user clicking the toolbar icon first). This triggers the "read data on all websites" install warning; the privacy policy must explain it (M5, see docs/store/PRIVACY-POLICY.md).
 - `host_permissions` stays empty — the content script match is sufficient; the service worker only calls translation APIs, which needs no host permission.
 - `offscreen` (added T-015): the on-device Translator/LanguageDetector engine needs a real Document, which the service worker cannot provide — see docs/ARCHITECTURE.md and docs/ENGINES.md "Engine 2".
+- `scripting` and `activeTab` were removed (T-031, 2026-07-03): neither was ever used — content scripts are injected purely declaratively via `content_scripts`, and the context menu's `chrome.tabs.sendMessage` (T-029) needs neither permission. Fewer permissions means a cleaner Web Store review and a simpler, honest privacy policy.
 - No remotely hosted code, no `eval` (MV3 / Chrome Web Store hard requirement).
 
 ## 8. Extension UI i18n
