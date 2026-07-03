@@ -20,6 +20,12 @@
   "modal_loading_text": {
     "message": "번역 중…"
   },
+  "modal_speak_source_label": {
+    "message": "원문 듣기"
+  },
+  "modal_speak_target_label": {
+    "message": "번역 듣기"
+  },
   "options_engine_section_heading": {
     "message": "번역 엔진"
   },
@@ -52,6 +58,24 @@
   },
   "options_target_lang_heading": {
     "message": "번역 대상 언어"
+  },
+  "options_tts_section_heading": {
+    "message": "텍스트 음성 변환"
+  },
+  "options_tts_section_note": {
+    "message": "브라우저에 내장된 음성을 사용합니다 — 무료이며 오프라인에서도 작동하고 계정이 필요하지 않습니다. 사용 가능한 음성은 운영체제에 따라 다릅니다."
+  },
+  "options_tts_autoplay_label": {
+    "message": "번역 결과를 자동으로 읽어주기"
+  },
+  "options_tts_voice_default": {
+    "message": "기본값 (브라우저가 선택)"
+  },
+  "options_tts_no_voices": {
+    "message": "대상 언어에 사용할 수 있는 음성이 설치되어 있지 않습니다. 이는 운영체제에 따른 것이며 이 확장 프로그램과는 관련이 없습니다."
+  },
+  "options_tts_unsupported": {
+    "message": "이 브라우저는 음성 읽기를 지원하지 않습니다."
   },
   "options_ui_lang_heading": {
     "message": "확장 프로그램 언어"

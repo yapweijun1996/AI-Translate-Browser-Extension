@@ -21,6 +21,7 @@ Icon-first flow (user's chosen design — deliberately different from the refere
    - Shows original text + translation (translation starts loading on icon click, not on selection — no wasted API calls when the user is just copying text).
    - Contains an **"Explain" button**: on click, expands an in-box learner explanation (definition, part of speech, CEFR level, graded examples, collocations, synonyms, memory tip).
    - Desktop only: draggable from any of its 4 edges to resize (min 260×160px, can't be dragged past the viewport edge). The chosen size is remembered and reused for future translations on any site, until resized again.
+   - A speaker button next to the source text and next to the translated text plays it aloud via the browser's built-in text-to-speech (free, no network call, no API key). The translated-text voice is whichever the user picked per target language in Settings, defaulting to the browser's own choice; the source-text voice always uses the browser default (no reliable source-language detection feeds into this). An optional Settings toggle speaks the translation automatically as soon as it arrives.
 4. Clicking outside the box, pressing Esc, or clicking × closes it. New selection replaces the old icon.
 5. Mobile / narrow viewport (< 640px): box renders as a bottom sheet with drag-to-dismiss instead of an anchored tooltip.
 

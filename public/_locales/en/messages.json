@@ -27,6 +27,14 @@
     "message": "Translating…",
     "description": "Placeholder shown in the modal while a translation request is in flight."
   },
+  "modal_speak_source_label": {
+    "message": "Listen to original text",
+    "description": "Accessible label for the speaker button next to the source text in the translation modal (T-034 TTS)."
+  },
+  "modal_speak_target_label": {
+    "message": "Listen to translation",
+    "description": "Accessible label for the speaker button next to the translated text in the translation modal (T-034 TTS)."
+  },
   "options_engine_section_heading": {
     "message": "Translation Engine",
     "description": "Section heading for the engine picker on the options page."
@@ -78,6 +86,30 @@
   "options_ui_lang_note": {
     "message": "This extension's own interface follows your browser's language. To change it, adjust the language order in Chrome's settings.",
     "description": "Note explaining that UI language is not independently switchable in the MVP."
+  },
+  "options_tts_section_heading": {
+    "message": "Text-to-Speech",
+    "description": "Section heading for the text-to-speech settings (T-034)."
+  },
+  "options_tts_section_note": {
+    "message": "Uses your browser's built-in voices — free, works offline, no account needed. Available voices depend on your operating system.",
+    "description": "Explanatory note under the Text-to-Speech section heading."
+  },
+  "options_tts_autoplay_label": {
+    "message": "Automatically read the translation aloud",
+    "description": "Checkbox label: when on, the translation is spoken as soon as it arrives, with no extra click needed."
+  },
+  "options_tts_voice_default": {
+    "message": "Default (browser choice)",
+    "description": "Option in each per-language voice dropdown meaning \"let the browser pick automatically\", i.e. no stored preference."
+  },
+  "options_tts_no_voices": {
+    "message": "No text-to-speech voices are installed for any of your target languages. This depends on your operating system, not this extension.",
+    "description": "Shown instead of the voice picker list when speechSynthesis.getVoices() has no match for any TARGET_LANGUAGES entry."
+  },
+  "options_tts_unsupported": {
+    "message": "Text-to-speech isn't supported in this browser.",
+    "description": "Shown instead of the voice picker list when window.speechSynthesis doesn't exist at all."
   },
   "engine_label_trial_gateway": {
     "message": "Free trial (built-in)",

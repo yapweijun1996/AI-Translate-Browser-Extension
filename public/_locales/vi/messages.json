@@ -20,6 +20,12 @@
   "modal_loading_text": {
     "message": "Đang dịch…"
   },
+  "modal_speak_source_label": {
+    "message": "Nghe văn bản gốc"
+  },
+  "modal_speak_target_label": {
+    "message": "Nghe bản dịch"
+  },
   "options_engine_section_heading": {
     "message": "Công cụ dịch"
   },
@@ -52,6 +58,24 @@
   },
   "options_target_lang_heading": {
     "message": "Dịch sang"
+  },
+  "options_tts_section_heading": {
+    "message": "Chuyển văn bản thành giọng nói"
+  },
+  "options_tts_section_note": {
+    "message": "Sử dụng giọng đọc tích hợp sẵn trong trình duyệt — miễn phí, hoạt động ngoại tuyến, không cần tài khoản. Các giọng đọc khả dụng tùy thuộc vào hệ điều hành của bạn."
+  },
+  "options_tts_autoplay_label": {
+    "message": "Tự động đọc to bản dịch"
+  },
+  "options_tts_voice_default": {
+    "message": "Mặc định (trình duyệt tự chọn)"
+  },
+  "options_tts_no_voices": {
+    "message": "Không có giọng đọc nào được cài đặt cho các ngôn ngữ đích của bạn. Điều này phụ thuộc vào hệ điều hành, không phải do tiện ích mở rộng này."
+  },
+  "options_tts_unsupported": {
+    "message": "Trình duyệt này không hỗ trợ chuyển văn bản thành giọng nói."
   },
   "options_ui_lang_heading": {
     "message": "Ngôn ngữ tiện ích mở rộng"

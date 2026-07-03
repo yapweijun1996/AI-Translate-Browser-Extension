@@ -14,6 +14,16 @@ import { escapeHtml } from '../shared/dom.js';
 // would be painful to build as ~50 createElement calls, so it's built as an
 // HTML string with every dynamic value passed through escapeHtml() first.
 
+// Static, trusted markup (no dynamic content) — safe for innerHTML, same
+// reasoning as trigger-icon.js's ICON_SVG. Simple speaker glyph: reused for
+// both the source-text and translation speak buttons.
+const SPEAK_ICON_SVG = `
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+       stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M4 9v6h4l5 4V5L8 9H4z" />
+    <path d="M16.5 8.5a5 5 0 0 1 0 7" />
+  </svg>`;
+
 const BOX_WIDTH = 340;
 const EDGE_MARGIN = 12;
 const GAP = 8;
@@ -185,6 +195,35 @@ const MODAL_CSS = `
     color: #b3261e;
     font-weight: normal;
   }
+  .modal-row-text {
+    display: inline;
+  }
+  .modal-speak-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    margin-left: 4px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: #888;
+    cursor: pointer;
+    border-radius: 4px;
+    vertical-align: -4px;
+  }
+  .modal-speak-btn:hover {
+    background: #eef1f5;
+    color: #2563eb;
+  }
+  .modal-speak-btn.is-speaking {
+    color: #2563eb;
+  }
+  .modal-speak-btn svg {
+    width: 14px;
+    height: 14px;
+  }
   .modal-explain-btn {
     margin-top: 10px;
     border: 1px solid #d0d0d0;
@@ -341,7 +380,11 @@ const MODAL_CSS = `
 
 let box = null;
 let sourceEl = null;
+let sourceTextEl = null;
+let sourceSpeakBtn = null;
 let targetEl = null;
+let targetTextEl = null;
+let targetSpeakBtn = null;
 let explainBtn = null;
 let explainBody = null;
 let upsellActions = null;
@@ -357,6 +400,11 @@ let upsellDismissBtn = null;
 // callback so main.js can persist whatever the user last dragged it to.
 let pendingSavedSize = null;
 let resizeCb = null;
+
+// Set on every wireSpeakButton() call — hideModal() uses it to stop any
+// in-progress speech on Esc/outside-click/× close paths, which don't route
+// through main.js.
+let stopSpeakingCb = null;
 
 /**
  * Restore the user's last manually-chosen box size, applied the next time
@@ -374,6 +422,50 @@ export function setSavedSize(size) {
  */
 export function onModalResize(cb) {
   resizeCb = cb;
+}
+
+/**
+ * Build one speak (🔊) button — used for both the source-text row and the
+ * translated-text row, each wired independently via wireSpeakButton() below.
+ * Starts hidden; the caller (showModal/showResult) reveals it once there's
+ * real text to speak and TTS is actually supported.
+ */
+function createSpeakButton() {
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'modal-speak-btn';
+  btn.innerHTML = SPEAK_ICON_SVG;
+  btn.hidden = true;
+  return btn;
+}
+
+/**
+ * Wire a speak button to toggle play/stop for `text`. onSpeak must return
+ * true if it actually started speaking (mirrors tts.js's speak() return
+ * value) — main.js supplies onSpeak/onStop since this module stays
+ * chrome-API-free and doesn't import tts.js itself.
+ * @param {HTMLButtonElement} btn
+ * @param {string} text
+ * @param {string} label i18n accessible name
+ * @param {(text: string) => boolean} onSpeak
+ * @param {() => void} onStop
+ */
+function wireSpeakButton(btn, text, label, onSpeak, onStop) {
+  btn.hidden = false;
+  btn.setAttribute('aria-label', label);
+  btn.title = label;
+  stopSpeakingCb = onStop;
+  btn.onclick = () => {
+    if (btn.classList.contains('is-speaking')) {
+      onStop();
+      btn.classList.remove('is-speaking');
+      return;
+    }
+    // Only one utterance plays at a time (tts.js cancels any other before
+    // starting) — drop the "speaking" look from whichever button had it.
+    box.querySelectorAll('.modal-speak-btn.is-speaking').forEach((b) => b.classList.remove('is-speaking'));
+    if (onSpeak(text)) btn.classList.add('is-speaking');
+  };
 }
 
 function ensureBox() {
@@ -400,9 +492,17 @@ function ensureBox() {
 
   sourceEl = document.createElement('div');
   sourceEl.className = 'modal-row modal-source';
+  sourceTextEl = document.createElement('span');
+  sourceTextEl.className = 'modal-row-text';
+  sourceSpeakBtn = createSpeakButton();
+  sourceEl.append(sourceTextEl, sourceSpeakBtn);
 
   targetEl = document.createElement('div');
   targetEl.className = 'modal-row modal-target';
+  targetTextEl = document.createElement('span');
+  targetTextEl.className = 'modal-row-text';
+  targetSpeakBtn = createSpeakButton();
+  targetEl.append(targetTextEl, targetSpeakBtn);
 
   explainBtn = document.createElement('button');
   explainBtn.type = 'button';
@@ -659,26 +759,44 @@ function wireResize(handleEl, edge) {
  * Open the modal anchored to `rect`, showing `sourceText` and a loading state.
  * @param {string} sourceText
  * @param {DOMRect} rect selection bounding rect from the detector
- * @param {{closeLabel: string, loadingLabel: string}} labels
+ * @param {{closeLabel: string, loadingLabel: string, speakLabel?: string, onSpeakSource?: (text: string) => boolean, onStopSpeaking?: () => void}} labels
+ *   onSpeakSource/onStopSpeaking are omitted entirely (not just falsy) when TTS isn't supported —
+ *   same fail-closed convention as onUseOnDevice in showUpsell().
  */
-export function showModal(sourceText, rect, { closeLabel, loadingLabel }) {
+export function showModal(sourceText, rect, { closeLabel, loadingLabel, speakLabel, onSpeakSource, onStopSpeaking }) {
   if (!rect) return;
   ensureBox();
   box.querySelector('.modal-close').setAttribute('aria-label', closeLabel);
-  sourceEl.textContent = sourceText;
-  targetEl.textContent = loadingLabel;
+  sourceTextEl.textContent = sourceText;
+  if (onSpeakSource) {
+    wireSpeakButton(sourceSpeakBtn, sourceText, speakLabel, onSpeakSource, onStopSpeaking);
+  } else {
+    sourceSpeakBtn.hidden = true;
+  }
+  targetTextEl.textContent = loadingLabel;
   targetEl.className = 'modal-row modal-target is-loading';
+  targetSpeakBtn.hidden = true;
   explainBtn.hidden = true;
   resetExplainBody();
   upsellActions.hidden = true;
   position(rect);
 }
 
-/** Render a successful translation result. */
-export function showResult(translatedText) {
+/**
+ * Render a successful translation result.
+ * @param {string} translatedText
+ * @param {{speakLabel?: string, onSpeakTarget?: (text: string) => boolean, onStopSpeaking?: () => void}} [opts]
+ *   Same omit-when-unsupported convention as showModal's onSpeakSource.
+ */
+export function showResult(translatedText, { speakLabel, onSpeakTarget, onStopSpeaking } = {}) {
   if (!targetEl) return;
-  targetEl.textContent = translatedText || '';
+  targetTextEl.textContent = translatedText || '';
   targetEl.className = 'modal-row modal-target';
+  if (onSpeakTarget && translatedText) {
+    wireSpeakButton(targetSpeakBtn, translatedText, speakLabel, onSpeakTarget, onStopSpeaking);
+  } else {
+    targetSpeakBtn.hidden = true;
+  }
   resetExplainBody();
   upsellActions.hidden = true;
 }
@@ -686,8 +804,9 @@ export function showResult(translatedText) {
 /** Render a friendly error message in place of the result. */
 export function showError(message) {
   if (!targetEl) return;
-  targetEl.textContent = message;
+  targetTextEl.textContent = message;
   targetEl.className = 'modal-row modal-target is-error';
+  targetSpeakBtn.hidden = true;
   resetExplainBody();
   upsellActions.hidden = true;
 }
@@ -709,8 +828,9 @@ export function showError(message) {
  */
 export function showUpsell(message, { settingsLabel, dismissLabel, onSettings, onDismiss, onDeviceLabel, onUseOnDevice }) {
   if (!targetEl) return;
-  targetEl.textContent = message;
+  targetTextEl.textContent = message;
   targetEl.className = 'modal-row modal-target is-error';
+  targetSpeakBtn.hidden = true;
   explainBtn.hidden = true;
   resetExplainBody();
 
@@ -916,6 +1036,10 @@ function wireExplainCollapsibles() {
 
 export function hideModal() {
   if (box) box.classList.remove('visible');
+  // Closing via Esc/outside-click/× doesn't go through main.js, so this
+  // module has to remember how to stop speech itself rather than relying on
+  // the caller to notice the modal closed.
+  stopSpeakingCb?.();
 }
 
 export function isModalVisible() {

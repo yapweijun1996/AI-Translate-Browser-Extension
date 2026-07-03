@@ -6,3 +6,10 @@
 
 /** Which engine the user picked, or absent/removed for "Automatic" (registry.js FALLBACK_ORDER). */
 export const ENGINE_ID_STORAGE_KEY = 'engineId';
+
+/** Per-target-language chosen TTS voice: { [langCode]: {voiceURI, name, lang} }, written by
+ * the options page's voice pickers, read by the content script when speaking a translation. */
+export const TTS_VOICES_STORAGE_KEY = 'ttsVoices';
+
+/** Whether to automatically speak the translation result as soon as it arrives. */
+export const TTS_AUTOPLAY_STORAGE_KEY = 'ttsAutoPlay';

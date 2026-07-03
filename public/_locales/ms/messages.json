@@ -20,6 +20,12 @@
   "modal_loading_text": {
     "message": "Menterjemah…"
   },
+  "modal_speak_source_label": {
+    "message": "Dengar teks asal"
+  },
+  "modal_speak_target_label": {
+    "message": "Dengar terjemahan"
+  },
   "options_engine_section_heading": {
     "message": "Enjin Terjemahan"
   },
@@ -52,6 +58,24 @@
   },
   "options_target_lang_heading": {
     "message": "Terjemah kepada"
+  },
+  "options_tts_section_heading": {
+    "message": "Teks ke Suara"
+  },
+  "options_tts_section_note": {
+    "message": "Menggunakan suara terbina dalam pelayar anda — percuma, berfungsi luar talian, tiada akaun diperlukan. Suara yang tersedia bergantung kepada sistem pengendalian anda."
+  },
+  "options_tts_autoplay_label": {
+    "message": "Baca terjemahan secara automatik"
+  },
+  "options_tts_voice_default": {
+    "message": "Lalai (pilihan pelayar)"
+  },
+  "options_tts_no_voices": {
+    "message": "Tiada suara teks-ke-suara dipasang untuk mana-mana bahasa sasaran anda. Ini bergantung kepada sistem pengendalian anda, bukan sambungan ini."
+  },
+  "options_tts_unsupported": {
+    "message": "Teks ke suara tidak disokong dalam pelayar ini."
   },
   "options_ui_lang_heading": {
     "message": "Bahasa sambungan"

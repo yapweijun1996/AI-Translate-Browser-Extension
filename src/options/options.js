@@ -1,6 +1,6 @@
 import { applyI18n } from '../shared/i18n.js';
 import { MSG } from '../shared/messages.js';
-import { ENGINE_ID_STORAGE_KEY } from '../shared/settings-keys.js';
+import { ENGINE_ID_STORAGE_KEY, TTS_VOICES_STORAGE_KEY, TTS_AUTOPLAY_STORAGE_KEY } from '../shared/settings-keys.js';
 import { TARGET_LANGUAGES, DEFAULT_TARGET_LANGUAGE, TARGET_LANG_STORAGE_KEY } from '../shared/languages.js';
 import { engineLabel } from '../shared/engine-labels.js';
 import { GEMINI_API_KEY_KEY } from '../background/engines/gemini.js';
@@ -13,6 +13,8 @@ applyI18n(document);
 const enginePickerEl = document.getElementById('enginePicker');
 const keyFieldsEl = document.getElementById('keyFields');
 const targetLangEl = document.getElementById('targetLang');
+const ttsAutoplayEl = document.getElementById('ttsAutoplay');
+const ttsVoicesEl = document.getElementById('ttsVoices');
 
 // Sentinel for the "Automatic" radio's value — never written to storage;
 // selecting it instead REMOVES the stored preference (registry.js then uses
@@ -93,13 +95,109 @@ function renderKeyFields() {
 }
 
 async function loadSettingsIntoForm() {
-  const keys = [TARGET_LANG_STORAGE_KEY, ...BYOK_KEY_FIELDS.map((f) => f.storageKey)];
+  const keys = [TARGET_LANG_STORAGE_KEY, TTS_AUTOPLAY_STORAGE_KEY, ...BYOK_KEY_FIELDS.map((f) => f.storageKey)];
   const stored = await chrome.storage.local.get(keys);
   targetLangEl.value = stored[TARGET_LANG_STORAGE_KEY] || DEFAULT_TARGET_LANGUAGE;
+  ttsAutoplayEl.checked = !!stored[TTS_AUTOPLAY_STORAGE_KEY];
   for (const [storageKey, input] of keyInputsByStorageKey) {
     input.value = stored[storageKey] || '';
   }
 }
+
+// speechSynthesis.getVoices() can return an empty list on the very first
+// call — some browsers load the voice list asynchronously and only fire
+// onvoiceschanged once it's ready. The 1s fallback covers platforms that
+// never fire the event at all (observed on some Linux TTS backends).
+function getVoicesAsync() {
+  if (!('speechSynthesis' in window)) return Promise.resolve([]);
+  const existing = speechSynthesis.getVoices();
+  if (existing.length) return Promise.resolve(existing);
+  return new Promise((resolve) => {
+    let done = false;
+    const finish = (voices) => {
+      if (done) return;
+      done = true;
+      resolve(voices);
+    };
+    speechSynthesis.onvoiceschanged = () => finish(speechSynthesis.getVoices());
+    setTimeout(() => finish(speechSynthesis.getVoices()), 1000);
+  });
+}
+
+/**
+ * One row per TARGET_LANGUAGES entry that actually has a matching system
+ * voice — languages with zero installed voices are skipped rather than
+ * shown with an unusable empty dropdown (voice availability is entirely
+ * OS-dependent; see docs/store/SUBMISSION-NOTES.md's TTS caveat).
+ */
+async function renderTtsVoicePickers() {
+  ttsVoicesEl.innerHTML = '';
+  if (!('speechSynthesis' in window)) {
+    const note = document.createElement('p');
+    note.textContent = chrome.i18n.getMessage('options_tts_unsupported');
+    ttsVoicesEl.appendChild(note);
+    return;
+  }
+
+  const voices = await getVoicesAsync();
+  const stored = (await chrome.storage.local.get(TTS_VOICES_STORAGE_KEY))[TTS_VOICES_STORAGE_KEY] || {};
+
+  for (const { code, label } of TARGET_LANGUAGES) {
+    const prefix = code.split('-')[0].toLowerCase();
+    const matches = voices.filter((v) => v.lang.toLowerCase().startsWith(prefix));
+    if (!matches.length) continue;
+
+    const row = document.createElement('div');
+    row.className = 'tts-voice-row';
+
+    const rowLabel = document.createElement('label');
+    const selectId = `tts-voice-${code}`;
+    rowLabel.htmlFor = selectId;
+    rowLabel.textContent = label;
+
+    const select = document.createElement('select');
+    select.id = selectId;
+
+    const defaultOpt = document.createElement('option');
+    defaultOpt.value = '';
+    defaultOpt.textContent = chrome.i18n.getMessage('options_tts_voice_default');
+    select.appendChild(defaultOpt);
+
+    for (const v of matches) {
+      const opt = document.createElement('option');
+      opt.value = v.voiceURI;
+      opt.textContent = `${v.name} (${v.lang})`;
+      select.appendChild(opt);
+    }
+
+    const savedPref = stored[code];
+    select.value = savedPref?.voiceURI && matches.some((v) => v.voiceURI === savedPref.voiceURI) ? savedPref.voiceURI : '';
+
+    select.addEventListener('change', async () => {
+      const next = { ...stored };
+      if (!select.value) {
+        delete next[code];
+      } else {
+        const chosen = matches.find((v) => v.voiceURI === select.value);
+        next[code] = { voiceURI: chosen.voiceURI, name: chosen.name, lang: chosen.lang };
+      }
+      await chrome.storage.local.set({ [TTS_VOICES_STORAGE_KEY]: next });
+    });
+
+    row.append(rowLabel, select);
+    ttsVoicesEl.appendChild(row);
+  }
+
+  if (!ttsVoicesEl.children.length) {
+    const note = document.createElement('p');
+    note.textContent = chrome.i18n.getMessage('options_tts_no_voices');
+    ttsVoicesEl.appendChild(note);
+  }
+}
+
+ttsAutoplayEl.addEventListener('change', async () => {
+  await chrome.storage.local.set({ [TTS_AUTOPLAY_STORAGE_KEY]: ttsAutoplayEl.checked });
+});
 
 function buildEngineRow({ value, label, hint, available, checked }) {
   const wrap = document.createElement('div');
@@ -183,6 +281,7 @@ async function init() {
   renderKeyFields();
   await loadSettingsIntoForm();
   await renderEnginePicker();
+  await renderTtsVoicePickers();
 }
 
 init();

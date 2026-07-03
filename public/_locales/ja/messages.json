@@ -20,6 +20,12 @@
   "modal_loading_text": {
     "message": "翻訳中…"
   },
+  "modal_speak_source_label": {
+    "message": "原文を読み上げる"
+  },
+  "modal_speak_target_label": {
+    "message": "翻訳を読み上げる"
+  },
   "options_engine_section_heading": {
     "message": "翻訳エンジン"
   },
@@ -52,6 +58,24 @@
   },
   "options_target_lang_heading": {
     "message": "翻訳先言語"
+  },
+  "options_tts_section_heading": {
+    "message": "音声読み上げ"
+  },
+  "options_tts_section_note": {
+    "message": "ブラウザ内蔵の音声を使用します——無料、オフラインでも動作し、アカウントは不要です。利用可能な音声はお使いのOSによって異なります。"
+  },
+  "options_tts_autoplay_label": {
+    "message": "翻訳結果を自動的に読み上げる"
+  },
+  "options_tts_voice_default": {
+    "message": "デフォルト(ブラウザが選択)"
+  },
+  "options_tts_no_voices": {
+    "message": "対象言語で利用できる読み上げ音声がインストールされていません。これはお使いのOSに依存するもので、この拡張機能の問題ではありません。"
+  },
+  "options_tts_unsupported": {
+    "message": "このブラウザは音声読み上げに対応していません。"
   },
   "options_ui_lang_heading": {
     "message": "拡張機能の表示言語"

@@ -18,6 +18,8 @@ import {
   setSavedSize,
   onModalResize,
 } from './modal.js';
+import { isTtsSupported, speak, stopSpeaking } from './tts.js';
+import { TTS_VOICES_STORAGE_KEY, TTS_AUTOPLAY_STORAGE_KEY } from '../shared/settings-keys.js';
 
 // Only read/written here — a single-file setting, so it doesn't belong in
 // shared/settings-keys.js (that file is for settings more than one
@@ -55,6 +57,38 @@ async function getTargetLang() {
   // the browser's own language if the user hasn't picked one.
   const stored = await chrome.storage.local.get(TARGET_LANG_STORAGE_KEY);
   return stored[TARGET_LANG_STORAGE_KEY] || navigator.language?.split('-')[0] || 'en';
+}
+
+/** The options page's per-target-language voice pick (T-034 TTS), or null if
+ * the user never set one for `lang` — tts.js then falls back to the
+ * browser's own default voice for that language. */
+async function getTtsVoicePref(lang) {
+  const stored = await chrome.storage.local.get(TTS_VOICES_STORAGE_KEY);
+  return stored[TTS_VOICES_STORAGE_KEY]?.[lang] || null;
+}
+
+async function getTtsAutoplay() {
+  const stored = await chrome.storage.local.get(TTS_AUTOPLAY_STORAGE_KEY);
+  return !!stored[TTS_AUTOPLAY_STORAGE_KEY];
+}
+
+/**
+ * Build the {speakLabel, onSpeakSource/onSpeakTarget, onStopSpeaking} option
+ * bundle showModal()/showResult() expect — omitted entirely (not passed as
+ * falsy) when TTS isn't supported, so modal.js's own hidden-by-default
+ * button logic takes over with no extra branching here.
+ * @param {'source'|'target'} which
+ * @param {string} lang omit for source (unknown language — see tts.js)
+ */
+async function ttsButtonOpts(which, lang) {
+  if (!isTtsSupported()) return {};
+  const voicePref = lang ? await getTtsVoicePref(lang) : null;
+  const key = which === 'source' ? 'onSpeakSource' : 'onSpeakTarget';
+  return {
+    speakLabel: chrome.i18n.getMessage(which === 'source' ? 'modal_speak_source_label' : 'modal_speak_target_label'),
+    [key]: (text) => speak(text, lang, voicePref),
+    onStopSpeaking: () => stopSpeaking(),
+  };
 }
 
 function requestTranslate(text, context, targetLang, engineOverride) {
@@ -156,6 +190,7 @@ async function showTrialQuotaUpsell(text, context, targetLang) {
         showModal(text, lastRect, {
           closeLabel: chrome.i18n.getMessage('modal_close_label'),
           loadingLabel: chrome.i18n.getMessage('modal_loading_text'),
+          ...(await ttsButtonOpts('source')),
         });
         const res = await requestTranslate(text, context, targetLang, 'on-device');
         if (res?.ok) {
@@ -163,7 +198,7 @@ async function showTrialQuotaUpsell(text, context, targetLang) {
           // on-device engine, which never supports Explain (docs/ENGINES.md)
           // — unlike the main flow below, there's no ambiguity to defer to
           // T-026's capability gating.
-          showResult(res.data.translated);
+          showResult(res.data.translated, await ttsButtonOpts('target', targetLang));
         } else {
           showError(res?.error?.message || chrome.i18n.getMessage('error_generic'));
         }
@@ -176,12 +211,16 @@ async function translateSelection(text, context) {
   showModal(text, lastRect, {
     closeLabel: chrome.i18n.getMessage('modal_close_label'),
     loadingLabel: chrome.i18n.getMessage('modal_loading_text'),
+    ...(await ttsButtonOpts('source')),
   });
   try {
     const targetLang = await getTargetLang();
     const res = await requestTranslate(text, context, targetLang);
     if (res?.ok) {
-      showResult(res.data.translated);
+      showResult(res.data.translated, await ttsButtonOpts('target', targetLang));
+      if (isTtsSupported() && (await getTtsAutoplay())) {
+        speak(res.data.translated, targetLang, await getTtsVoicePref(targetLang));
+      }
       offerExplain(text, context, targetLang);
     } else if (res?.error?.code === 'trial_quota_exhausted') {
       await showTrialQuotaUpsell(text, context, targetLang);

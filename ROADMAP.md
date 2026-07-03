@@ -31,7 +31,7 @@ Priority order (re-evaluate after v1.0 feedback):
 1. **Full-page bilingual translation** — MutationObserver node tracking, batching, skip-already-translated (the flagship Immersive-Translate-style feature; biggest engineering lift)
 2. Per-site auto-translate rules
 3. Glossary / terminology overrides (user dictionary)
-4. TTS (browser speechSynthesis + optional Gemini TTS)
+4. ~~TTS (browser speechSynthesis)~~ — done ahead of schedule (T-035, 2026-07-03): speaker buttons on source/translated text + per-target-language voice picker + auto-play toggle in Settings. Optional Gemini TTS (a higher-quality paid alternative to the free browser voices) remains a possible future addition, not yet scoped.
 5. Translation history + export
 6. Firefox port (MV3 WebExtensions delta)
 

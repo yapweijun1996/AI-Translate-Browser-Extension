@@ -20,6 +20,12 @@
   "modal_loading_text": {
     "message": "翻译中…"
   },
+  "modal_speak_source_label": {
+    "message": "朗读原文"
+  },
+  "modal_speak_target_label": {
+    "message": "朗读译文"
+  },
   "options_engine_section_heading": {
     "message": "翻译引擎"
   },
@@ -52,6 +58,24 @@
   },
   "options_target_lang_heading": {
     "message": "翻译成"
+  },
+  "options_tts_section_heading": {
+    "message": "文字转语音"
+  },
+  "options_tts_section_note": {
+    "message": "使用浏览器内置的语音——免费、可离线使用、无需账号。可用的语音取决于你的操作系统。"
+  },
+  "options_tts_autoplay_label": {
+    "message": "翻译完成后自动朗读"
+  },
+  "options_tts_voice_default": {
+    "message": "默认(由浏览器选择)"
+  },
+  "options_tts_no_voices": {
+    "message": "你的目标语言中没有安装可用的语音。这取决于你的操作系统,与本扩展无关。"
+  },
+  "options_tts_unsupported": {
+    "message": "此浏览器不支持文字转语音。"
   },
   "options_ui_lang_heading": {
     "message": "扩展界面语言"

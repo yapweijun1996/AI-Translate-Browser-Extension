@@ -92,6 +92,28 @@
         font-size: 13px;
         min-width: 220px;
       }
+      .tts-autoplay-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        margin-bottom: 14px;
+        cursor: pointer;
+      }
+      .tts-voice-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 5px 0;
+        font-size: 14px;
+      }
+      .tts-voice-row label {
+        flex: 0 0 140px;
+      }
+      .tts-voice-row select {
+        flex: 1;
+        min-width: 0;
+      }
     </style>
   </head>
   <body>
@@ -110,6 +132,16 @@
     <section>
       <h2 data-i18n="options_target_lang_heading"></h2>
       <select id="targetLang"><!-- populated by options.js from shared/languages.js --></select>
+    </section>
+
+    <section>
+      <h2 data-i18n="options_tts_section_heading"></h2>
+      <p data-i18n="options_tts_section_note"></p>
+      <label class="tts-autoplay-row">
+        <input type="checkbox" id="ttsAutoplay" />
+        <span data-i18n="options_tts_autoplay_label"></span>
+      </label>
+      <div id="ttsVoices"><!-- rendered by options.js from speechSynthesis.getVoices() --></div>
     </section>
 
     <section>
