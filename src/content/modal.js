@@ -1,6 +1,6 @@
 // Translation modal box: opened by the trigger icon (T-007), anchored to the
-// selection rect. Desktop positioning only — the mobile bottom-sheet variant
-// is T-009 (see docs/REFERENCE-SNIPPETS.md §7 for both patterns).
+// selection rect on desktop. Below MOBILE_BREAKPOINT it renders as a bottom
+// sheet with a drag handle instead (docs/REFERENCE-SNIPPETS.md §7).
 //
 // Kept chrome-API-free (labels are passed in) so it's standalone-testable,
 // same pattern as trigger-icon.js.
@@ -14,6 +14,8 @@ import { getShadowRoot, isInsideHost } from './ui-host.js';
 const BOX_WIDTH = 340;
 const EDGE_MARGIN = 12;
 const GAP = 8;
+const MOBILE_BREAKPOINT = 640;
+const DISMISS_DRAG_THRESHOLD = 80;
 
 const MODAL_CSS = `
   .modal {
@@ -28,8 +30,35 @@ const MODAL_CSS = `
     padding: 14px 16px;
     font-size: 14px;
     line-height: 1.45;
+    transition: transform 0.2s ease;
   }
   .modal.visible {
+    display: block;
+  }
+  .modal.is-sheet {
+    width: auto;
+    max-width: none;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    top: auto;
+    border-radius: 14px 14px 0 0;
+    padding-top: 20px;
+    padding-bottom: max(14px, env(safe-area-inset-bottom));
+  }
+  .modal-handle {
+    display: none;
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 4px;
+    border-radius: 2px;
+    background: #d5d5d8;
+    touch-action: none;
+  }
+  .modal.is-sheet .modal-handle {
     display: block;
   }
   .modal-close {
@@ -100,6 +129,10 @@ function ensureBox() {
   box.setAttribute('role', 'dialog');
   box.setAttribute('aria-live', 'polite');
 
+  const handle = document.createElement('div');
+  handle.className = 'modal-handle';
+  handle.setAttribute('aria-hidden', 'true'); // decorative drag affordance only
+
   const closeBtn = document.createElement('button');
   closeBtn.type = 'button';
   closeBtn.className = 'modal-close';
@@ -117,8 +150,10 @@ function ensureBox() {
   explainBtn.className = 'modal-explain-btn';
   explainBtn.hidden = true; // wired up in T-004 (Explain feature)
 
-  box.append(closeBtn, sourceEl, targetEl, explainBtn);
+  box.append(handle, closeBtn, sourceEl, targetEl, explainBtn);
   shadow.appendChild(box);
+
+  wireDragToDismiss(handle);
 
   document.addEventListener('mousedown', (e) => {
     if (isModalVisible() && !isInsideHost(e.target)) hideModal();
@@ -130,7 +165,23 @@ function ensureBox() {
   return box;
 }
 
+function isMobileViewport() {
+  return window.innerWidth < MOBILE_BREAKPOINT;
+}
+
 function position(rect) {
+  // Any leftover drag transform from a previous open must not carry over.
+  box.style.transform = '';
+
+  if (isMobileViewport()) {
+    box.classList.add('is-sheet');
+    box.style.left = '';
+    box.style.top = '';
+    box.classList.add('visible');
+    return;
+  }
+  box.classList.remove('is-sheet');
+
   // Measure with the box already in normal flow (visible, off in a corner)
   // so offsetWidth/offsetHeight reflect real content, then place it.
   box.style.left = '-9999px';
@@ -152,6 +203,48 @@ function position(rect) {
 
   box.style.left = `${left}px`;
   box.style.top = `${Math.max(EDGE_MARGIN, top)}px`;
+}
+
+/**
+ * Drag-to-dismiss on the handle (bottom-sheet mode only — desktop simply
+ * never triggers these gestures in practice, but the listeners are harmless
+ * either way). Supports touch and mouse so it's testable on desktop too.
+ */
+function wireDragToDismiss(handle) {
+  let startY = 0;
+  let dy = 0;
+  let dragging = false;
+
+  const pointY = (e) => e.touches?.[0]?.clientY ?? e.clientY;
+
+  const onStart = (e) => {
+    dragging = true;
+    startY = pointY(e);
+    dy = 0;
+    box.style.transition = 'none';
+  };
+  const onMove = (e) => {
+    if (!dragging) return;
+    dy = Math.max(0, pointY(e) - startY);
+    box.style.transform = `translateY(${dy}px)`;
+  };
+  const onEnd = () => {
+    if (!dragging) return;
+    dragging = false;
+    box.style.transition = '';
+    if (dy > DISMISS_DRAG_THRESHOLD) {
+      hideModal();
+    } else {
+      box.style.transform = '';
+    }
+  };
+
+  handle.addEventListener('touchstart', onStart, { passive: true });
+  handle.addEventListener('touchmove', onMove, { passive: true });
+  handle.addEventListener('touchend', onEnd);
+  handle.addEventListener('mousedown', onStart);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onEnd);
 }
 
 /**
