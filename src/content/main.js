@@ -1,5 +1,6 @@
 import { MSG } from '../shared/messages.js';
 import { onSelection } from './selection.js';
+import { captureContext } from './context.js';
 import { isInsideHost } from './ui-host.js';
 import { showTriggerIcon, hideTriggerIcon, isTriggerIconVisible } from './trigger-icon.js';
 import { showModal, showResult, showError } from './modal.js';
@@ -23,17 +24,17 @@ chrome.runtime
     console.warn('[ai-translate:content] PING failed:', e?.message);
   });
 
-async function translateSelection(text) {
+async function translateSelection(text, context) {
   showModal(text, lastRect, {
     closeLabel: chrome.i18n.getMessage('modal_close_label'),
     loadingLabel: chrome.i18n.getMessage('modal_loading_text'),
   });
   try {
-    // context capture lands in T-010; targetLang defaults to the browser's
-    // language until real settings land in T-019.
+    // targetLang defaults to the browser's language until real settings
+    // land in T-019.
     const res = await chrome.runtime.sendMessage({
       type: MSG.TRANSLATE,
-      payload: { text, context: '', targetLang: navigator.language?.split('-')[0] || 'en' },
+      payload: { text, context, targetLang: navigator.language?.split('-')[0] || 'en' },
     });
     if (res?.ok) {
       showResult(res.data.translated);
@@ -55,9 +56,13 @@ onSelection((text, rect) => {
   if (isInsideHost(window.getSelection()?.anchorNode)) return;
   if (!rect) return;
   lastRect = rect;
+  // Captured now, while the selection is still live — by the time the icon
+  // is clicked the trigger's mousedown-preventDefault keeps it alive, but
+  // there's no guarantee once translateSelection is mid-flight.
+  const context = captureContext(text);
   showTriggerIcon(rect, {
     label: chrome.i18n.getMessage('modal_trigger_label'),
-    onClick: () => translateSelection(text),
+    onClick: () => translateSelection(text, context),
   });
 });
 
