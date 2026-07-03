@@ -1,7 +1,9 @@
 import { MSG } from '../shared/messages.js';
+import { onSelection } from './selection.js';
 
-// M1 skeleton: prove the content script loads on pages and can round-trip a
-// message to the service worker. Selection UX starts at T-006.
+// Content script entry. Selection events feed the trigger icon (T-007);
+// until that lands, detected selections are logged so T-006 is verifiable
+// on any page.
 
 console.log('[ai-translate:content] content script loaded on', location.origin);
 
@@ -15,3 +17,10 @@ chrome.runtime
     // client in T-011.
     console.warn('[ai-translate:content] PING failed:', e?.message);
   });
+
+onSelection((text, rect) => {
+  console.log('[ai-translate:content] selection detected:', {
+    text: text.length > 80 ? `${text.slice(0, 80)}…` : text,
+    rect: rect ? { x: rect.x, y: rect.y, w: rect.width, h: rect.height } : null,
+  });
+});
