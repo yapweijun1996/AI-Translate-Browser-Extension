@@ -401,6 +401,15 @@ let upsellDismissBtn = null;
 let pendingSavedSize = null;
 let resizeCb = null;
 
+// The user's chosen height is a CAP, not a fixed size: dragging the top/
+// bottom edge sets how tall the box is allowed to get, but the box still
+// shrinks to fit whatever content it currently has. Without this, dragging
+// the box tall once (e.g. for a long Explain payload) would leave a large
+// blank gap under every later, shorter translation for the rest of the page
+// session. Width has no equivalent problem (extra width is just breathing
+// room, not an obvious visual gap) so it stays a fixed, sticky size.
+let userHeightCap = null;
+
 // Set on every wireSpeakButton() call — hideModal() uses it to stop any
 // in-progress speech on Esc/outside-click/× close paths, which don't route
 // through main.js.
@@ -563,9 +572,11 @@ function ensureBox() {
   wireResize(resizeBottom, 'bottom');
   wireResize(resizeLeft, 'left');
 
-  if (pendingSavedSize?.width && pendingSavedSize?.height) {
+  if (pendingSavedSize?.width) {
     box.style.width = `${pendingSavedSize.width}px`;
-    box.style.height = `${pendingSavedSize.height}px`;
+  }
+  if (pendingSavedSize?.height) {
+    userHeightCap = pendingSavedSize.height;
   }
 
   document.addEventListener('mousedown', (e) => {
@@ -631,7 +642,11 @@ function position(rect) {
   // reintroduce the exact overflow this exists to prevent) so growth always
   // scrolls inside the box (via .modal's overflow-y) instead of running
   // off-screen, even in the worst case of a selection right at the edge.
-  box.style.maxHeight = `${window.innerHeight - top - EDGE_MARGIN}px`;
+  // If the user has also manually dragged a height cap (userHeightCap), the
+  // effective limit is whichever is smaller — the box never grows past the
+  // viewport even if the user's chosen cap would technically allow more.
+  const viewportCap = window.innerHeight - top - EDGE_MARGIN;
+  box.style.maxHeight = `${userHeightCap != null ? Math.min(viewportCap, userHeightCap) : viewportCap}px`;
 
   box.style.left = `${left}px`;
   box.style.top = `${top}px`;
@@ -685,10 +700,15 @@ function wireDragToDismiss(handle) {
  * (mobile keeps its own drag-to-dismiss handle instead). Resizing from
  * top/left moves that edge and adjusts the opposite dimension so the box
  * grows/shrinks from the edge being dragged, like a real window border.
- * Once the user resizes, the box keeps an explicit width/height from then
- * on (in place of the auto content-driven size) — .modal's max-height CSS
- * and position()'s per-open cap still apply on top, so a user-chosen size
- * still can't push the box off-screen; it just scrolls internally instead.
+ * Width becomes an explicit, fixed size once dragged (extra width is just
+ * reading room, not visually wasteful). Height instead becomes a CAP
+ * (userHeightCap) rather than a fixed size: the box still shrinks to fit
+ * whatever content it currently has, so a height chosen for one long
+ * Explain payload doesn't leave a large blank gap under a later, much
+ * shorter translation — see userHeightCap's own comment for why. .modal's
+ * max-height CSS and position()'s per-open viewport cap still apply on
+ * top of userHeightCap either way, so a user-chosen size still can't push
+ * the box off-screen; it just scrolls internally instead.
  * @param {HTMLElement} handleEl
  * @param {'top'|'right'|'bottom'|'left'} edge
  */
@@ -744,7 +764,18 @@ function wireResize(handleEl, edge) {
     dragging = false;
     box.style.transition = '';
     handleEl.classList.remove('is-active');
-    resizeCb?.({ width: Math.round(box.getBoundingClientRect().width), height: Math.round(box.getBoundingClientRect().height) });
+    if (edge === 'top' || edge === 'bottom') {
+      // The drag tracked box.style.height directly for real-time visual
+      // feedback while dragging. Convert that into a CAP now, not a fixed
+      // size: clearing the explicit height lets the box immediately shrink
+      // back down if its current content doesn't need all that room, while
+      // userHeightCap (applied via position()'s max-height) remembers how
+      // tall the user is willing to let it get for a future longer payload.
+      userHeightCap = Math.round(box.getBoundingClientRect().height);
+      box.style.height = '';
+      box.style.maxHeight = `${userHeightCap}px`;
+    }
+    resizeCb?.({ width: Math.round(box.getBoundingClientRect().width), height: userHeightCap ?? Math.round(box.getBoundingClientRect().height) });
   };
 
   handleEl.addEventListener('touchstart', onStart, { passive: false });
