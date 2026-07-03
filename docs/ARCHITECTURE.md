@@ -2,9 +2,9 @@
 
 Read [SPEC.md](../SPEC.md) first. This doc explains *how the pieces talk to each other* so you know where any new code belongs.
 
-## The four contexts
+## The contexts
 
-An MV3 extension runs code in four isolated places. They cannot call each other's functions — they communicate only by message passing and shared storage.
+An MV3 extension runs code in several isolated places. They cannot call each other's functions — they communicate only by message passing and shared storage.
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -24,14 +24,20 @@ An MV3 extension runs code in four isolated places. They cannot call each other'
 │ - IndexedDB cache                                             │
 │ - error mapper (provider error → friendly code)               │
 │ - context menu registration                                   │
-└──────▲──────────────────────────▲────────────────────────────┘
-       │ runtime messages          │ chrome.storage (settings)
-┌──────▼──────┐            ┌───────▼──────┐
-│ POPUP       │            │ OPTIONS      │
-│ quick UI    │            │ engine, keys,│
-│             │            │ languages    │
-└─────────────┘            └──────────────┘
+└──────▲───────────────────▲──────────────────────▲────────────┘
+       │ runtime messages   │ chrome.storage        │ chrome.runtime
+┌──────▼──────┐      ┌──────▼──────┐        ┌───────▼────────────┐
+│ POPUP       │      │ OPTIONS     │        │ OFFSCREEN DOCUMENT │
+│ quick UI    │      │ engine,keys,│        │ (offscreen/)       │
+│             │      │ languages   │        │ hosts Translator/  │
+│             │      │             │        │ LanguageDetector — │
+│             │      │             │        │ these need a real  │
+│             │      │             │        │ Document, worker   │
+│             │      │             │        │ can't call them    │
+└─────────────┘      └─────────────┘        └─────────────────────┘
 ```
+
+The offscreen document is created on demand by `background/engines/on-device.js` (not declared in the manifest the way popup/options are — see docs/ENGINES.md "Engine 2" for why, the internal `OD_MSG` protocol it uses, and a gotcha this causes in the worker's own message listener). Content scripts never talk to it directly.
 
 **Golden rule:** if code needs a key or the network → service worker. If code needs the page DOM → content script. Nothing else.
 

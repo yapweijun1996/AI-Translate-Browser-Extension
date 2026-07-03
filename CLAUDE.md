@@ -23,7 +23,7 @@ A browser extension that translates web content using AI — bilingual page tran
 ## Key architecture decisions (research done 2026-07-03)
 
 - **Manifest V3 only.** Service worker (background), content scripts (DOM access), popup UI, options page. No remotely hosted or `eval`'d code — disallowed by MV3 and Chrome Web Store policy.
-- **Permissions kept minimal.** `permissions`: `storage`, `contextMenus`, `scripting`, `activeTab`. `host_permissions` scoped to what's actually needed, not `<all_urls>` unless a feature requires it.
+- **Permissions kept minimal.** `permissions`: `storage`, `contextMenus`, `scripting`, `activeTab`, `offscreen` (the last one exists solely because the on-device Translator API needs a real Document — the service worker can't host it, see docs/ENGINES.md "Engine 2"). `host_permissions` scoped to what's actually needed, not `<all_urls>` unless a feature requires it.
 - **Translation engine — dual path:**
   - Default: Chrome's built-in on-device **Translator API** + **Language Detector API** (free, private, no network call, no API key). Chrome desktop 138+ only.
   - Optional "bring your own API key": DeepL, Google Cloud Translate, OpenAI, Gemini, Claude — for higher quality, cross-browser support, or nuanced/LLM-style translation.

@@ -1,13 +1,14 @@
 import { MSG, ok, err } from '../shared/messages.js';
 import { registerEngine, translate, explain, getActiveEngine } from './engines/registry.js';
 import { trialGatewayAdapter } from './engines/trial-gateway.js';
+import { onDeviceAdapter } from './engines/on-device.js';
+import { OD_MSG } from './engines/on-device-protocol.js';
 
-// On-device (T-015) and BYOK (T-016..T-018) adapters, and the cache (T-020),
-// aren't registered yet. The trial gateway (T-014) is the first real engine —
-// translate() now returns real results; explain() still resolves through the
-// registry to "no engine available" until an engine with explain capability
-// lands (T-024). See docs/ENGINES.md.
+// BYOK adapters (T-016..T-018) and the cache (T-020) aren't registered yet.
+// explain() still resolves through the registry to "no engine available"
+// until an engine with explain capability lands (T-024). See docs/ENGINES.md.
 registerEngine(trialGatewayAdapter);
+registerEngine(onDeviceAdapter);
 
 console.log('[ai-translate:worker] service worker loaded');
 
@@ -59,6 +60,15 @@ chrome.runtime.onMessage.addListener((message, _sender, sendResponse) => {
       handleGetCapabilities(sendResponse);
       return true;
     default:
+      // OD_MSG.* (CHECK_SUPPORT/TRANSLATE) are the worker's own messages TO
+      // the offscreen document — chrome.runtime.sendMessage broadcasts to
+      // every listener in the extension, including the sender's own, so
+      // this listener sees them too. It must NOT respond to them: if it did,
+      // this synchronous error would win the race and the offscreen
+      // document's real response would never reach the caller. Ignoring
+      // them (no sendResponse, return false) lets the offscreen document's
+      // listener answer instead.
+      if (Object.values(OD_MSG).includes(message?.type)) return false;
       sendResponse(err('unknown', `unhandled message type: ${message?.type}`));
       return false;
   }

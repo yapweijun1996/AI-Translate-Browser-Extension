@@ -1,0 +1,13 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>AI Translate — offscreen</title>
+  </head>
+  <body>
+    <!-- Invisible extension page. Its only job is hosting the on-device
+         Translator/LanguageDetector APIs, which need a real Document and
+         aren't available in the service worker. -->
+    <script type="module" src="./offscreen.js"></script>
+  </body>
+</html>
