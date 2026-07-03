@@ -86,6 +86,24 @@ const MODAL_CSS = `
     position: absolute;
     touch-action: none;
   }
+  /* Invisible by default (the handle itself is a bare hit-target strip
+     straddling the box edge) — ::before is the actual visual grip, a short
+     bar centered on the edge that only appears on hover/active so the box
+     stays visually clean while still being discoverable once the user's
+     cursor is anywhere near an edge (the cursor: *-resize change alone,
+     with zero visual cue on the box itself, is easy to miss). */
+  .modal-resize::before {
+    content: '';
+    position: absolute;
+    background: #2563eb;
+    opacity: 0;
+    border-radius: 2px;
+    transition: opacity 0.12s ease;
+  }
+  .modal-resize:hover::before,
+  .modal-resize.is-active::before {
+    opacity: 0.55;
+  }
   .modal-resize-top,
   .modal-resize-bottom {
     left: 0;
@@ -99,6 +117,14 @@ const MODAL_CSS = `
   .modal-resize-bottom {
     bottom: -${RESIZE_HANDLE_THICKNESS / 2}px;
   }
+  .modal-resize-top::before,
+  .modal-resize-bottom::before {
+    left: 30%;
+    right: 30%;
+    height: 3px;
+    top: 50%;
+    transform: translateY(-50%);
+  }
   .modal-resize-left,
   .modal-resize-right {
     top: 0;
@@ -111,6 +137,14 @@ const MODAL_CSS = `
   }
   .modal-resize-right {
     right: -${RESIZE_HANDLE_THICKNESS / 2}px;
+  }
+  .modal-resize-left::before,
+  .modal-resize-right::before {
+    top: 30%;
+    bottom: 30%;
+    width: 3px;
+    left: 50%;
+    transform: translateX(-50%);
   }
   .modal.is-sheet .modal-resize {
     display: none;
@@ -573,6 +607,11 @@ function wireResize(handleEl, edge) {
     startY = pointY(e);
     startRect = box.getBoundingClientRect();
     box.style.transition = 'none';
+    // Keep the grip line lit for the whole drag — :hover alone flickers off
+    // the moment the pointer leaves the thin handle strip, even though the
+    // resize itself keeps tracking fine (listeners are on window, not just
+    // the handle).
+    handleEl.classList.add('is-active');
     e.preventDefault?.();
   };
 
@@ -604,6 +643,7 @@ function wireResize(handleEl, edge) {
     if (!dragging) return;
     dragging = false;
     box.style.transition = '';
+    handleEl.classList.remove('is-active');
     resizeCb?.({ width: Math.round(box.getBoundingClientRect().width), height: Math.round(box.getBoundingClientRect().height) });
   };
 
