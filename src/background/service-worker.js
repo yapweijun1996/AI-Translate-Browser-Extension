@@ -7,9 +7,8 @@ import { openaiAdapter } from './engines/openai.js';
 import { deepseekAdapter } from './engines/deepseek.js';
 import { OD_MSG } from './engines/on-device-protocol.js';
 
-// The cache (T-020) isn't wired up yet. explain() still resolves through
-// the registry to "no engine available" until an engine with explain
-// capability lands (T-024). See docs/ENGINES.md.
+// explain() still resolves through the registry to "no engine available"
+// until an engine with explain capability lands (T-024). See docs/ENGINES.md.
 registerEngine(trialGatewayAdapter);
 registerEngine(onDeviceAdapter);
 registerEngine(geminiAdapter);
@@ -24,8 +23,10 @@ chrome.runtime.onInstalled.addListener((details) => {
 
 async function handleTranslate(payload, sendResponse) {
   try {
-    const translated = await translate(payload?.text, payload?.targetLang, { context: payload?.context });
-    sendResponse(ok({ translated }));
+    // registry.translate() already returns {translated, engine, cached} —
+    // the exact shape docs/ARCHITECTURE.md documents for this response.
+    const result = await translate(payload?.text, payload?.targetLang, { context: payload?.context });
+    sendResponse(ok(result));
   } catch (e) {
     sendResponse(err(e.code || 'unknown', e.message));
   }

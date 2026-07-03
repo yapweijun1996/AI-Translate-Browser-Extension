@@ -1,12 +1,12 @@
 // Engine adapter registry — the seam between the worker's message handlers
 // and the concrete translation engines (trial gateway T-014, on-device
-// T-015, BYOK T-016..T-018). None are registered yet; this task only builds
-// the interface + selection logic, so every call currently resolves to
-// EngineError('no_engine_available', ...) — the honest state until those
-// land. See docs/ENGINES.md for the adapter shape and per-engine notes.
+// T-015, BYOK Gemini/OpenAI/DeepSeek T-016..T-018 — all five now registered
+// in service-worker.js). See docs/ENGINES.md for the adapter shape and
+// per-engine notes.
 
 import { EngineError } from './errors.js';
 import { ENGINE_ID_STORAGE_KEY } from '../../shared/settings-keys.js';
+import { getCachedTranslation, setCachedTranslation } from '../translation-cache.js';
 
 /**
  * @typedef {object} EngineAdapter
@@ -65,13 +65,25 @@ export async function getActiveEngine() {
   return null;
 }
 
-/** @param {string} text @param {string} targetLang @param {{context?: string, signal?: AbortSignal}} [opts] */
+/**
+ * @param {string} text @param {string} targetLang @param {{context?: string, signal?: AbortSignal}} [opts]
+ * @returns {Promise<{translated: string, engine: string, cached: boolean}>}
+ *   Shape matches the TRANSLATE response documented in docs/ARCHITECTURE.md.
+ */
 export async function translate(text, targetLang, opts = {}) {
   const engine = await getActiveEngine();
   if (!engine) {
     throw new EngineError('no_engine_available', 'No translation engine is configured or available.');
   }
-  return engine.translate(text, targetLang, opts);
+
+  const cached = await getCachedTranslation(text, targetLang, engine.id);
+  if (cached !== undefined) {
+    return { translated: cached, engine: engine.id, cached: true };
+  }
+
+  const translated = await engine.translate(text, targetLang, opts);
+  await setCachedTranslation(text, targetLang, engine.id, translated);
+  return { translated, engine: engine.id, cached: false };
 }
 
 /** @param {string} phrase @param {string} targetLang @param {{context?: string, signal?: AbortSignal}} [opts] */

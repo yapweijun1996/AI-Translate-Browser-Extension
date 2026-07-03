@@ -16,5 +16,8 @@
     "globals": "^15.0.0",
     "prettier": "^3.0.0",
     "vite": "^6.0.0"
+  },
+  "dependencies": {
+    "idb-keyval": "^6.2.6"
   }
 }
