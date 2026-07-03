@@ -4,7 +4,17 @@ import { onSelection } from './selection.js';
 import { captureContext } from './context.js';
 import { isInsideHost } from './ui-host.js';
 import { showTriggerIcon, hideTriggerIcon, isTriggerIconVisible } from './trigger-icon.js';
-import { showModal, showResult, showError, showUpsell, hideModal } from './modal.js';
+import {
+  showModal,
+  showResult,
+  showError,
+  showUpsell,
+  hideModal,
+  showExplainButton,
+  showExplainLoading,
+  showExplainResult,
+  showExplainError,
+} from './modal.js';
 
 // Content script entry: selection → trigger icon → modal. Translation is
 // requested for real over the message protocol (docs/ARCHITECTURE.md) and
@@ -39,6 +49,51 @@ function requestTranslate(text, context, targetLang, engineOverride) {
   });
 }
 
+function requestExplain(phrase, context, targetLang) {
+  return chrome.runtime.sendMessage({
+    type: MSG.EXPLAIN,
+    payload: { phrase, context, targetLang },
+  });
+}
+
+/** i18n labels for showExplainResult()'s section headings — read fresh each
+ * call rather than cached at module scope so a UI-language change (browser
+ * restart) is always picked up. */
+function explainSectionLabels() {
+  return {
+    definitionLabel: chrome.i18n.getMessage('explain_section_definition'),
+    contextLabel: chrome.i18n.getMessage('explain_section_context'),
+    examplesLabel: chrome.i18n.getMessage('explain_section_examples'),
+    collocationsLabel: chrome.i18n.getMessage('explain_section_collocations'),
+    wordFamilyLabel: chrome.i18n.getMessage('explain_section_word_family'),
+    synonymsLabel: chrome.i18n.getMessage('explain_section_synonyms'),
+    antonymsLabel: chrome.i18n.getMessage('explain_section_antonyms'),
+    memoryTipLabel: chrome.i18n.getMessage('explain_section_memory_tip'),
+  };
+}
+
+/**
+ * Wire the Explain button for the phrase currently shown in the modal.
+ * Capability gating (hiding the button when the active engine can't
+ * explain) is T-026 — for now every successful translation offers it, and
+ * an unsupported engine surfaces as a normal explain_unsupported error.
+ */
+function offerExplain(text, context, targetLang) {
+  showExplainButton(chrome.i18n.getMessage('modal_explain_button'), async () => {
+    showExplainLoading(chrome.i18n.getMessage('modal_explain_loading'));
+    try {
+      const res = await requestExplain(text, context, targetLang);
+      if (res?.ok) {
+        showExplainResult(text, res.data, explainSectionLabels());
+      } else {
+        showExplainError(res?.error?.message || chrome.i18n.getMessage('error_generic'));
+      }
+    } catch (e) {
+      showExplainError(e?.message || chrome.i18n.getMessage('error_generic'));
+    }
+  });
+}
+
 /**
  * The trial gateway's free daily allowance ran out. Show the upsell instead
  * of a plain error (SPEC §4/§9): open Settings, try again tomorrow, or (if
@@ -69,6 +124,10 @@ async function showTrialQuotaUpsell(text, context, targetLang) {
         });
         const res = await requestTranslate(text, context, targetLang, 'on-device');
         if (res?.ok) {
+          // No offerExplain() here: this retry deliberately forces the
+          // on-device engine, which never supports Explain (docs/ENGINES.md)
+          // — unlike the main flow below, there's no ambiguity to defer to
+          // T-026's capability gating.
           showResult(res.data.translated);
         } else {
           showError(res?.error?.message || chrome.i18n.getMessage('error_generic'));
@@ -88,6 +147,7 @@ async function translateSelection(text, context) {
     const res = await requestTranslate(text, context, targetLang);
     if (res?.ok) {
       showResult(res.data.translated);
+      offerExplain(text, context, targetLang);
     } else if (res?.error?.code === 'trial_quota_exhausted') {
       await showTrialQuotaUpsell(text, context, targetLang);
     } else {

@@ -138,5 +138,45 @@
   "error_upsell_on_device_button": {
     "message": "Use on-device translation instead",
     "description": "Button in the trial-quota upsell offering an immediate free alternative when the on-device engine is available."
+  },
+  "modal_explain_button": {
+    "message": "Explain",
+    "description": "Button shown after a translation that requests a deeper word/phrase explanation."
+  },
+  "modal_explain_loading": {
+    "message": "Loading explanation…",
+    "description": "Placeholder shown while an Explain request is in flight."
+  },
+  "explain_section_definition": {
+    "message": "Definition",
+    "description": "Section label in the Explain panel for the source + target language definitions."
+  },
+  "explain_section_context": {
+    "message": "In context",
+    "description": "Section label in the Explain panel for the meaning as used in the selected text's surrounding context."
+  },
+  "explain_section_examples": {
+    "message": "Examples",
+    "description": "Section label in the Explain panel for CEFR-graded example sentences."
+  },
+  "explain_section_collocations": {
+    "message": "Collocations",
+    "description": "Section label in the Explain panel for common word pairings."
+  },
+  "explain_section_word_family": {
+    "message": "Word family",
+    "description": "Section label in the Explain panel for related word forms (noun/verb/adjective forms, etc.)."
+  },
+  "explain_section_synonyms": {
+    "message": "Synonyms",
+    "description": "Section label in the Explain panel for words with similar meaning."
+  },
+  "explain_section_antonyms": {
+    "message": "Antonyms",
+    "description": "Section label in the Explain panel for words with opposite meaning."
+  },
+  "explain_section_memory_tip": {
+    "message": "Memory tip",
+    "description": "Section label in the Explain panel for a mnemonic to help remember the word."
   }
 }

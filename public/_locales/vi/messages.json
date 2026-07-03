@@ -103,5 +103,35 @@
   },
   "error_upsell_on_device_button": {
     "message": "Dùng bản dịch trên thiết bị thay thế"
+  },
+  "modal_explain_button": {
+    "message": "Giải thích"
+  },
+  "modal_explain_loading": {
+    "message": "Đang tải phần giải thích…"
+  },
+  "explain_section_definition": {
+    "message": "Định nghĩa"
+  },
+  "explain_section_context": {
+    "message": "Trong ngữ cảnh"
+  },
+  "explain_section_examples": {
+    "message": "Ví dụ"
+  },
+  "explain_section_collocations": {
+    "message": "Cụm từ thường đi kèm"
+  },
+  "explain_section_word_family": {
+    "message": "Họ từ"
+  },
+  "explain_section_synonyms": {
+    "message": "Từ đồng nghĩa"
+  },
+  "explain_section_antonyms": {
+    "message": "Từ trái nghĩa"
+  },
+  "explain_section_memory_tip": {
+    "message": "Mẹo ghi nhớ"
   }
 }

@@ -103,5 +103,35 @@
   },
   "error_upsell_on_device_button": {
     "message": "代わりにオンデバイス翻訳を使う"
+  },
+  "modal_explain_button": {
+    "message": "詳しく解説"
+  },
+  "modal_explain_loading": {
+    "message": "解説を読み込み中…"
+  },
+  "explain_section_definition": {
+    "message": "定義"
+  },
+  "explain_section_context": {
+    "message": "文脈での意味"
+  },
+  "explain_section_examples": {
+    "message": "例文"
+  },
+  "explain_section_collocations": {
+    "message": "よく使われる組み合わせ"
+  },
+  "explain_section_word_family": {
+    "message": "関連語"
+  },
+  "explain_section_synonyms": {
+    "message": "類義語"
+  },
+  "explain_section_antonyms": {
+    "message": "対義語"
+  },
+  "explain_section_memory_tip": {
+    "message": "覚え方のヒント"
   }
 }

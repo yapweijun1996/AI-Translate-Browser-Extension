@@ -103,5 +103,35 @@
   },
   "error_upsell_on_device_button": {
     "message": "Guna terjemahan dalam peranti sebagai gantinya"
+  },
+  "modal_explain_button": {
+    "message": "Terangkan"
+  },
+  "modal_explain_loading": {
+    "message": "Memuatkan penerangan…"
+  },
+  "explain_section_definition": {
+    "message": "Definisi"
+  },
+  "explain_section_context": {
+    "message": "Dalam konteks"
+  },
+  "explain_section_examples": {
+    "message": "Contoh ayat"
+  },
+  "explain_section_collocations": {
+    "message": "Kolokasi"
+  },
+  "explain_section_word_family": {
+    "message": "Keluarga perkataan"
+  },
+  "explain_section_synonyms": {
+    "message": "Sinonim"
+  },
+  "explain_section_antonyms": {
+    "message": "Antonim"
+  },
+  "explain_section_memory_tip": {
+    "message": "Petua mengingat"
   }
 }

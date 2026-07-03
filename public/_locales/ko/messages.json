@@ -103,5 +103,35 @@
   },
   "error_upsell_on_device_button": {
     "message": "대신 온디바이스 번역 사용"
+  },
+  "modal_explain_button": {
+    "message": "자세히 설명"
+  },
+  "modal_explain_loading": {
+    "message": "설명을 불러오는 중…"
+  },
+  "explain_section_definition": {
+    "message": "정의"
+  },
+  "explain_section_context": {
+    "message": "문맥에서의 의미"
+  },
+  "explain_section_examples": {
+    "message": "예문"
+  },
+  "explain_section_collocations": {
+    "message": "연어(자주 쓰이는 조합)"
+  },
+  "explain_section_word_family": {
+    "message": "단어족"
+  },
+  "explain_section_synonyms": {
+    "message": "유의어"
+  },
+  "explain_section_antonyms": {
+    "message": "반의어"
+  },
+  "explain_section_memory_tip": {
+    "message": "암기 팁"
   }
 }

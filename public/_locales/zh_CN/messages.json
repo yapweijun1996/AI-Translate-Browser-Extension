@@ -103,5 +103,35 @@
   },
   "error_upsell_on_device_button": {
     "message": "改用设备端翻译"
+  },
+  "modal_explain_button": {
+    "message": "详解"
+  },
+  "modal_explain_loading": {
+    "message": "讲解加载中…"
+  },
+  "explain_section_definition": {
+    "message": "释义"
+  },
+  "explain_section_context": {
+    "message": "在此语境中"
+  },
+  "explain_section_examples": {
+    "message": "例句"
+  },
+  "explain_section_collocations": {
+    "message": "常见搭配"
+  },
+  "explain_section_word_family": {
+    "message": "词族"
+  },
+  "explain_section_synonyms": {
+    "message": "近义词"
+  },
+  "explain_section_antonyms": {
+    "message": "反义词"
+  },
+  "explain_section_memory_tip": {
+    "message": "记忆技巧"
   }
 }

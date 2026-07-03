@@ -6,10 +6,13 @@
 // same pattern as trigger-icon.js.
 
 import { getShadowRoot, isInsideHost } from './ui-host.js';
+import { escapeHtml } from '../shared/dom.js';
 
-// This module renders all dynamic text via .textContent (never innerHTML),
-// so no escaping helper is needed here — see shared/dom.js for when
-// richer HTML rendering (Explain, T-025) requires escapeHtml().
+// Everything except the Explain payload (T-025) renders via .textContent.
+// The Explain block is the one place this module uses innerHTML — SPEC §5's
+// payload has real structure (badges, examples, collapsible sections) that
+// would be painful to build as ~50 createElement calls, so it's built as an
+// HTML string with every dynamic value passed through escapeHtml() first.
 
 const BOX_WIDTH = 340;
 const EDGE_MARGIN = 12;
@@ -137,12 +140,115 @@ const MODAL_CSS = `
   .modal-upsell-btn-primary:hover {
     background: #1d4ed8;
   }
+  .modal-explain-body {
+    margin-top: 10px;
+    max-height: 320px;
+    overflow-y: auto;
+    font-size: 13px;
+  }
+  .modal-explain-body.is-loading,
+  .modal-explain-body.is-error {
+    color: #888;
+  }
+  .modal-explain-body.is-error {
+    color: #b3261e;
+  }
+  .explain-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+  .explain-headword {
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .explain-phonetic {
+    margin-left: 6px;
+    color: #777;
+    font-size: 12px;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 1px 6px;
+    border-radius: 8px;
+    background: #eee;
+    color: #555;
+    margin-left: 4px;
+  }
+  .badge-cefr {
+    background: #e3ecfb;
+    color: #1d4ed8;
+  }
+  .badge-sm {
+    font-size: 10px;
+  }
+  .explain-block {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+  }
+  .explain-label {
+    font-weight: 600;
+    color: #444;
+    font-size: 12px;
+    margin-bottom: 3px;
+  }
+  .explain-block.is-collapsible .explain-label {
+    cursor: pointer;
+    user-select: none;
+  }
+  .explain-toggle {
+    color: #999;
+    font-weight: normal;
+  }
+  .explain-block.is-collapsible[data-collapsed='1'] .explain-body-text {
+    display: none;
+  }
+  .explain-def-src {
+    color: #444;
+  }
+  .explain-def-tgt {
+    color: #1a1a1a;
+    margin-top: 2px;
+  }
+  .explain-example {
+    margin-top: 6px;
+  }
+  .explain-example-src {
+    color: #444;
+  }
+  .explain-example-tgt {
+    color: #1a1a1a;
+  }
+  .explain-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .chip {
+    background: #f3f3f4;
+    border-radius: 10px;
+    padding: 2px 8px;
+    font-size: 12px;
+    color: #444;
+  }
+  .explain-list {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .muted {
+    color: #888;
+  }
 `;
 
 let box = null;
 let sourceEl = null;
 let targetEl = null;
 let explainBtn = null;
+let explainBody = null;
 let upsellActions = null;
 let upsellSettingsBtn = null;
 let upsellOnDeviceBtn = null;
@@ -179,7 +285,12 @@ function ensureBox() {
   explainBtn = document.createElement('button');
   explainBtn.type = 'button';
   explainBtn.className = 'modal-explain-btn';
-  explainBtn.hidden = true; // wired up in T-004 (Explain feature)
+  explainBtn.hidden = true; // shown by main.js after a successful translation (visibility gating by
+  // engine capability is T-026 — this module just exposes the on/off switch)
+
+  explainBody = document.createElement('div');
+  explainBody.className = 'modal-explain-body';
+  explainBody.hidden = true;
 
   // Trial-quota upsell (T-022): shown instead of a plain error when the
   // trial gateway's daily allowance runs out. Buttons are wired per-call in
@@ -204,7 +315,7 @@ function ensureBox() {
 
   upsellActions.append(upsellSettingsBtn, upsellOnDeviceBtn, upsellDismissBtn);
 
-  box.append(handle, closeBtn, sourceEl, targetEl, explainBtn, upsellActions);
+  box.append(handle, closeBtn, sourceEl, targetEl, explainBtn, explainBody, upsellActions);
   shadow.appendChild(box);
 
   wireDragToDismiss(handle);
@@ -315,6 +426,7 @@ export function showModal(sourceText, rect, { closeLabel, loadingLabel }) {
   targetEl.textContent = loadingLabel;
   targetEl.className = 'modal-row modal-target is-loading';
   explainBtn.hidden = true;
+  resetExplainBody();
   upsellActions.hidden = true;
   position(rect);
 }
@@ -324,6 +436,7 @@ export function showResult(translatedText) {
   if (!targetEl) return;
   targetEl.textContent = translatedText || '';
   targetEl.className = 'modal-row modal-target';
+  resetExplainBody();
   upsellActions.hidden = true;
 }
 
@@ -332,6 +445,7 @@ export function showError(message) {
   if (!targetEl) return;
   targetEl.textContent = message;
   targetEl.className = 'modal-row modal-target is-error';
+  resetExplainBody();
   upsellActions.hidden = true;
 }
 
@@ -355,6 +469,7 @@ export function showUpsell(message, { settingsLabel, dismissLabel, onSettings, o
   targetEl.textContent = message;
   targetEl.className = 'modal-row modal-target is-error';
   explainBtn.hidden = true;
+  resetExplainBody();
 
   upsellSettingsBtn.textContent = settingsLabel;
   upsellSettingsBtn.onclick = () => onSettings?.();
@@ -372,6 +487,170 @@ export function showUpsell(message, { settingsLabel, dismissLabel, onSettings, o
   }
 
   upsellActions.hidden = false;
+}
+
+function resetExplainBody() {
+  explainBody.hidden = true;
+  explainBody.className = 'modal-explain-body';
+  explainBody.innerHTML = '';
+}
+
+/**
+ * Show the Explain button after a successful translation. Visibility
+ * GATING by engine capability is T-026's job — this is just the on/off
+ * switch; main.js decides when to call it.
+ * @param {string} label i18n "Explain" button text
+ * @param {() => void} onClick
+ */
+export function showExplainButton(label, onClick) {
+  if (!explainBtn) return;
+  explainBtn.textContent = label;
+  explainBtn.disabled = false;
+  explainBtn.hidden = false;
+  explainBtn.onclick = () => onClick();
+}
+
+/** Loading state while the EXPLAIN request is in flight — disables the button so it can't double-fire. */
+export function showExplainLoading(loadingLabel) {
+  if (!explainBody) return;
+  explainBtn.disabled = true;
+  explainBody.className = 'modal-explain-body is-loading';
+  explainBody.textContent = loadingLabel;
+  explainBody.hidden = false;
+}
+
+/** Friendly error in place of the explain payload (e.g. explain_unsupported, network failure). */
+export function showExplainError(message) {
+  if (!explainBody) return;
+  explainBtn.disabled = false;
+  explainBody.className = 'modal-explain-body is-error';
+  explainBody.textContent = message;
+  explainBody.hidden = false;
+}
+
+/**
+ * Render the SPEC §5 explain payload: headword + phonetic + POS/CEFR
+ * badges, dual-language definitions, in-context meaning, graded examples,
+ * and collapsible collocations/word-family/synonyms/antonyms/memory-tip.
+ * Every dynamic value is escaped — this is the one place in this module
+ * that uses innerHTML (see the file-header comment).
+ * @param {string} headword the originally-selected phrase (already shown in sourceEl, repeated here as the Explain block's own heading)
+ * @param {object} payload SPEC §5 shape from EXPLAIN — schemaVersion, phonetic, partOfSpeech, cefrLevel, definitionSrc, definitionTgt, context, examples[], collocations[], wordFamily[], synonyms[], antonyms[], memoryTip
+ * @param {{collocationsLabel: string, wordFamilyLabel: string, synonymsLabel: string, antonymsLabel: string, memoryTipLabel: string, definitionLabel: string, examplesLabel: string, contextLabel: string}} sectionLabels i18n labels for each block (T-025 doesn't hardcode English)
+ */
+export function showExplainResult(headword, payload, sectionLabels) {
+  if (!explainBody) return;
+  explainBtn.disabled = false;
+
+  const block = (body, opts = {}) =>
+    body
+      ? `<div class="explain-block${opts.collapsible ? ' is-collapsible' : ''}"${
+          opts.collapsible ? ' data-collapsed="1"' : ''
+        }>
+           <div class="explain-label">${escapeHtml(opts.label || '')}${opts.collapsible ? ' <span class="explain-toggle">+</span>' : ''}</div>
+           <div class="explain-body-text">${body}</div>
+         </div>`
+      : '';
+
+  const head = `
+    <div class="explain-head">
+      <div>
+        <span class="explain-headword">${escapeHtml(headword)}</span>
+        ${payload.phonetic ? `<span class="explain-phonetic">${escapeHtml(payload.phonetic)}</span>` : ''}
+      </div>
+      <div>
+        ${payload.partOfSpeech ? `<span class="badge">${escapeHtml(payload.partOfSpeech)}</span>` : ''}
+        ${payload.cefrLevel && payload.cefrLevel !== 'unknown' ? `<span class="badge badge-cefr">${escapeHtml(payload.cefrLevel)}</span>` : ''}
+      </div>
+    </div>`;
+
+  const definitions =
+    payload.definitionSrc || payload.definitionTgt
+      ? block(
+          `${payload.definitionSrc ? `<div class="explain-def-src">${escapeHtml(payload.definitionSrc)}</div>` : ''}${
+            payload.definitionTgt ? `<div class="explain-def-tgt">${escapeHtml(payload.definitionTgt)}</div>` : ''
+          }`,
+          { label: sectionLabels.definitionLabel },
+        )
+      : '';
+
+  const context = payload.context ? block(escapeHtml(payload.context), { label: sectionLabels.contextLabel }) : '';
+
+  const examples = payload.examples?.length
+    ? block(
+        payload.examples
+          .map(
+            (e) => `
+          <div class="explain-example">
+            ${e.level ? `<span class="badge badge-cefr badge-sm">${escapeHtml(e.level)}</span>` : ''}
+            <div class="explain-example-src">${escapeHtml(e.src)}</div>
+            <div class="explain-example-tgt">${escapeHtml(e.tgt)}</div>
+          </div>`,
+          )
+          .join(''),
+        { label: sectionLabels.examplesLabel },
+      )
+    : '';
+
+  const collocations = payload.collocations?.length
+    ? block(
+        `<div class="explain-chips">${payload.collocations.map((c) => `<span class="chip">${escapeHtml(c)}</span>`).join('')}</div>`,
+        { label: sectionLabels.collocationsLabel, collapsible: true },
+      )
+    : '';
+
+  const wordFamily = payload.wordFamily?.length
+    ? block(
+        `<ul class="explain-list">${payload.wordFamily
+          .map(
+            (w) =>
+              `<li><strong>${escapeHtml(w.word)}</strong>${w.pos ? ` <span class="muted">(${escapeHtml(w.pos)})</span>` : ''}${w.meaning ? ` — ${escapeHtml(w.meaning)}` : ''}</li>`,
+          )
+          .join('')}</ul>`,
+        { label: sectionLabels.wordFamilyLabel, collapsible: true },
+      )
+    : '';
+
+  const synonyms = payload.synonyms?.length
+    ? block(
+        `<ul class="explain-list">${payload.synonyms
+          .map(
+            (s) =>
+              `<li><strong>${escapeHtml(s.word)}</strong>${s.note ? ` — <span class="muted">${escapeHtml(s.note)}</span>` : ''}</li>`,
+          )
+          .join('')}</ul>`,
+        { label: sectionLabels.synonymsLabel, collapsible: true },
+      )
+    : '';
+
+  const antonyms = payload.antonyms?.length
+    ? block(
+        `<div class="explain-chips">${payload.antonyms.map((a) => `<span class="chip">${escapeHtml(a)}</span>`).join('')}</div>`,
+        { label: sectionLabels.antonymsLabel, collapsible: true },
+      )
+    : '';
+
+  const memoryTip = payload.memoryTip
+    ? block(escapeHtml(payload.memoryTip), { label: sectionLabels.memoryTipLabel, collapsible: true })
+    : '';
+
+  explainBody.className = 'modal-explain-body';
+  explainBody.innerHTML = head + definitions + context + examples + collocations + wordFamily + synonyms + antonyms + memoryTip;
+  explainBody.hidden = false;
+  wireExplainCollapsibles();
+}
+
+/** Click-to-toggle for `.explain-block.is-collapsible` sections. */
+function wireExplainCollapsibles() {
+  explainBody.querySelectorAll('.explain-block.is-collapsible .explain-label').forEach((label) => {
+    label.addEventListener('click', () => {
+      const b = label.parentElement;
+      const collapsed = b.dataset.collapsed === '1';
+      b.dataset.collapsed = collapsed ? '0' : '1';
+      const toggle = b.querySelector('.explain-toggle');
+      if (toggle) toggle.textContent = collapsed ? '−' : '+';
+    });
+  });
 }
 
 export function hideModal() {
