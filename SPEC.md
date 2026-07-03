@@ -1,7 +1,7 @@
 # SPEC — AI Translate Browser Extension
 
 Status: Draft v1 (2026-07-03). No code exists yet; this spec is the build target for the MVP.
-Reference implementation studied: [sample/PDF-Reader](sample/PDF-Reader) (selection → tooltip → explain pipeline).
+Reference implementation studied: a proven PDF-Reader PWA with the same selection → tooltip → explain pipeline; its reusable code lives in [docs/REFERENCE-SNIPPETS.md](docs/REFERENCE-SNIPPETS.md).
 
 ---
 
@@ -13,7 +13,7 @@ Primary user: a language learner reading foreign-language web content, who wants
 
 ## 2. Core UX flow (MVP)
 
-Icon-first flow (user's chosen design — deliberately different from the sample's instant-popup):
+Icon-first flow (user's chosen design — deliberately different from the reference project's instant-popup):
 
 1. User selects/highlights text or a sentence on the page.
 2. A small floating **trigger icon** appears near the end of the selection (debounced ~250ms; does NOT appear for selections < 2 chars or when selection is collapsed).
@@ -48,13 +48,13 @@ content script ◀─(result | error {friendlyMessage})──────── 
 Rules:
 - Content script NEVER calls translation APIs directly and never sees API keys. All network + key access lives in the service worker.
 - Content script UI must be resilient to hostile page CSS: render icon + box inside a Shadow DOM host element with reset styles.
-- Selection detection: `mouseup` + `touchend`, debounced 250ms, with `selectionchange` clearing state when selection collapses (port of the sample's [pdf-viewer.js `onSelection()`](sample/PDF-Reader/src/pdf-viewer.js)).
+- Selection detection: `mouseup` + `touchend`, debounced 250ms, with `selectionchange` clearing state when selection collapses ([REFERENCE-SNIPPETS §1](docs/REFERENCE-SNIPPETS.md)).
 
 ## 4. Translation engines
 
 | Priority | Engine | Notes |
 |---|---|---|
-| Shipped default (trial) | Owner's GPT gateway (`https://gpt.yapweijun1996.com/v1/responses`) | Works out of the box, zero setup — this is the try-before-BYOK funnel. Owner-controlled, **daily token limit enforced server-side**, key revocable/rotatable at any time. Bundled key is XOR-obfuscated (seed `20260515`, same scheme as [sample gateway.js](sample/PDF-Reader/src/gateway.js) / [XOR-Cipher-Tool](https://github.com/yapweijun1996/XOR-Cipher-Tool)). Model: `gpt-5.4-mini`, `/v1/responses` streaming SSE, `reasoning.effort: "low"` for snappy translations. |
+| Shipped default (trial) | Owner's GPT gateway (`https://gpt.yapweijun1996.com/v1/responses`) | Works out of the box, zero setup — this is the try-before-BYOK funnel. Owner-controlled, **daily token limit enforced server-side**, key revocable/rotatable at any time. Bundled key is XOR-obfuscated (seed `20260515`, scheme + cipher string in [REFERENCE-SNIPPETS §3](docs/REFERENCE-SNIPPETS.md); tool: [XOR-Cipher-Tool](https://github.com/yapweijun1996/XOR-Cipher-Tool)). Model: `gpt-5.4-mini`, `/v1/responses` streaming SSE, `reasoning.effort: "low"` for snappy translations. |
 | Upgrade path (BYOK) | User-supplied key: OpenAI / DeepSeek / Gemini / Claude / DeepL | Configured in options page. Key stored in `chrome.storage.local`. Once set, replaces the trial gateway entirely. LLM engines also power "Explain". |
 | Alternative (free/private) | Chrome built-in Translator API + Language Detector API | On-device, free, private, no key, no quota. Chrome desktop 138+. Feature-detect; offer as a no-cost option for plain translation (cannot power "Explain"). |
 
@@ -62,24 +62,24 @@ Trial → BYOK funnel (product decision, 2026-07-03):
 - The extension ships with the owner's gateway key as the working default so end users can **try immediately with zero setup**. This is owner-authorized: the gateway enforces a daily token limit server-side, so key extraction/abuse is bounded and the key can be rotated or killed at any time.
 - When the gateway returns its **daily-limit/quota error**, the extension must NOT show a dead-end error. It shows a friendly upsell alert: "今日免费额度已用完" → explain the free trial quota is exhausted for today, and offer two buttons: **"Set up your own API key"** (opens options page, BYOK) and **"Try again tomorrow"** (dismiss). If the on-device Chrome Translator API is available, also offer it as a free fallback for plain translation.
 - Once the user configures BYOK, the trial gateway is no longer used for that user (their key, their quota, no shared limit).
-- Reuse the sample's `gateway.js` client (SSE streaming parse, `decryptKey()`) as-is.
+- Reuse the reference gateway client (SSE streaming parse, `decryptKey()`) as-is — [REFERENCE-SNIPPETS §3](docs/REFERENCE-SNIPPETS.md).
 - "Explain" requires an LLM engine; if the user's only working engine is on-device Translator, hide or disable the Explain button with a hint to configure an LLM key.
 
-## 5. Explain feature (port from sample)
+## 5. Explain feature
 
-Port the sample's [explain.js](sample/PDF-Reader/src/explain.js) design:
+Port the reference explain design ([REFERENCE-SNIPPETS §5](docs/REFERENCE-SNIPPETS.md)):
 
 - Strict-JSON prompt, schema-versioned payload (`schemaVersion`), loose-parse fallback (strip code fences, regex-extract `{...}`).
 - Payload: phonetic (IPA), partOfSpeech, cefrLevel, definition in source language + target language, in-context meaning, 3 graded examples (increasing CEFR, vocabulary simpler than the target word), collocations, wordFamily, synonyms/antonyms, memoryTip.
 - Context: send the surrounding paragraph (capture via selection's `commonAncestorContainer`, truncated to ~1200 chars) so the explanation is context-specific.
-- Render: headword + badges (POS, CEFR), definition block, collapsible sections for collocations/word family/synonyms (port of [tooltip.js `renderExplain()`](sample/PDF-Reader/src/tooltip.js)).
+- Render: headword + badges (POS, CEFR), definition block, collapsible sections for collocations/word family/synonyms. Escape all dynamic HTML ([REFERENCE-SNIPPETS §8](docs/REFERENCE-SNIPPETS.md)).
 
 ## 6. Caching
 
 - Storage: IndexedDB (`idb-keyval` or equivalent) accessed from the service worker.
 - Translation cache key: `v{PROMPT_VERSION}::{targetLang}::{engine}::{sha256(text) short}`.
 - Explain cache key: `explain::v{SCHEMA_VERSION}::{origin or pageURL}::{normalized phrase}::{targetLang}`.
-- Bump `PROMPT_VERSION` / `SCHEMA_VERSION` whenever the prompt or payload schema changes — old cache entries auto-invalidate (sample's `TRANS_VERSION` pattern in [db.js](sample/PDF-Reader/src/db.js)).
+- Bump `PROMPT_VERSION` / `SCHEMA_VERSION` whenever the prompt or payload schema changes — old cache entries auto-invalidate ([REFERENCE-SNIPPETS §6](docs/REFERENCE-SNIPPETS.md)).
 - LRU cap (e.g. a few thousand entries) to bound storage.
 
 ## 7. Permissions (minimal)
@@ -117,7 +117,7 @@ Rules:
 
 ## 9. Error handling
 
-- Central error mapper in the service worker (port the sample's `llm-error.js` idea): network / auth (bad key) / quota / model errors → one friendly, actionable message string sent to the content script. Content script only renders, never interprets provider errors.
+- Central error mapper in the service worker: network / auth (bad key) / quota / model errors → one friendly, actionable message string sent to the content script. Content script only renders, never interprets provider errors.
 - **Quota error is a first-class product event, not just an error** (see §4 trial funnel): when the trial gateway returns its daily-limit error (HTTP 429 or the gateway's quota-exceeded response — confirm exact shape against the live gateway during M3), the service worker maps it to `code: 'trial_quota_exhausted'` and the content script renders the BYOK upsell (options-page button + "try again tomorrow" + on-device fallback if available) instead of a plain error string. A BYOK user's own provider quota error renders as a normal quota message pointing at their provider dashboard, NOT the upsell.
 - All error/upsell strings go through `chrome.i18n` (`error_*` keys, all 6 locales — see §8).
 - Timeouts: abort translation calls via `AbortSignal` (e.g. 30s); show retry affordance in the box.
@@ -127,7 +127,7 @@ Rules:
 - Full-page bilingual translation (planned v2 — needs `MutationObserver` node tracking + batching; see [CLAUDE.md](CLAUDE.md) feature list)
 - Video subtitle translation
 - PDF/EPUB translation
-- TTS (the sample has it; defer)
+- TTS (defer to v1.x)
 - Firefox/Safari ports
 - Per-site auto-translate rules
 
@@ -135,7 +135,7 @@ Rules:
 
 1. **M1 — Skeleton**: manifest + build tooling (Vite + CRXJS or esbuild), empty service worker/content script/popup/options wired and loadable unpacked. `_locales/` scaffolded for all 6 locales from day one (`default_locale: "en"`).
 2. **M2 — Selection → icon → box**: full content-script UX with a mock translator (no real API), Shadow DOM styling, Esc/outside-click dismiss, bottom sheet on mobile widths.
-3. **M3 — Real engines**: demo gateway path (port sample `gateway.js` + XOR key, build-flag gated) + Chrome Translator API path + one BYO-key LLM path (Gemini or OpenAI), options page for key/target language, service-worker cache.
+3. **M3 — Real engines**: trial gateway path (REFERENCE-SNIPPETS §3) + Chrome Translator API path + one BYO-key LLM path (Gemini or OpenAI), options page for key/target language, service-worker cache, quota→upsell flow.
 4. **M4 — Explain**: LLM explain call + rendering, explain cache, engine-capability gating.
 5. **M5 — Polish**: error messages, context menu ("Translate selection"), i18n completeness pass (all 6 locales translated, no English placeholders left — see §8), Web Store listing prep (privacy policy: what text is sent where; localized store listing for the 6 languages).
 

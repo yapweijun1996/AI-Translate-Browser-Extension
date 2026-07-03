@@ -74,16 +74,19 @@ MV3 workers are killed after ~30s idle and restarted on demand. Consequences:
 - In-flight SSE streams die if the worker is killed mid-stream — keep translation calls short, and always handle a dropped connection as a `network` error with retry.
 - Event listeners must be registered synchronously at the top level of the worker script.
 
-## Reference implementation
+## Reference code
 
-[sample/PDF-Reader](../sample/PDF-Reader) is a working PWA (not an extension) with the same pipeline. Port table:
+Reusable snippets from a proven reference project live in [REFERENCE-SNIPPETS.md](REFERENCE-SNIPPETS.md). Port table:
 
-| Sample file | Port to | Change needed |
+| Snippet | Port to | Change needed |
 |---|---|---|
-| `pdf-viewer.js onSelection()` | content script | as-is |
-| `tooltip.js` (position, bottom sheet, renderExplain) | content script | render inside Shadow DOM |
-| `gateway.js` | worker engine adapter | as-is (XOR + SSE) |
-| `explain.js` | worker | as-is (prompt + loose parse) |
-| `db.js` cache patterns | worker IndexedDB | new cache keys (no docHash — use origin/text hash) |
-| `llm-error.js` idea | worker error mapper | add `trial_quota_exhausted` |
-| `main.js` direct fetch-in-page wiring | **do NOT port** | replaced by message protocol |
+| §1 selection detector | content script | as-is |
+| §2 context capture | content script | as-is |
+| §3 gateway client (XOR + SSE) | worker engine adapter | plug errors into central mapper |
+| §4 translate prompt | worker | as-is |
+| §5 explain prompt + loose parse | worker | as-is |
+| §6 cache versioning | worker IndexedDB | as-is |
+| §7 modal positioning / bottom sheet | content script | render inside Shadow DOM |
+| §8 escapeHtml | shared/ | as-is |
+
+The reference project called APIs directly from page JS — that wiring is **not** ported; this extension uses the message protocol above instead.

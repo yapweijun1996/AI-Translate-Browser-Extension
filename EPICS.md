@@ -22,7 +22,7 @@ The icon-first select→icon→modal experience, fully working with a mock trans
 
 Real translation through three engine paths + the options page.
 
-- Scope: engine adapter interface; trial gateway adapter (port sample `gateway.js`: XOR key, SSE streaming); Chrome on-device Translator+Language Detector adapter (feature-detected); one BYOK adapter (Gemini first, then OpenAI/DeepSeek); options page (engine, key entry, target language, UI language); IndexedDB cache with version-stamped keys; trial-quota error → BYOK upsell flow
+- Scope: engine adapter interface; trial gateway adapter (XOR key + SSE streaming, REFERENCE-SNIPPETS §3); Chrome on-device Translator+Language Detector adapter (feature-detected); one BYOK adapter (Gemini first, then OpenAI/DeepSeek); options page (engine, key entry, target language, UI language); IndexedDB cache with version-stamped keys; trial-quota error → BYOK upsell flow
 - Exit criteria: translation works through all three paths; BYOK key survives restart; quota error shows upsell (verified against the live gateway); cache hit skips the network (verify in devtools).
 - SPEC: §4, §6, §9
 
@@ -30,7 +30,7 @@ Real translation through three engine paths + the options page.
 
 The learner-oriented deep explanation.
 
-- Scope: explain prompt + strict-JSON schema (port sample `explain.js`), loose-parse fallback, render (headword/POS/CEFR badges, definitions, graded examples, collapsible sections), explain cache, engine gating (LLM-only)
+- Scope: explain prompt + strict-JSON schema (REFERENCE-SNIPPETS §5), loose-parse fallback, render (headword/POS/CEFR badges, definitions, graded examples, collapsible sections), explain cache, engine gating (LLM-only)
 - Exit criteria: explain works via trial gateway and BYOK; malformed model output degrades gracefully (shows raw text, never crashes); cached explain renders offline.
 - SPEC: §5
 

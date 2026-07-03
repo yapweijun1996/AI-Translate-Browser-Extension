@@ -20,7 +20,7 @@ Pre-code — full documentation suite exists, no source code yet. Build from the
 
 - Default: Chrome's built-in on-device **Translator API** + **Language Detector API** — free, private (text never leaves the device), no API key, Chrome desktop 138+ only.
 - Optional, user-supplied API key: DeepL, Google Cloud Translate, OpenAI, Gemini, Claude — for higher quality, cross-browser support, or nuanced/LLM-style translation.
-- Trial → BYOK funnel (owner-authorized): the extension ships with the owner's own daily-rate-limited GPT gateway key (`gpt.yapweijun1996.com`, XOR-obfuscated, seed `20260515`, same scheme as `sample/PDF-Reader/src/gateway.js`) as the zero-setup default. On daily-limit error, show a BYOK upsell prompting the user to configure their own OpenAI/DeepSeek/Gemini key. See SPEC.md §4 + §9.
+- Trial → BYOK funnel (owner-authorized): the extension ships with the owner's own daily-rate-limited GPT gateway key (`gpt.yapweijun1996.com`, XOR-obfuscated, seed `20260515`, scheme + cipher in `docs/REFERENCE-SNIPPETS.md` §3) as the zero-setup default. On daily-limit error, show a BYOK upsell prompting the user to configure their own OpenAI/DeepSeek/Gemini key. See SPEC.md §4 + §9.
 - Never bundle any other provider's key. Store user-supplied keys in `chrome.storage.local`.
 
 ## Conventions

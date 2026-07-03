@@ -1,6 +1,6 @@
 # Coding standards
 
-Short version: plain modern JavaScript (ES modules), small files, no clever tricks. When in doubt, copy the style of the sample code in [sample/PDF-Reader/src](../sample/PDF-Reader/src) — it's the reference for tone and structure.
+Short version: plain modern JavaScript (ES modules), small files, no clever tricks. When in doubt, copy the style of the code in [REFERENCE-SNIPPETS.md](REFERENCE-SNIPPETS.md) — it's the reference for tone and structure.
 
 ## Language & modules
 
@@ -18,7 +18,7 @@ Short version: plain modern JavaScript (ES modules), small files, no clever tric
 
 1. **No network calls or API keys in the content script.** All provider traffic goes through the service worker (SPEC §3).
 2. **No hardcoded user-visible strings.** Every UI string is a `chrome.i18n` key present in all 6 locales ([I18N.md](I18N.md)).
-3. **No `innerHTML` with unescaped dynamic content.** Use the `escapeHtml` helper (port from sample tooltip.js) or `textContent`.
+3. **No `innerHTML` with unescaped dynamic content.** Use the `escapeHtml` helper ([REFERENCE-SNIPPETS §8](REFERENCE-SNIPPETS.md)) or `textContent`.
 4. **No new permissions** in manifest.json without a spec change + owner approval.
 5. **Never commit a plaintext API key.** The trial key exists in the repo ONLY as its XOR cipher string.
 6. **No `eval`, no remote code, no CDN scripts.** MV3/store hard requirement.
@@ -32,7 +32,7 @@ Short version: plain modern JavaScript (ES modules), small files, no clever tric
 
 ## Comments
 
-- Comment *why*, not *what*. Good: the sample's comment explaining why temperature isn't forwarded to gpt-5.x. Bad: `// call the API`.
+- Comment *why*, not *what*. Good: the reference gateway client's note on why `temperature` isn't forwarded to gpt-5.x. Bad: `// call the API`.
 - Every exported function: one-line JSDoc minimum.
 
 ## Git & PRs

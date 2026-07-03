@@ -11,7 +11,7 @@ Pre-code (as of 2026-07-03). Full documentation suite exists; no source code yet
 - [ROADMAP.md](ROADMAP.md) — v0.x MVP → v1.0 production → v2.0 business
 - [EPICS.md](EPICS.md) — E1–E8 with exit criteria
 - [task.jsonl](task.jsonl) — T-001…T-032 work queue (one JSON per line; never delete lines)
-- docs/ — [ARCHITECTURE](docs/ARCHITECTURE.md), [DEVELOPMENT](docs/DEVELOPMENT.md), [CODING-STANDARDS](docs/CODING-STANDARDS.md), [I18N](docs/I18N.md), [ENGINES](docs/ENGINES.md)
+- docs/ — [ARCHITECTURE](docs/ARCHITECTURE.md), [DEVELOPMENT](docs/DEVELOPMENT.md), [CODING-STANDARDS](docs/CODING-STANDARDS.md), [I18N](docs/I18N.md), [ENGINES](docs/ENGINES.md), [REFERENCE-SNIPPETS](docs/REFERENCE-SNIPPETS.md)
 - [LICENSE](LICENSE) — MIT
 
 When a decision changes: update SPEC.md first, then the affected docs/ file, then task.jsonl, in the same change.
@@ -27,7 +27,7 @@ A browser extension that translates web content using AI — bilingual page tran
 - **Translation engine — dual path:**
   - Default: Chrome's built-in on-device **Translator API** + **Language Detector API** (free, private, no network call, no API key). Chrome desktop 138+ only.
   - Optional "bring your own API key": DeepL, Google Cloud Translate, OpenAI, Gemini, Claude — for higher quality, cross-browser support, or nuanced/LLM-style translation.
-  - **Trial → BYOK funnel (owner-authorized, 2026-07-03):** the extension SHIPS with the owner's own GPT gateway key (`gpt.yapweijun1996.com`, XOR-obfuscated with seed `20260515`, same scheme as `sample/PDF-Reader/src/gateway.js`) as the zero-setup default, so users can try before configuring a key. This is safe because the gateway enforces a daily token limit server-side and the key is revocable. When the daily limit is hit, show a BYOK upsell (not a dead-end error) prompting the user to add their own OpenAI/DeepSeek/Gemini key. See SPEC.md §4 + §9.
+  - **Trial → BYOK funnel (owner-authorized, 2026-07-03):** the extension SHIPS with the owner's own GPT gateway key (`gpt.yapweijun1996.com`, XOR-obfuscated with seed `20260515`, scheme + cipher in `docs/REFERENCE-SNIPPETS.md` §3) as the zero-setup default, so users can try before configuring a key. This is safe because the gateway enforces a daily token limit server-side and the key is revocable. When the daily limit is hit, show a BYOK upsell (not a dead-end error) prompting the user to add their own OpenAI/DeepSeek/Gemini key. See SPEC.md §4 + §9.
   - Never bundle any OTHER provider's key. User-supplied keys live in `chrome.storage.local`.
 
 ## Planned MVP feature set

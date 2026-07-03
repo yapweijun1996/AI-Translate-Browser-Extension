@@ -23,7 +23,7 @@ Registry (`background/engines/index.js`) resolves the active adapter from settin
 
 - Endpoint: `https://gpt.yapweijun1996.com/v1/responses` (OpenAI-compatible `/v1/responses`, SSE streaming).
 - Model: `gpt-5.4-mini`. Always pass `reasoning: {effort: "low"}` explicitly — the gateway's own default is `xhigh`, which drains quota.
-- Auth: `Bearer` key bundled as an **XOR cipher string** (seed `20260515`). Port `decryptKey()` + the SSE parse loop from [sample gateway.js](../sample/PDF-Reader/src/gateway.js) unchanged. The plaintext key must never appear in the repo, logs, or error messages.
+- Auth: `Bearer` key bundled as an **XOR cipher string** (seed `20260515`). Port `decryptKey()` + the SSE parse loop from [REFERENCE-SNIPPETS §3](REFERENCE-SNIPPETS.md) unchanged (the cipher string is there too). The plaintext key must never appear in the repo, logs, or error messages.
 - Why bundling is OK here (and only here): the gateway is owner-controlled, enforces a **daily token limit server-side**, and the key can be rotated/revoked anytime. This is the try-before-BYOK funnel (SPEC §4).
 - Streaming is required — it avoids Cloudflare's 100s edge timeout on long outputs.
 
@@ -53,8 +53,8 @@ Content script behavior on this code (SPEC §9): show the upsell — "free quota
 
 ## Prompts
 
-- Translate prompt: port the sample [translator.js](../sample/PDF-Reader/src/translator.js) cleaning rules (drop citation markers, fix hyphen-split words, keep math/variable tokens, output translation only) — adapt "academic PDF" framing to "web page content".
-- Explain prompt: port [explain.js](../sample/PDF-Reader/src/explain.js) verbatim (strict JSON, CEFR-graded examples, simpler-vocabulary rule, loose-parse fallback).
+- Translate prompt: [REFERENCE-SNIPPETS §4](REFERENCE-SNIPPETS.md) (cleaning rules: drop citation markers, fix hyphen-split words, keep code/math tokens, output translation only).
+- Explain prompt: [REFERENCE-SNIPPETS §5](REFERENCE-SNIPPETS.md) verbatim (strict JSON, CEFR-graded examples, simpler-vocabulary rule, loose-parse fallback).
 - Prompts are versioned: bumping a prompt bumps `PROMPT_VERSION`, which invalidates the cache (SPEC §6).
 
 ## Adding a new engine later

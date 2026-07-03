@@ -31,7 +31,7 @@ Priority order (re-evaluate after v1.0 feedback):
 1. **Full-page bilingual translation** — MutationObserver node tracking, batching, skip-already-translated (the flagship Immersive-Translate-style feature; biggest engineering lift)
 2. Per-site auto-translate rules
 3. Glossary / terminology overrides (user dictionary)
-4. TTS (port from sample: browser TTS + optional Gemini TTS)
+4. TTS (browser speechSynthesis + optional Gemini TTS)
 5. Translation history + export
 6. Firefox port (MV3 WebExtensions delta)
 
