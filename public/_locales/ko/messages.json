@@ -13,5 +13,8 @@
   },
   "options_skeleton_note": {
     "message": "번역 엔진 및 언어 설정은 이후 버전에서 여기에 표시됩니다."
+  },
+  "modal_trigger_label": {
+    "message": "선택한 텍스트 번역"
   }
 }

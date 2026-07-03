@@ -13,5 +13,8 @@
   },
   "options_skeleton_note": {
     "message": "翻译引擎与语言设置将在后续版本中显示。"
+  },
+  "modal_trigger_label": {
+    "message": "翻译所选文字"
   }
 }

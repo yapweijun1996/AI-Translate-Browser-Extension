@@ -18,5 +18,9 @@
   "options_skeleton_note": {
     "message": "Engine and language settings will appear here in a later milestone.",
     "description": "Temporary note on the options page during early development (M1); replaced by real settings in M3."
+  },
+  "modal_trigger_label": {
+    "message": "Translate selection",
+    "description": "Accessible label + tooltip of the floating trigger icon that appears next to a text selection."
   }
 }

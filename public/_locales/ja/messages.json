@@ -13,5 +13,8 @@
   },
   "options_skeleton_note": {
     "message": "翻訳エンジンと言語の設定は今後のバージョンでここに表示されます。"
+  },
+  "modal_trigger_label": {
+    "message": "選択したテキストを翻訳"
   }
 }

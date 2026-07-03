@@ -1,9 +1,10 @@
 import { MSG } from '../shared/messages.js';
 import { onSelection } from './selection.js';
+import { isInsideHost } from './ui-host.js';
+import { showTriggerIcon, hideTriggerIcon, isTriggerIconVisible } from './trigger-icon.js';
 
-// Content script entry. Selection events feed the trigger icon (T-007);
-// until that lands, detected selections are logged so T-006 is verifiable
-// on any page.
+// Content script entry: selection → trigger icon. Clicking the icon opens
+// the translation modal (T-008); until that lands it logs the pending text.
 
 console.log('[ai-translate:content] content script loaded on', location.origin);
 
@@ -18,9 +19,27 @@ chrome.runtime
     console.warn('[ai-translate:content] PING failed:', e?.message);
   });
 
+let pendingText = '';
+
 onSelection((text, rect) => {
-  console.log('[ai-translate:content] selection detected:', {
-    text: text.length > 80 ? `${text.slice(0, 80)}…` : text,
-    rect: rect ? { x: rect.x, y: rect.y, w: rect.width, h: rect.height } : null,
+  // Selections made inside our own UI must never trigger the icon.
+  if (isInsideHost(window.getSelection()?.anchorNode)) return;
+  if (!rect) return;
+  pendingText = text;
+  showTriggerIcon(rect, {
+    label: chrome.i18n.getMessage('modal_trigger_label'),
+    onClick: () => {
+      // T-008 opens the modal here; translation starts on click, not on
+      // selection (SPEC §2).
+      console.log('[ai-translate:content] trigger clicked for:', pendingText.slice(0, 80));
+    },
   });
 });
+
+// The icon follows the selection: gone when the selection collapses, gone on
+// scroll (its viewport anchor is stale the moment the page moves).
+document.addEventListener('selectionchange', () => {
+  const sel = window.getSelection();
+  if ((!sel || sel.isCollapsed) && isTriggerIconVisible()) hideTriggerIcon();
+});
+document.addEventListener('scroll', () => hideTriggerIcon(), { capture: true, passive: true });

@@ -13,5 +13,8 @@
   },
   "options_skeleton_note": {
     "message": "Cài đặt công cụ dịch và ngôn ngữ sẽ xuất hiện ở đây trong phiên bản sau."
+  },
+  "modal_trigger_label": {
+    "message": "Dịch văn bản đã chọn"
   }
 }
