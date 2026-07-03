@@ -85,5 +85,11 @@
   },
   "popup_no_engine": {
     "message": "Chưa có công cụ dịch nào khả dụng."
+  },
+  "engine_label_deepseek": {
+    "message": "DeepSeek (khóa API của bạn)"
+  },
+  "options_deepseek_key_label": {
+    "message": "Khóa API DeepSeek"
   }
 }

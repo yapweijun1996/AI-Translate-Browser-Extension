@@ -85,5 +85,11 @@
   },
   "popup_no_engine": {
     "message": "暂无可用的翻译引擎。"
+  },
+  "engine_label_deepseek": {
+    "message": "DeepSeek(你的API密钥)"
+  },
+  "options_deepseek_key_label": {
+    "message": "DeepSeek API 密钥"
   }
 }

@@ -4,15 +4,17 @@ import { trialGatewayAdapter } from './engines/trial-gateway.js';
 import { onDeviceAdapter } from './engines/on-device.js';
 import { geminiAdapter } from './engines/gemini.js';
 import { openaiAdapter } from './engines/openai.js';
+import { deepseekAdapter } from './engines/deepseek.js';
 import { OD_MSG } from './engines/on-device-protocol.js';
 
-// DeepSeek BYOK (T-018) and the cache (T-020) aren't registered yet.
-// explain() still resolves through the registry to "no engine available"
-// until an engine with explain capability lands (T-024). See docs/ENGINES.md.
+// The cache (T-020) isn't wired up yet. explain() still resolves through
+// the registry to "no engine available" until an engine with explain
+// capability lands (T-024). See docs/ENGINES.md.
 registerEngine(trialGatewayAdapter);
 registerEngine(onDeviceAdapter);
 registerEngine(geminiAdapter);
 registerEngine(openaiAdapter);
+registerEngine(deepseekAdapter);
 
 console.log('[ai-translate:worker] service worker loaded');
 

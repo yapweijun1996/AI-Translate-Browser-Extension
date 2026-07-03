@@ -114,5 +114,13 @@
   "popup_no_engine": {
     "message": "No translation engine is available yet.",
     "description": "Shown in the popup when no engine is currently usable."
+  },
+  "engine_label_deepseek": {
+    "message": "DeepSeek (your API key)",
+    "description": "Display name for the DeepSeek BYOK engine in the picker."
+  },
+  "options_deepseek_key_label": {
+    "message": "DeepSeek API key",
+    "description": "Label for the DeepSeek API key input field."
   }
 }

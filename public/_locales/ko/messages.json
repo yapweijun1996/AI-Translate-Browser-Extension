@@ -85,5 +85,11 @@
   },
   "popup_no_engine": {
     "message": "아직 사용 가능한 번역 엔진이 없습니다."
+  },
+  "engine_label_deepseek": {
+    "message": "DeepSeek (내 API 키)"
+  },
+  "options_deepseek_key_label": {
+    "message": "DeepSeek API 키"
   }
 }

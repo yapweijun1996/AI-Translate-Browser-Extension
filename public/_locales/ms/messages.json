@@ -85,5 +85,11 @@
   },
   "popup_no_engine": {
     "message": "Tiada enjin terjemahan tersedia lagi."
+  },
+  "engine_label_deepseek": {
+    "message": "DeepSeek (kunci API anda)"
+  },
+  "options_deepseek_key_label": {
+    "message": "Kunci API DeepSeek"
   }
 }

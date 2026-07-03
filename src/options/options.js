@@ -5,6 +5,7 @@ import { TARGET_LANGUAGES, DEFAULT_TARGET_LANGUAGE, TARGET_LANG_STORAGE_KEY } fr
 import { engineLabel } from '../shared/engine-labels.js';
 import { GEMINI_API_KEY_KEY } from '../background/engines/gemini.js';
 import { OPENAI_API_KEY_KEY } from '../background/engines/openai.js';
+import { DEEPSEEK_API_KEY_KEY } from '../background/engines/deepseek.js';
 
 console.log('[ai-translate:options] options page opened');
 applyI18n(document);
@@ -18,11 +19,13 @@ const targetLangEl = document.getElementById('targetLang');
 // its FALLBACK_ORDER).
 const AUTO_VALUE = '__auto__';
 
-// Data-driven BYOK key fields — adding a new BYOK engine (T-018 DeepSeek)
-// means adding one entry here, not another near-duplicate HTML/JS block.
+// Data-driven BYOK key fields — adding a new BYOK engine means adding one
+// entry here, not another near-duplicate HTML/JS block (proven by T-018:
+// DeepSeek only needed this one line + the import above).
 const BYOK_KEY_FIELDS = [
   { storageKey: GEMINI_API_KEY_KEY, labelKey: 'options_gemini_key_label' },
   { storageKey: OPENAI_API_KEY_KEY, labelKey: 'options_openai_key_label' },
+  { storageKey: DEEPSEEK_API_KEY_KEY, labelKey: 'options_deepseek_key_label' },
 ];
 
 function populateTargetLanguages() {

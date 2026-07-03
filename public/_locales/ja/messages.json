@@ -85,5 +85,11 @@
   },
   "popup_no_engine": {
     "message": "利用可能な翻訳エンジンがまだありません。"
+  },
+  "engine_label_deepseek": {
+    "message": "DeepSeek(あなたのAPIキー)"
+  },
+  "options_deepseek_key_label": {
+    "message": "DeepSeek APIキー"
   }
 }

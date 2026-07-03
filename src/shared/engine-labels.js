@@ -8,6 +8,7 @@ const ENGINE_LABEL_KEYS = {
   'on-device': 'engine_label_on_device',
   gemini: 'engine_label_gemini',
   openai: 'engine_label_openai',
+  deepseek: 'engine_label_deepseek',
 };
 
 export function engineLabel(id) {
