@@ -21,10 +21,10 @@ The icon-first select→icon→modal experience.
 
 ## E3 — Engines & settings (MVP M3)
 
-Real translation through three engine paths + the options page.
+Real translation through five engine paths + the options page.
 
-- Scope: engine adapter interface; trial gateway adapter (XOR key + SSE streaming, REFERENCE-SNIPPETS §3); Chrome on-device Translator+Language Detector adapter (feature-detected); one BYOK adapter (Gemini first, then OpenAI/DeepSeek); options page (engine, key entry, target language, UI language); IndexedDB cache with version-stamped keys; trial-quota error → BYOK upsell flow
-- Exit criteria: translation works through all three paths; BYOK key survives restart; quota error shows upsell (verified against the live gateway); cache hit skips the network (verify in devtools).
+- Scope: engine adapter interface; trial gateway adapter (XOR key + SSE streaming, REFERENCE-SNIPPETS §3); Chrome on-device Translator+Language Detector adapter (feature-detected, offscreen-document architecture); three BYOK adapters (Gemini, OpenAI, DeepSeek); options page (engine, key entry, target language, UI language); IndexedDB cache with version-stamped keys; central error mapper; trial-quota error → BYOK upsell flow
+- Exit criteria: translation works through all five paths (verified with mocked HTTP — no live-gateway quota probing, an explicit owner decision on T-021); BYOK keys survive restart, independently per provider; `trial_quota_exhausted` shows the upsell while a BYOK engine's own quota shows a plain message; cache hit returns without calling the engine (verified via call-counting, not manual devtools inspection).
 - SPEC: §4, §6, §9
 
 ## E4 — Explain (MVP M4)
