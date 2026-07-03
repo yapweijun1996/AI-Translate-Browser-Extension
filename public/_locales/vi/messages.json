@@ -16,5 +16,14 @@
   },
   "modal_trigger_label": {
     "message": "Dịch văn bản đã chọn"
+  },
+  "modal_close_label": {
+    "message": "Đóng"
+  },
+  "modal_loading_text": {
+    "message": "Đang dịch…"
+  },
+  "modal_error_generic": {
+    "message": "Đã xảy ra lỗi. Vui lòng thử lại."
   }
 }

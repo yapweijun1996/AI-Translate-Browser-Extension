@@ -16,5 +16,14 @@
   },
   "modal_trigger_label": {
     "message": "翻译所选文字"
+  },
+  "modal_close_label": {
+    "message": "关闭"
+  },
+  "modal_loading_text": {
+    "message": "翻译中…"
+  },
+  "modal_error_generic": {
+    "message": "出错了,请再试一次。"
   }
 }

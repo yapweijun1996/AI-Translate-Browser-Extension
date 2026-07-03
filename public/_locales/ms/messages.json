@@ -16,5 +16,14 @@
   },
   "modal_trigger_label": {
     "message": "Terjemah teks yang dipilih"
+  },
+  "modal_close_label": {
+    "message": "Tutup"
+  },
+  "modal_loading_text": {
+    "message": "Menterjemah…"
+  },
+  "modal_error_generic": {
+    "message": "Sesuatu tidak kena. Sila cuba lagi."
   }
 }

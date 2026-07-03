@@ -22,5 +22,17 @@
   "modal_trigger_label": {
     "message": "Translate selection",
     "description": "Accessible label + tooltip of the floating trigger icon that appears next to a text selection."
+  },
+  "modal_close_label": {
+    "message": "Close",
+    "description": "Accessible label for the × button that closes the translation modal."
+  },
+  "modal_loading_text": {
+    "message": "Translating…",
+    "description": "Placeholder shown in the modal while a translation request is in flight."
+  },
+  "modal_error_generic": {
+    "message": "Something went wrong. Please try again.",
+    "description": "Fallback error text in the translation modal when no specific error message is available."
   }
 }

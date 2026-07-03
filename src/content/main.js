@@ -2,9 +2,13 @@ import { MSG } from '../shared/messages.js';
 import { onSelection } from './selection.js';
 import { isInsideHost } from './ui-host.js';
 import { showTriggerIcon, hideTriggerIcon, isTriggerIconVisible } from './trigger-icon.js';
+import { showModal, showResult, showError } from './modal.js';
 
-// Content script entry: selection → trigger icon. Clicking the icon opens
-// the translation modal (T-008); until that lands it logs the pending text.
+// Content script entry: selection → trigger icon → modal. Translation is
+// requested for real over the message protocol (docs/ARCHITECTURE.md); the
+// worker doesn't implement TRANSLATE yet (that's T-011's mock, then T-023's
+// real engines), so today every click surfaces the resulting "unhandled
+// message type" error in the modal — that's expected until those land.
 
 console.log('[ai-translate:content] content script loaded on', location.origin);
 
@@ -19,25 +23,47 @@ chrome.runtime
     console.warn('[ai-translate:content] PING failed:', e?.message);
   });
 
-let pendingText = '';
+async function translateSelection(text) {
+  showModal(text, lastRect, {
+    closeLabel: chrome.i18n.getMessage('modal_close_label'),
+    loadingLabel: chrome.i18n.getMessage('modal_loading_text'),
+  });
+  try {
+    // context capture lands in T-010; targetLang defaults to the browser's
+    // language until real settings land in T-019.
+    const res = await chrome.runtime.sendMessage({
+      type: MSG.TRANSLATE,
+      payload: { text, context: '', targetLang: navigator.language?.split('-')[0] || 'en' },
+    });
+    if (res?.ok) {
+      showResult(res.data.translated);
+    } else {
+      // Until the T-021 error mapper lands, surface the raw error.message
+      // (dev-facing, e.g. "unhandled message type: TRANSLATE") rather than
+      // hiding it — it's the honest current state of the wiring.
+      showError(res?.error?.message || chrome.i18n.getMessage('modal_error_generic'));
+    }
+  } catch (e) {
+    showError(e?.message || chrome.i18n.getMessage('modal_error_generic'));
+  }
+}
+
+let lastRect = null;
 
 onSelection((text, rect) => {
   // Selections made inside our own UI must never trigger the icon.
   if (isInsideHost(window.getSelection()?.anchorNode)) return;
   if (!rect) return;
-  pendingText = text;
+  lastRect = rect;
   showTriggerIcon(rect, {
     label: chrome.i18n.getMessage('modal_trigger_label'),
-    onClick: () => {
-      // T-008 opens the modal here; translation starts on click, not on
-      // selection (SPEC §2).
-      console.log('[ai-translate:content] trigger clicked for:', pendingText.slice(0, 80));
-    },
+    onClick: () => translateSelection(text),
   });
 });
 
 // The icon follows the selection: gone when the selection collapses, gone on
-// scroll (its viewport anchor is stale the moment the page moves).
+// scroll (its viewport anchor is stale the moment the page moves). The modal
+// stays open independently — it has its own dismissal (Esc / outside / ×).
 document.addEventListener('selectionchange', () => {
   const sel = window.getSelection();
   if ((!sel || sel.isCollapsed) && isTriggerIconVisible()) hideTriggerIcon();
