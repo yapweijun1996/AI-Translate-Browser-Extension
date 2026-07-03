@@ -26,6 +26,8 @@ const MODAL_CSS = `
     display: none;
     width: ${BOX_WIDTH}px;
     max-width: calc(100vw - ${EDGE_MARGIN * 2}px);
+    max-height: calc(100vh - ${EDGE_MARGIN * 2}px);
+    overflow-y: auto;
     background: #fff;
     color: #1a1a1a;
     border-radius: 10px;
@@ -347,6 +349,9 @@ function isMobileViewport() {
 function position(rect) {
   // Any leftover drag transform from a previous open must not carry over.
   box.style.transform = '';
+  // Reset before measuring — a stale cap from a previous open would
+  // otherwise clip the natural-size measurement below.
+  box.style.maxHeight = '';
 
   if (isMobileViewport()) {
     box.classList.add('is-sheet');
@@ -374,10 +379,21 @@ function position(rect) {
   const spaceBelow = window.innerHeight - rect.bottom;
   const spaceAbove = rect.top;
   const flipUp = spaceBelow < boxHeight + GAP && spaceAbove > spaceBelow;
-  const top = flipUp ? rect.top - boxHeight - GAP : rect.bottom + GAP;
+  const top = Math.max(EDGE_MARGIN, flipUp ? rect.top - boxHeight - GAP : rect.bottom + GAP);
+
+  // The box is measured at whatever size its CURRENT content needs (still
+  // just source text + a loading spinner at this point) — the translation
+  // result and, later, the Explain payload both arrive after this and grow
+  // it further. Without a position-relative cap, that growth silently pushes
+  // the box past the viewport edge with no way to reach the rest of it. Cap
+  // strictly to the room available below this top (no floor — a floor would
+  // reintroduce the exact overflow this exists to prevent) so growth always
+  // scrolls inside the box (via .modal's overflow-y) instead of running
+  // off-screen, even in the worst case of a selection right at the edge.
+  box.style.maxHeight = `${window.innerHeight - top - EDGE_MARGIN}px`;
 
   box.style.left = `${left}px`;
-  box.style.top = `${Math.max(EDGE_MARGIN, top)}px`;
+  box.style.top = `${top}px`;
 }
 
 /**
