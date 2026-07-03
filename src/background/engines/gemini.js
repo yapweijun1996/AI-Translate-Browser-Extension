@@ -1,13 +1,17 @@
 // Gemini BYOK engine adapter (ENGINES.md "Engines 3-5"). User supplies their
-// own API key in the options page (T-019, not built yet — this adapter
-// defines the storage schema T-019 must write to: GEMINI_API_KEY_KEY /
-// GEMINI_MODEL_KEY). This is the pattern T-017 (OpenAI) and T-018 (DeepSeek)
-// clone: each BYOK engine is a self-contained file with its own settings
-// keys, request builder, and error mapping — same shape as trial-gateway.js,
-// no shared abstraction, so each is easy to read end-to-end on its own.
+// own API key in the options page (T-019), which reads/writes this
+// adapter's storage schema: GEMINI_API_KEY_KEY / GEMINI_MODEL_KEY. This is
+// the pattern T-017 (OpenAI) and T-018 (DeepSeek) clone: each BYOK engine
+// is a self-contained file with its own settings keys, request builder,
+// and error mapping — same shape as trial-gateway.js, no shared
+// abstraction, so each is easy to read end-to-end on its own. (Explain,
+// T-024, is the one exception — its prompt/parsing IS shared, since it's
+// 100% provider-agnostic; see explain-schema.js.)
 
 import { EngineError } from './errors.js';
 import { mapHttpError, mapNetworkError, extractErrorMessage } from '../error-mapper.js';
+import { buildExplainPrompt, parseExplainResponse } from '../explain-schema.js';
+import { detectSourceLanguage } from '../lang-detect.js';
 
 const API_BASE = 'https://generativelanguage.googleapis.com/v1beta/models';
 const DEFAULT_MODEL = 'gemini-2.0-flash';
@@ -33,14 +37,19 @@ function withTimeout(externalSignal) {
 /**
  * Call Gemini's generateContent REST endpoint and return the assembled text.
  * @param {string} prompt
- * @param {{apiKey: string, model: string, signal?: AbortSignal}} opts
+ * @param {{apiKey: string, model: string, signal?: AbortSignal, maxOutputTokens?: number}} opts
+ *   maxOutputTokens confirmed as a real generationConfig field against
+ *   ai.google.dev 2026-07-03 (see gemini.js's T-016 commit) — used by
+ *   explain() for its longer structured-JSON response; translate() omits it.
  * @returns {Promise<string>}
  */
-async function callGemini(prompt, { apiKey, model, signal }) {
+async function callGemini(prompt, { apiKey, model, signal, maxOutputTokens }) {
   const url = `${API_BASE}/${model}:generateContent?key=${encodeURIComponent(apiKey)}`;
+  const generationConfig = { temperature: 0.3 };
+  if (typeof maxOutputTokens === 'number') generationConfig.maxOutputTokens = maxOutputTokens;
   const body = {
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
-    generationConfig: { temperature: 0.3 },
+    generationConfig,
   };
 
   let res;
@@ -95,8 +104,7 @@ export const geminiAdapter = {
     return apiKey.trim().length > 0;
   },
   capabilities() {
-    // explain:false until T-024 adds the Explain prompt to this adapter.
-    return { translate: true, explain: false, streaming: false };
+    return { translate: true, explain: true, streaming: false };
   },
   async translate(text, targetLang, { signal } = {}) {
     const { apiKey, model } = await getSettings();
@@ -105,5 +113,20 @@ export const geminiAdapter = {
     }
     const prompt = buildTranslatePrompt({ text, targetLang });
     return callGemini(prompt, { apiKey, model, signal });
+  },
+  async explain(phrase, targetLang, { context, signal } = {}) {
+    const { apiKey, model } = await getSettings();
+    if (!apiKey) {
+      throw new EngineError('auth', 'No Gemini API key is configured.');
+    }
+    const sourceLang = detectSourceLanguage(phrase);
+    const prompt = buildExplainPrompt({
+      phrase,
+      contextParagraph: context,
+      sourceLangName: sourceLang.name,
+      targetLang,
+    });
+    const raw = await callGemini(prompt, { apiKey, model, signal, maxOutputTokens: 1600 });
+    return parseExplainResponse(raw, sourceLang);
   },
 };

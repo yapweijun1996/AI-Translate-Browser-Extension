@@ -7,6 +7,8 @@
 
 import { EngineError } from './errors.js';
 import { mapHttpError, mapNetworkError, extractErrorMessage } from '../error-mapper.js';
+import { buildExplainPrompt, parseExplainResponse } from '../explain-schema.js';
+import { detectSourceLanguage } from '../lang-detect.js';
 
 const API_URL = 'https://api.deepseek.com/chat/completions';
 // DeepSeek's legacy 'deepseek-chat'/'deepseek-reasoner' model names are
@@ -105,8 +107,7 @@ export const deepseekAdapter = {
     return apiKey.trim().length > 0;
   },
   capabilities() {
-    // explain:false until T-024 adds the Explain prompt to this adapter.
-    return { translate: true, explain: false, streaming: false };
+    return { translate: true, explain: true, streaming: false };
   },
   async translate(text, targetLang, { signal } = {}) {
     const { apiKey, model } = await getSettings();
@@ -115,5 +116,20 @@ export const deepseekAdapter = {
     }
     const prompt = buildTranslatePrompt({ text, targetLang });
     return callDeepSeek(prompt, { apiKey, model, signal });
+  },
+  async explain(phrase, targetLang, { context, signal } = {}) {
+    const { apiKey, model } = await getSettings();
+    if (!apiKey) {
+      throw new EngineError('auth', 'No DeepSeek API key is configured.');
+    }
+    const sourceLang = detectSourceLanguage(phrase);
+    const prompt = buildExplainPrompt({
+      phrase,
+      contextParagraph: context,
+      sourceLangName: sourceLang.name,
+      targetLang,
+    });
+    const raw = await callDeepSeek(prompt, { apiKey, model, signal });
+    return parseExplainResponse(raw, sourceLang);
   },
 };

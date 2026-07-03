@@ -9,6 +9,8 @@
 
 import { EngineError } from './errors.js';
 import { mapHttpError, mapNetworkError, extractErrorMessage } from '../error-mapper.js';
+import { buildExplainPrompt, parseExplainResponse } from '../explain-schema.js';
+import { detectSourceLanguage } from '../lang-detect.js';
 
 const GATEWAY_URL = 'https://gpt.yapweijun1996.com/v1/responses';
 const DEFAULT_MODEL = 'gpt-5.4-mini';
@@ -161,10 +163,21 @@ export const trialGatewayAdapter = {
     return true;
   },
   capabilities() {
-    return { translate: true, explain: false, streaming: true };
+    return { translate: true, explain: true, streaming: true };
   },
   async translate(text, targetLang, { signal } = {}) {
     const prompt = buildTranslatePrompt({ text, targetLang });
     return callGateway(prompt, { reasoningEffort: 'low', signal });
+  },
+  async explain(phrase, targetLang, { context, signal } = {}) {
+    const sourceLang = detectSourceLanguage(phrase);
+    const prompt = buildExplainPrompt({
+      phrase,
+      contextParagraph: context,
+      sourceLangName: sourceLang.name,
+      targetLang,
+    });
+    const raw = await callGateway(prompt, { reasoningEffort: 'low', maxOutputTokens: 1600, signal });
+    return parseExplainResponse(raw, sourceLang);
   },
 };

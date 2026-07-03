@@ -23,6 +23,7 @@ Registry (`background/engines/registry.js`) resolves the active adapter from set
 
 - Endpoint: `https://gpt.yapweijun1996.com/v1/responses` (OpenAI-compatible `/v1/responses`, SSE streaming).
 - Model: `gpt-5.4-mini`. Always pass `reasoning: {effort: "low"}` explicitly — the gateway's own default is `xhigh`, which drains quota.
+- Explain (T-024): `capabilities().explain` is `true` — the same `callGateway()` used for translate is reused with the Explain prompt (`maxOutputTokens: 1600`) and the shared parser (see "Prompts" below).
 - Auth: `Bearer` key bundled as an **XOR cipher string** (seed `20260515`). Port `decryptKey()` + the SSE parse loop from [REFERENCE-SNIPPETS §3](REFERENCE-SNIPPETS.md) unchanged (the cipher string is there too). The plaintext key must never appear in the repo, logs, or error messages.
 - Why bundling is OK here (and only here): the gateway is owner-controlled, enforces a **daily token limit server-side**, and the key can be rotated/revoked anytime. This is the try-before-BYOK funnel (SPEC §4).
 - Streaming is required — it avoids Cloudflare's 100s edge timeout on long outputs.
@@ -53,15 +54,15 @@ Content script behavior on `trial_quota_exhausted` (SPEC §9, wired by T-022): s
 
 - Key from `chrome.storage.local` (options page writes it, worker reads it, masked in UI, never sent to content script). Each engine file owns and exports its own storage-key constants (e.g. `gemini.js` exports `GEMINI_API_KEY_KEY`, `GEMINI_MODEL_KEY`) — options.js (T-019) imports them directly rather than the storage schema being centralized, so each BYOK engine stays a self-contained, cloneable file (see the "clone pattern" note at the top of this section).
 - Gemini: `generateContent` REST (confirmed against ai.google.dev 2026-07-03 — key as a query param, not a header; response text at `candidates[0].content.parts[0].text`). OpenAI: `/v1/chat/completions` (confirmed 2026-07-03 — `Authorization: Bearer`, `{model, messages:[{role,content}]}` body, response text at `choices[0].message.content`; default model `gpt-5.4-mini`, matching the trial gateway's already-validated model choice). DeepSeek: `https://api.deepseek.com/chat/completions`, identical OpenAI-compatible request/response shape (confirmed against api-docs.deepseek.com 2026-07-03) — default model `deepseek-v4-flash`; the legacy names `deepseek-chat`/`deepseek-reasoner` are deprecated 2026-07-24, so don't default to those even though they're what most existing sample code still shows.
-- All three power translate + explain. Auth failure maps to `code: 'auth'` → UI points at options page.
+- All three power translate + explain (T-024). Auth failure maps to `code: 'auth'` → UI points at options page.
 - Once a BYOK engine is selected, the trial gateway is not called at all for that user.
 - The options page's engine picker asks the worker for the live list via `LIST_ENGINES` (docs/ARCHITECTURE.md) rather than hardcoding engine ids — a BYOK engine only becomes selectable once its key makes `isAvailable()` true. Engine selection itself is `chrome.storage.local` key `engineId` (`shared/settings-keys.js`, `ENGINE_ID_STORAGE_KEY`) — absent/removed means "Automatic" (registry.js `FALLBACK_ORDER`); BYOK engines are deliberately never in that fallback order, since they must only run when the user explicitly picks them.
 
 ## Prompts
 
-- Translate prompt: [REFERENCE-SNIPPETS §4](REFERENCE-SNIPPETS.md) (cleaning rules: drop citation markers, fix hyphen-split words, keep code/math tokens, output translation only).
-- Explain prompt: [REFERENCE-SNIPPETS §5](REFERENCE-SNIPPETS.md) verbatim (strict JSON, CEFR-graded examples, simpler-vocabulary rule, loose-parse fallback).
-- Prompts are versioned: bumping a prompt bumps `PROMPT_VERSION`, which invalidates the cache (SPEC §6).
+- Translate prompt: [REFERENCE-SNIPPETS §4](REFERENCE-SNIPPETS.md) (cleaning rules: drop citation markers, fix hyphen-split words, keep code/math tokens, output translation only). Each engine keeps its own copy (deliberate — see the "clone pattern" note above); bumping it means bumping `translation-cache.js`'s `PROMPT_VERSION` (SPEC §6).
+- Explain prompt (T-024): unlike translate, this one IS shared — `background/explain-schema.js` (`buildExplainPrompt`, `parseExplainResponse`) is imported by all 4 LLM-capable engines, since the prompt and response parsing are 100% provider-agnostic (only which raw-completion function gets called differs). Strict JSON, CEFR-graded examples, simpler-vocabulary rule, loose-parse fallback — [REFERENCE-SNIPPETS §5](REFERENCE-SNIPPETS.md), near-verbatim. Source-language framing text comes from `background/lang-detect.js`'s `detectSourceLanguage()` — a local Unicode-block heuristic (no network/on-device-API call), low-stakes since the model reads the real phrase regardless of this label. Own cache/schema versioning: `explain-schema.js`'s `SCHEMA_VERSION` (starts at 1 — no prior version to migrate from in this project, unlike REFERENCE-SNIPPETS' source project which was already at v2). Caching itself (the `explain::` key) and modal rendering are T-026/T-025, not this file's job.
+- on-device (Engine 2) has no `explain()` — the Translator API can't do this; `capabilities().explain` stays `false`.
 
 ## Adding a new engine later
 

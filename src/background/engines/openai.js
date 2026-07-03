@@ -6,6 +6,8 @@
 
 import { EngineError } from './errors.js';
 import { mapHttpError, mapNetworkError, extractErrorMessage } from '../error-mapper.js';
+import { buildExplainPrompt, parseExplainResponse } from '../explain-schema.js';
+import { detectSourceLanguage } from '../lang-detect.js';
 
 const API_URL = 'https://api.openai.com/v1/chat/completions';
 const DEFAULT_MODEL = 'gpt-5.4-mini';
@@ -31,6 +33,14 @@ function withTimeout(externalSignal) {
 
 /**
  * Call OpenAI's chat.completions endpoint and return the assembled text.
+ * No output-token cap is set here (unlike gemini.js's confirmed
+ * generationConfig.maxOutputTokens) — OpenAI's own field name for this has
+ * shifted across model generations (max_tokens vs max_completion_tokens)
+ * and wasn't verified live for this task (platform.openai.com blocked the
+ * WebFetch check during T-017); guessing wrong risks a 400 the same way
+ * forwarding `temperature` to gpt-5.x reasoning models does (trial-gateway.js).
+ * The model's own default ceiling is generous enough for Explain's ~1500
+ * token JSON response in practice.
  * @param {string} prompt
  * @param {{apiKey: string, model: string, signal?: AbortSignal}} opts
  * @returns {Promise<string>}
@@ -97,8 +107,7 @@ export const openaiAdapter = {
     return apiKey.trim().length > 0;
   },
   capabilities() {
-    // explain:false until T-024 adds the Explain prompt to this adapter.
-    return { translate: true, explain: false, streaming: false };
+    return { translate: true, explain: true, streaming: false };
   },
   async translate(text, targetLang, { signal } = {}) {
     const { apiKey, model } = await getSettings();
@@ -107,5 +116,20 @@ export const openaiAdapter = {
     }
     const prompt = buildTranslatePrompt({ text, targetLang });
     return callOpenAI(prompt, { apiKey, model, signal });
+  },
+  async explain(phrase, targetLang, { context, signal } = {}) {
+    const { apiKey, model } = await getSettings();
+    if (!apiKey) {
+      throw new EngineError('auth', 'No OpenAI API key is configured.');
+    }
+    const sourceLang = detectSourceLanguage(phrase);
+    const prompt = buildExplainPrompt({
+      phrase,
+      contextParagraph: context,
+      sourceLangName: sourceLang.name,
+      targetLang,
+    });
+    const raw = await callOpenAI(prompt, { apiKey, model, signal });
+    return parseExplainResponse(raw, sourceLang);
   },
 };
