@@ -29,4 +29,12 @@ export default [
       },
     },
   },
+  {
+    // Node-side tooling (T-028's CI i18n check) — runs under `node`, not a
+    // browser/extension context, so it needs Node's globals instead.
+    files: ['scripts/**/*.mjs'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
 ];

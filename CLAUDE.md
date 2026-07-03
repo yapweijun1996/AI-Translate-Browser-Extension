@@ -51,4 +51,5 @@ This project's decisions and facts are tracked in KB-MCP under `project: "AI-Tra
 - `npm run dev` — Vite watch build (then load `dist/` unpacked in Chrome; see docs/DEVELOPMENT.md)
 - `npm run build` — production build to `dist/`
 - `npm run lint` — ESLint (flat config)
+- `npm run lint:i18n` — CI i18n check (T-028): missing/unknown message keys, hardcoded UI-string heuristic
 - `npm run format` — Prettier write

@@ -53,7 +53,7 @@ Tips:
 ## Definition of Done (every task)
 
 1. Code follows CODING-STANDARDS.md; no hardcoded UI strings.
-2. `npm run build` clean; lint passes; CI green.
+2. `npm run build` clean; `npm run lint` and `npm run lint:i18n` pass; CI green.
 3. Manually verified in a loaded unpacked build (say what you tested in the PR description).
 4. task.jsonl status updated in the same PR.
 5. If you changed a message type, engine behavior, or cache key: update the matching doc (ARCHITECTURE/ENGINES) in the same PR.
