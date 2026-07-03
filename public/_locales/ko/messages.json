@@ -17,9 +17,6 @@
   "modal_loading_text": {
     "message": "번역 중…"
   },
-  "modal_error_generic": {
-    "message": "문제가 발생했습니다. 다시 시도해 주세요."
-  },
   "options_engine_section_heading": {
     "message": "번역 엔진"
   },
@@ -91,5 +88,20 @@
   },
   "options_deepseek_key_label": {
     "message": "DeepSeek API 키"
+  },
+  "error_generic": {
+    "message": "문제가 발생했습니다. 다시 시도해 주세요."
+  },
+  "error_trial_quota_exhausted": {
+    "message": "오늘의 무료 할당량을 모두 사용했습니다."
+  },
+  "error_upsell_settings_button": {
+    "message": "내 API 키 설정하기"
+  },
+  "error_upsell_dismiss_button": {
+    "message": "내일 다시 시도"
+  },
+  "error_upsell_on_device_button": {
+    "message": "대신 온디바이스 번역 사용"
   }
 }

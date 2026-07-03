@@ -23,10 +23,6 @@
     "message": "Translating…",
     "description": "Placeholder shown in the modal while a translation request is in flight."
   },
-  "modal_error_generic": {
-    "message": "Something went wrong. Please try again.",
-    "description": "Fallback error text in the translation modal when no specific error message is available."
-  },
   "options_engine_section_heading": {
     "message": "Translation Engine",
     "description": "Section heading for the engine picker on the options page."
@@ -122,5 +118,25 @@
   "options_deepseek_key_label": {
     "message": "DeepSeek API key",
     "description": "Label for the DeepSeek API key input field."
+  },
+  "error_generic": {
+    "message": "Something went wrong. Please try again.",
+    "description": "Fallback error text in the translation modal when no specific error message is available."
+  },
+  "error_trial_quota_exhausted": {
+    "message": "Today's free quota is used up.",
+    "description": "Headline shown in the modal when the shared trial engine hits its daily limit."
+  },
+  "error_upsell_settings_button": {
+    "message": "Set up your own API key",
+    "description": "Button in the trial-quota upsell that opens the options page."
+  },
+  "error_upsell_dismiss_button": {
+    "message": "Try again tomorrow",
+    "description": "Button in the trial-quota upsell that just closes the modal."
+  },
+  "error_upsell_on_device_button": {
+    "message": "Use on-device translation instead",
+    "description": "Button in the trial-quota upsell offering an immediate free alternative when the on-device engine is available."
   }
 }

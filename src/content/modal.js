@@ -110,12 +110,43 @@ const MODAL_CSS = `
   .modal-explain-btn:hover {
     background: #efeff1;
   }
+  .modal-upsell-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 10px;
+  }
+  .modal-upsell-btn {
+    border: 1px solid #d0d0d0;
+    background: #f7f7f8;
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: 13px;
+    cursor: pointer;
+    color: #333;
+    text-align: center;
+  }
+  .modal-upsell-btn:hover {
+    background: #efeff1;
+  }
+  .modal-upsell-btn-primary {
+    background: #2563eb;
+    border-color: #2563eb;
+    color: #fff;
+  }
+  .modal-upsell-btn-primary:hover {
+    background: #1d4ed8;
+  }
 `;
 
 let box = null;
 let sourceEl = null;
 let targetEl = null;
 let explainBtn = null;
+let upsellActions = null;
+let upsellSettingsBtn = null;
+let upsellOnDeviceBtn = null;
+let upsellDismissBtn = null;
 
 function ensureBox() {
   if (box) return box;
@@ -150,7 +181,30 @@ function ensureBox() {
   explainBtn.className = 'modal-explain-btn';
   explainBtn.hidden = true; // wired up in T-004 (Explain feature)
 
-  box.append(handle, closeBtn, sourceEl, targetEl, explainBtn);
+  // Trial-quota upsell (T-022): shown instead of a plain error when the
+  // trial gateway's daily allowance runs out. Buttons are wired per-call in
+  // showUpsell() since their behavior (open options / retry on-device /
+  // dismiss) is supplied by main.js, not this chrome-API-free module.
+  upsellActions = document.createElement('div');
+  upsellActions.className = 'modal-upsell-actions';
+  upsellActions.hidden = true;
+
+  upsellSettingsBtn = document.createElement('button');
+  upsellSettingsBtn.type = 'button';
+  upsellSettingsBtn.className = 'modal-upsell-btn modal-upsell-btn-primary';
+
+  upsellOnDeviceBtn = document.createElement('button');
+  upsellOnDeviceBtn.type = 'button';
+  upsellOnDeviceBtn.className = 'modal-upsell-btn';
+  upsellOnDeviceBtn.hidden = true; // shown only when on-device is available
+
+  upsellDismissBtn = document.createElement('button');
+  upsellDismissBtn.type = 'button';
+  upsellDismissBtn.className = 'modal-upsell-btn';
+
+  upsellActions.append(upsellSettingsBtn, upsellOnDeviceBtn, upsellDismissBtn);
+
+  box.append(handle, closeBtn, sourceEl, targetEl, explainBtn, upsellActions);
   shadow.appendChild(box);
 
   wireDragToDismiss(handle);
@@ -261,6 +315,7 @@ export function showModal(sourceText, rect, { closeLabel, loadingLabel }) {
   targetEl.textContent = loadingLabel;
   targetEl.className = 'modal-row modal-target is-loading';
   explainBtn.hidden = true;
+  upsellActions.hidden = true;
   position(rect);
 }
 
@@ -269,6 +324,7 @@ export function showResult(translatedText) {
   if (!targetEl) return;
   targetEl.textContent = translatedText || '';
   targetEl.className = 'modal-row modal-target';
+  upsellActions.hidden = true;
 }
 
 /** Render a friendly error message in place of the result. */
@@ -276,6 +332,46 @@ export function showError(message) {
   if (!targetEl) return;
   targetEl.textContent = message;
   targetEl.className = 'modal-row modal-target is-error';
+  upsellActions.hidden = true;
+}
+
+/**
+ * Render the trial-quota-exhausted upsell in place of a plain error: a
+ * headline message plus up to three actions. Callbacks (not chrome APIs)
+ * are supplied by main.js so this module stays chrome-free (SPEC/CODING-
+ * STANDARDS: content-script UI never touches chrome.* directly except
+ * through main.js's message layer).
+ * @param {string} message headline text (e.g. "today's free quota is used up")
+ * @param {object} opts
+ * @param {string} opts.settingsLabel
+ * @param {string} opts.dismissLabel
+ * @param {() => void} opts.onSettings
+ * @param {() => void} opts.onDismiss
+ * @param {string} [opts.onDeviceLabel] only needed when onUseOnDevice is provided
+ * @param {() => void} [opts.onUseOnDevice] omit entirely to hide the on-device button
+ */
+export function showUpsell(message, { settingsLabel, dismissLabel, onSettings, onDismiss, onDeviceLabel, onUseOnDevice }) {
+  if (!targetEl) return;
+  targetEl.textContent = message;
+  targetEl.className = 'modal-row modal-target is-error';
+  explainBtn.hidden = true;
+
+  upsellSettingsBtn.textContent = settingsLabel;
+  upsellSettingsBtn.onclick = () => onSettings?.();
+
+  upsellDismissBtn.textContent = dismissLabel;
+  upsellDismissBtn.onclick = () => onDismiss?.();
+
+  if (onUseOnDevice) {
+    upsellOnDeviceBtn.textContent = onDeviceLabel;
+    upsellOnDeviceBtn.hidden = false;
+    upsellOnDeviceBtn.onclick = () => onUseOnDevice();
+  } else {
+    upsellOnDeviceBtn.hidden = true;
+    upsellOnDeviceBtn.onclick = null;
+  }
+
+  upsellActions.hidden = false;
 }
 
 export function hideModal() {

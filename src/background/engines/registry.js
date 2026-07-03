@@ -65,13 +65,26 @@ export async function getActiveEngine() {
   return null;
 }
 
+/** Resolves a SPECIFIC engine id regardless of settings, for the one-shot
+ * "use on-device instead" retry in the trial-quota upsell (T-022) — never
+ * changes the user's persistent preference. Returns null if unregistered
+ * or not currently available (same availability gate as normal resolution). */
+async function resolveOverrideEngine(id) {
+  const adapter = engines.get(id);
+  if (adapter && (await adapter.isAvailable())) return adapter;
+  return null;
+}
+
 /**
- * @param {string} text @param {string} targetLang @param {{context?: string, signal?: AbortSignal}} [opts]
+ * @param {string} text @param {string} targetLang
+ * @param {{context?: string, signal?: AbortSignal, engineOverride?: string}} [opts]
+ *   `engineOverride`: bypass the normal preference/fallback resolution and
+ *   use this specific engine id for just this call (T-022's on-device retry).
  * @returns {Promise<{translated: string, engine: string, cached: boolean}>}
  *   Shape matches the TRANSLATE response documented in docs/ARCHITECTURE.md.
  */
 export async function translate(text, targetLang, opts = {}) {
-  const engine = await getActiveEngine();
+  const engine = opts.engineOverride ? await resolveOverrideEngine(opts.engineOverride) : await getActiveEngine();
   if (!engine) {
     throw new EngineError('no_engine_available', 'No translation engine is configured or available.');
   }

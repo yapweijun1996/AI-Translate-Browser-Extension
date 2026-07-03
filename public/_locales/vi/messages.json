@@ -17,9 +17,6 @@
   "modal_loading_text": {
     "message": "Đang dịch…"
   },
-  "modal_error_generic": {
-    "message": "Đã xảy ra lỗi. Vui lòng thử lại."
-  },
   "options_engine_section_heading": {
     "message": "Công cụ dịch"
   },
@@ -91,5 +88,20 @@
   },
   "options_deepseek_key_label": {
     "message": "Khóa API DeepSeek"
+  },
+  "error_generic": {
+    "message": "Đã xảy ra lỗi. Vui lòng thử lại."
+  },
+  "error_trial_quota_exhausted": {
+    "message": "Hạn ngạch miễn phí hôm nay đã hết."
+  },
+  "error_upsell_settings_button": {
+    "message": "Thiết lập khóa API của riêng bạn"
+  },
+  "error_upsell_dismiss_button": {
+    "message": "Thử lại vào ngày mai"
+  },
+  "error_upsell_on_device_button": {
+    "message": "Dùng bản dịch trên thiết bị thay thế"
   }
 }

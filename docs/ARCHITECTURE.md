@@ -47,13 +47,15 @@ All messages are `{type, payload}` objects over `chrome.runtime.sendMessage`. Re
 
 | type | direction | payload | data |
 |---|---|---|---|
-| `TRANSLATE` | content → worker | `{text, context, targetLang}` | `{translated, engine, cached}` |
+| `TRANSLATE` | content → worker | `{text, context, targetLang, engineOverride?}` | `{translated, engine, cached}` |
 | `EXPLAIN` | content → worker | `{phrase, context, targetLang}` | explain payload (SPEC §5 schema) |
 | `GET_CAPABILITIES` | content → worker | `{}` | `{canTranslate, canExplain, engine}` |
 | `OPEN_OPTIONS` | content → worker | `{}` | — (worker calls `chrome.runtime.openOptionsPage()`) |
-| `LIST_ENGINES` | options → worker | `{}` | `{engines: [{id, available, capabilities}]}` — options page's engine picker (T-019); availability is live runtime state the options page can't read itself |
+| `LIST_ENGINES` | options **and content** → worker | `{}` | `{engines: [{id, available, capabilities}]}` — options page's engine picker (T-019) and the content script's trial-quota upsell (T-022, checking whether on-device is available for the fallback button); availability is live runtime state neither caller can read itself |
 
-Error codes (produced by `background/error-mapper.js`, T-021 — every engine adapter's HTTP failures funnel through it instead of each duplicating status-code logic): `trial_quota_exhausted` (trial gateway's own daily limit → render BYOK upsell, SPEC §9 — T-022 wires this), `quota` (a BYOK user's own provider quota/rate-limit → plain message, never the upsell — the `isTrialGateway` flag on `mapHttpError()` is what keeps these two apart), `auth` (bad/missing key → point at options), `network`, `timeout`, `gateway_error`/`unknown` (generic message + retry button). `no_engine_available` / `explain_unsupported` come from the registry itself, not a provider.
+`engineOverride` (optional, `TRANSLATE` only): bypasses the normal preference/fallback resolution to force one specific engine id for that single call, without touching the user's persistent settings — used only by T-022's "use on-device instead" upsell button (`registry.js`'s `resolveOverrideEngine`).
+
+Error codes (produced by `background/error-mapper.js`, T-021 — every engine adapter's HTTP failures funnel through it instead of each duplicating status-code logic): `trial_quota_exhausted` (trial gateway's own daily limit → render BYOK upsell, SPEC §9, wired by T-022), `quota` (a BYOK user's own provider quota/rate-limit → plain message, never the upsell — the `isTrialGateway` flag on `mapHttpError()` is what keeps these two apart), `auth` (bad/missing key → point at options), `network`, `timeout`, `gateway_error`/`unknown` (generic message + retry button). `no_engine_available` / `explain_unsupported` come from the registry itself, not a provider.
 
 Add new message types to this table in the same PR that introduces them.
 

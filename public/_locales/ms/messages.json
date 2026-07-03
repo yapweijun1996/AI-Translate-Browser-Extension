@@ -17,9 +17,6 @@
   "modal_loading_text": {
     "message": "Menterjemah…"
   },
-  "modal_error_generic": {
-    "message": "Sesuatu tidak kena. Sila cuba lagi."
-  },
   "options_engine_section_heading": {
     "message": "Enjin Terjemahan"
   },
@@ -91,5 +88,20 @@
   },
   "options_deepseek_key_label": {
     "message": "Kunci API DeepSeek"
+  },
+  "error_generic": {
+    "message": "Sesuatu tidak kena. Sila cuba lagi."
+  },
+  "error_trial_quota_exhausted": {
+    "message": "Kuota percuma hari ini telah habis."
+  },
+  "error_upsell_settings_button": {
+    "message": "Sediakan kunci API anda sendiri"
+  },
+  "error_upsell_dismiss_button": {
+    "message": "Cuba lagi esok"
+  },
+  "error_upsell_on_device_button": {
+    "message": "Guna terjemahan dalam peranti sebagai gantinya"
   }
 }

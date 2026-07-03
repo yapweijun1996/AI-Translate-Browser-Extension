@@ -17,9 +17,6 @@
   "modal_loading_text": {
     "message": "翻译中…"
   },
-  "modal_error_generic": {
-    "message": "出错了,请再试一次。"
-  },
   "options_engine_section_heading": {
     "message": "翻译引擎"
   },
@@ -91,5 +88,20 @@
   },
   "options_deepseek_key_label": {
     "message": "DeepSeek API 密钥"
+  },
+  "error_generic": {
+    "message": "出错了,请再试一次。"
+  },
+  "error_trial_quota_exhausted": {
+    "message": "今日免费额度已用完。"
+  },
+  "error_upsell_settings_button": {
+    "message": "设置自己的 API key"
+  },
+  "error_upsell_dismiss_button": {
+    "message": "明天再试"
+  },
+  "error_upsell_on_device_button": {
+    "message": "改用设备端翻译"
   }
 }

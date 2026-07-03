@@ -25,7 +25,12 @@ async function handleTranslate(payload, sendResponse) {
   try {
     // registry.translate() already returns {translated, engine, cached} —
     // the exact shape docs/ARCHITECTURE.md documents for this response.
-    const result = await translate(payload?.text, payload?.targetLang, { context: payload?.context });
+    // engineOverride (optional) is T-022's one-shot "use on-device instead"
+    // retry from the trial-quota upsell — never touches persistent settings.
+    const result = await translate(payload?.text, payload?.targetLang, {
+      context: payload?.context,
+      engineOverride: payload?.engineOverride,
+    });
     sendResponse(ok(result));
   } catch (e) {
     sendResponse(err(e.code || 'unknown', e.message));

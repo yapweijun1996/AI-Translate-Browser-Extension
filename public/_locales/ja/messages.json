@@ -17,9 +17,6 @@
   "modal_loading_text": {
     "message": "翻訳中…"
   },
-  "modal_error_generic": {
-    "message": "問題が発生しました。もう一度お試しください。"
-  },
   "options_engine_section_heading": {
     "message": "翻訳エンジン"
   },
@@ -91,5 +88,20 @@
   },
   "options_deepseek_key_label": {
     "message": "DeepSeek APIキー"
+  },
+  "error_generic": {
+    "message": "問題が発生しました。もう一度お試しください。"
+  },
+  "error_trial_quota_exhausted": {
+    "message": "本日の無料クォータを使い切りました。"
+  },
+  "error_upsell_settings_button": {
+    "message": "自分のAPIキーを設定する"
+  },
+  "error_upsell_dismiss_button": {
+    "message": "明日また試す"
+  },
+  "error_upsell_on_device_button": {
+    "message": "代わりにオンデバイス翻訳を使う"
   }
 }
