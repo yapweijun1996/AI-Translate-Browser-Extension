@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <style>
+      body {
+        min-width: 260px;
+        margin: 0;
+        padding: 16px;
+        font-family: system-ui, sans-serif;
+      }
+      h1 {
+        font-size: 15px;
+        margin: 0 0 8px;
+      }
+      p {
+        font-size: 13px;
+        margin: 0;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Text is filled from _locales via popup.js — no hardcoded UI strings. -->
+    <h1 data-i18n="ext_name"></h1>
+    <p data-i18n="popup_status_ready"></p>
+    <script type="module" src="./popup.js"></script>
+  </body>
+</html>

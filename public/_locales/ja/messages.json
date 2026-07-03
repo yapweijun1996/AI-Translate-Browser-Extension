@@ -1,0 +1,17 @@
+{
+  "ext_name": {
+    "message": "AI Translate"
+  },
+  "ext_description": {
+    "message": "任意のページでテキストを選択すると、AI翻訳と学習者向けのわかりやすい解説がすぐに表示されます。"
+  },
+  "popup_status_ready": {
+    "message": "拡張機能のスケルトンが動作中です。"
+  },
+  "options_heading": {
+    "message": "設定"
+  },
+  "options_skeleton_note": {
+    "message": "翻訳エンジンと言語の設定は今後のバージョンでここに表示されます。"
+  }
+}

@@ -6,7 +6,7 @@ AI-Translate-Browser-Extension — an AI-powered browser extension for translati
 
 ## Current state
 
-Pre-code — full documentation suite exists, no source code yet. Build from the docs: README.md (entry + task workflow) → SPEC.md (the contract) → docs/ (ARCHITECTURE, DEVELOPMENT, CODING-STANDARDS, I18N, ENGINES) → task.jsonl (work queue T-001…T-032, one JSON per line, never delete lines). EPICS.md and ROADMAP.md define scope and direction. License: MIT.
+M1 skeleton done — MV3 extension builds via Vite + CRXJS (`npm run build` → load `dist/` unpacked), 4 contexts wired, 6 locales scaffolded, CI in place. Docs: README.md (entry + task workflow) → SPEC.md (the contract) → docs/ (ARCHITECTURE, DEVELOPMENT, CODING-STANDARDS, I18N, ENGINES, REFERENCE-SNIPPETS) → task.jsonl (work queue T-001…T-032, one JSON per line, never delete lines; T-001…T-005 done). EPICS.md and ROADMAP.md define scope and direction. License: MIT.
 
 ## Planned architecture
 

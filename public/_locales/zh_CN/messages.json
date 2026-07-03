@@ -1,0 +1,17 @@
+{
+  "ext_name": {
+    "message": "AI Translate"
+  },
+  "ext_description": {
+    "message": "在任意网页选中文字,立即获得 AI 翻译和易懂的学习讲解。"
+  },
+  "popup_status_ready": {
+    "message": "扩展骨架运行中。"
+  },
+  "options_heading": {
+    "message": "设置"
+  },
+  "options_skeleton_note": {
+    "message": "翻译引擎与语言设置将在后续版本中显示。"
+  }
+}

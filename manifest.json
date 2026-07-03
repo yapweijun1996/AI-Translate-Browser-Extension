@@ -1,0 +1,27 @@
+{
+  "manifest_version": 3,
+  "name": "__MSG_ext_name__",
+  "description": "__MSG_ext_description__",
+  "version": "0.1.0",
+  "default_locale": "en",
+  "permissions": ["storage", "contextMenus", "scripting", "activeTab"],
+  "host_permissions": [],
+  "background": {
+    "service_worker": "src/background/service-worker.js",
+    "type": "module"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/content/main.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "src/popup/index.html"
+  },
+  "options_ui": {
+    "page": "src/options/index.html",
+    "open_in_tab": true
+  }
+}

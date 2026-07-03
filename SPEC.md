@@ -89,7 +89,8 @@ Port the reference explain design ([REFERENCE-SNIPPETS §5](docs/REFERENCE-SNIPP
 "host_permissions": []
 ```
 
-- Start with `activeTab` + on-demand injection; do NOT request `<all_urls>` for MVP unless per-site auto-translate ships and requires it.
+- The content script is declared with `"matches": ["<all_urls>"]` — required for the core UX (selection must be detectable on any page without the user clicking the toolbar icon first). This triggers the "read data on all websites" install warning; the privacy policy must explain it (M5).
+- `host_permissions` stays empty — the content script match is sufficient; the service worker only calls translation APIs, which needs no host permission.
 - No remotely hosted code, no `eval` (MV3 / Chrome Web Store hard requirement).
 
 ## 8. Extension UI i18n

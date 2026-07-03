@@ -1,0 +1,17 @@
+{
+  "ext_name": {
+    "message": "AI Translate"
+  },
+  "ext_description": {
+    "message": "어떤 페이지에서든 텍스트를 선택하면 즉시 AI 번역과 학습자 친화적인 설명을 볼 수 있습니다."
+  },
+  "popup_status_ready": {
+    "message": "확장 프로그램 스켈레톤이 실행 중입니다."
+  },
+  "options_heading": {
+    "message": "설정"
+  },
+  "options_skeleton_note": {
+    "message": "번역 엔진 및 언어 설정은 이후 버전에서 여기에 표시됩니다."
+  }
+}

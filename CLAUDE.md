@@ -2,7 +2,7 @@
 
 ## Status
 
-Pre-code (as of 2026-07-03). Full documentation suite exists; no source code yet. Junior engineers build from the docs + task list.
+M1 skeleton done (2026-07-03): MV3 extension builds and loads unpacked (Vite + CRXJS), 4 contexts wired with PING round-trip, 6 locales scaffolded, ESLint/Prettier/CI in place. Next work starts at T-006 (selection detector) in task.jsonl. Junior engineers build from the docs + task list.
 
 ## Documentation map (keep in sync)
 
@@ -48,4 +48,7 @@ This project's decisions and facts are tracked in KB-MCP under `project: "AI-Tra
 
 ## Commands
 
-None yet — no `package.json` or build tooling exists. Add this section once a build system (e.g. Vite/esbuild + manifest bundling) is chosen.
+- `npm run dev` — Vite watch build (then load `dist/` unpacked in Chrome; see docs/DEVELOPMENT.md)
+- `npm run build` — production build to `dist/`
+- `npm run lint` — ESLint (flat config)
+- `npm run format` — Prettier write

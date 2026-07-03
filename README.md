@@ -4,7 +4,7 @@ Select text on any webpage → a small icon appears → click it → get an inst
 
 Chrome/Edge extension, Manifest V3. Ships with a free trial engine (zero setup) — users who want more bring their own API key (OpenAI / DeepSeek / Gemini).
 
-> **Status: pre-code.** The documentation below is the build plan. No source code exists yet — start from the task list.
+> **Status: M1 skeleton done.** The extension builds and loads unpacked (`npm install && npm run build` → load `dist/` at chrome://extensions). Feature work starts at T-006 in [task.jsonl](task.jsonl).
 
 ## For engineers — read in this order
 

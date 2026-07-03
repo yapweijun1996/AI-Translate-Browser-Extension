@@ -1,0 +1,22 @@
+{
+  "ext_name": {
+    "message": "AI Translate",
+    "description": "Extension name shown in the browser toolbar and store listing. Brand name — keep identical in all locales."
+  },
+  "ext_description": {
+    "message": "Select text on any page to get an instant AI translation and a learner-friendly explanation.",
+    "description": "Extension description shown in the store listing and chrome://extensions."
+  },
+  "popup_status_ready": {
+    "message": "Extension skeleton is running.",
+    "description": "Temporary status line in the toolbar popup during early development (M1)."
+  },
+  "options_heading": {
+    "message": "Settings",
+    "description": "Options page main heading."
+  },
+  "options_skeleton_note": {
+    "message": "Engine and language settings will appear here in a later milestone.",
+    "description": "Temporary note on the options page during early development (M1); replaced by real settings in M3."
+  }
+}

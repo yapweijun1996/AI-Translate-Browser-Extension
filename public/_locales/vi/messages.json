@@ -1,0 +1,17 @@
+{
+  "ext_name": {
+    "message": "AI Translate"
+  },
+  "ext_description": {
+    "message": "Chọn văn bản trên bất kỳ trang nào để nhận bản dịch AI tức thì và giải thích dễ hiểu cho người học."
+  },
+  "popup_status_ready": {
+    "message": "Khung tiện ích mở rộng đang chạy."
+  },
+  "options_heading": {
+    "message": "Cài đặt"
+  },
+  "options_skeleton_note": {
+    "message": "Cài đặt công cụ dịch và ngôn ngữ sẽ xuất hiện ở đây trong phiên bản sau."
+  }
+}

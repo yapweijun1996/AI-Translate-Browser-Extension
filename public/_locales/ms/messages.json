@@ -1,0 +1,17 @@
+{
+  "ext_name": {
+    "message": "AI Translate"
+  },
+  "ext_description": {
+    "message": "Pilih teks pada mana-mana halaman untuk mendapatkan terjemahan AI segera dan penjelasan yang mudah difahami."
+  },
+  "popup_status_ready": {
+    "message": "Rangka sambungan sedang berjalan."
+  },
+  "options_heading": {
+    "message": "Tetapan"
+  },
+  "options_skeleton_note": {
+    "message": "Tetapan enjin dan bahasa akan dipaparkan di sini dalam versi akan datang."
+  }
+}
