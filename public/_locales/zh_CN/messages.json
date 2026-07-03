@@ -110,6 +110,9 @@
   "modal_explain_loading": {
     "message": "讲解加载中…"
   },
+  "modal_explain_disabled_hint": {
+    "message": "详解功能需要 AI 引擎。请在设置中添加你自己的 API 密钥以启用。"
+  },
   "explain_section_definition": {
     "message": "释义"
   },

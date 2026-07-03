@@ -7,6 +7,7 @@
 import { EngineError } from './errors.js';
 import { ENGINE_ID_STORAGE_KEY } from '../../shared/settings-keys.js';
 import { getCachedTranslation, setCachedTranslation } from '../translation-cache.js';
+import { getCachedExplain, setCachedExplain } from '../explain-cache.js';
 
 /**
  * @typedef {object} EngineAdapter
@@ -99,7 +100,15 @@ export async function translate(text, targetLang, opts = {}) {
   return { translated, engine: engine.id, cached: false };
 }
 
-/** @param {string} phrase @param {string} targetLang @param {{context?: string, signal?: AbortSignal}} [opts] */
+/**
+ * @param {string} phrase @param {string} targetLang
+ * @param {{context?: string, signal?: AbortSignal, origin?: string}} [opts]
+ *   `origin` (the page's location.origin, supplied by main.js) scopes the
+ *   cache per SPEC §6 — explain results aren't hashed by engine like
+ *   translate()'s cache, since the explanation shouldn't change just
+ *   because the active engine changed.
+ * @returns {Promise<object>} SPEC §5 explain payload (cached or freshly computed)
+ */
 export async function explain(phrase, targetLang, opts = {}) {
   const engine = await getActiveEngine();
   if (!engine) {
@@ -108,5 +117,12 @@ export async function explain(phrase, targetLang, opts = {}) {
   if (!engine.capabilities().explain) {
     throw new EngineError('explain_unsupported', 'The active translation engine does not support Explain.');
   }
-  return engine.explain(phrase, targetLang, opts);
+
+  const origin = opts.origin || 'unknown-origin';
+  const cached = await getCachedExplain(origin, phrase, targetLang);
+  if (cached !== undefined) return cached;
+
+  const payload = await engine.explain(phrase, targetLang, opts);
+  await setCachedExplain(origin, phrase, targetLang, payload);
+  return payload;
 }

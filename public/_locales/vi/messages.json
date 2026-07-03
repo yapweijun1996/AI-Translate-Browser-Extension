@@ -110,6 +110,9 @@
   "modal_explain_loading": {
     "message": "Đang tải phần giải thích…"
   },
+  "modal_explain_disabled_hint": {
+    "message": "Giải thích cần một công cụ AI. Thêm khóa API của riêng bạn trong Cài đặt để bật tính năng này."
+  },
   "explain_section_definition": {
     "message": "Định nghĩa"
   },

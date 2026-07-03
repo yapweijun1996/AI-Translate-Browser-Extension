@@ -110,6 +110,9 @@
   "modal_explain_loading": {
     "message": "Memuatkan penerangan…"
   },
+  "modal_explain_disabled_hint": {
+    "message": "Terangkan memerlukan enjin AI. Tambah kunci API anda sendiri dalam Tetapan untuk mengaktifkannya."
+  },
   "explain_section_definition": {
     "message": "Definisi"
   },

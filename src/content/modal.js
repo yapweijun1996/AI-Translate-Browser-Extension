@@ -113,6 +113,13 @@ const MODAL_CSS = `
   .modal-explain-btn:hover {
     background: #efeff1;
   }
+  .modal-explain-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  .modal-explain-btn:disabled:hover {
+    background: #f7f7f8;
+  }
   .modal-upsell-actions {
     display: flex;
     flex-direction: column;
@@ -285,8 +292,8 @@ function ensureBox() {
   explainBtn = document.createElement('button');
   explainBtn.type = 'button';
   explainBtn.className = 'modal-explain-btn';
-  explainBtn.hidden = true; // shown by main.js after a successful translation (visibility gating by
-  // engine capability is T-026 — this module just exposes the on/off switch)
+  explainBtn.hidden = true; // shown (enabled or disabled-with-hint) by main.js after a successful
+  // translation, based on GET_CAPABILITIES' canExplain (T-026)
 
   explainBody = document.createElement('div');
   explainBody.className = 'modal-explain-body';
@@ -496,9 +503,9 @@ function resetExplainBody() {
 }
 
 /**
- * Show the Explain button after a successful translation. Visibility
- * GATING by engine capability is T-026's job — this is just the on/off
- * switch; main.js decides when to call it.
+ * Show the Explain button, enabled, after a successful translation on an
+ * engine that supports it. main.js decides which of this or
+ * showExplainDisabled() to call, based on GET_CAPABILITIES (T-026).
  * @param {string} label i18n "Explain" button text
  * @param {() => void} onClick
  */
@@ -506,8 +513,26 @@ export function showExplainButton(label, onClick) {
   if (!explainBtn) return;
   explainBtn.textContent = label;
   explainBtn.disabled = false;
+  explainBtn.title = '';
   explainBtn.hidden = false;
   explainBtn.onclick = () => onClick();
+}
+
+/**
+ * Show the Explain button in a disabled state with a hint (SPEC §4: "hide
+ * or disable the Explain button with a hint to configure an LLM key" when
+ * the active engine is on-device-only). Disabled rather than hidden so the
+ * feature stays discoverable.
+ * @param {string} label i18n "Explain" button text
+ * @param {string} hint i18n tooltip explaining why it's disabled
+ */
+export function showExplainDisabled(label, hint) {
+  if (!explainBtn) return;
+  explainBtn.textContent = label;
+  explainBtn.disabled = true;
+  explainBtn.title = hint;
+  explainBtn.hidden = false;
+  explainBtn.onclick = null;
 }
 
 /** Loading state while the EXPLAIN request is in flight — disables the button so it can't double-fire. */

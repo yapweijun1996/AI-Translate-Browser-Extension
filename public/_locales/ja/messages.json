@@ -110,6 +110,9 @@
   "modal_explain_loading": {
     "message": "解説を読み込み中…"
   },
+  "modal_explain_disabled_hint": {
+    "message": "詳しく解説にはAIエンジンが必要です。設定でご自身のAPIキーを追加すると使えるようになります。"
+  },
   "explain_section_definition": {
     "message": "定義"
   },

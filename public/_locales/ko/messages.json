@@ -110,6 +110,9 @@
   "modal_explain_loading": {
     "message": "설명을 불러오는 중…"
   },
+  "modal_explain_disabled_hint": {
+    "message": "자세히 설명 기능은 AI 엔진이 필요합니다. 설정에서 본인의 API 키를 추가하면 사용할 수 있습니다."
+  },
   "explain_section_definition": {
     "message": "정의"
   },

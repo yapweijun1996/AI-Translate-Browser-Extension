@@ -147,6 +147,10 @@
     "message": "Loading explanation…",
     "description": "Placeholder shown while an Explain request is in flight."
   },
+  "modal_explain_disabled_hint": {
+    "message": "Explain needs an AI engine. Add your own API key in Settings to enable it.",
+    "description": "Tooltip on the disabled Explain button when the active engine (e.g. on-device) can't produce an explanation."
+  },
   "explain_section_definition": {
     "message": "Definition",
     "description": "Section label in the Explain panel for the source + target language definitions."

@@ -7,8 +7,6 @@ import { openaiAdapter } from './engines/openai.js';
 import { deepseekAdapter } from './engines/deepseek.js';
 import { OD_MSG } from './engines/on-device-protocol.js';
 
-// explain() still resolves through the registry to "no engine available"
-// until an engine with explain capability lands (T-024). See docs/ENGINES.md.
 registerEngine(trialGatewayAdapter);
 registerEngine(onDeviceAdapter);
 registerEngine(geminiAdapter);
@@ -39,7 +37,10 @@ async function handleTranslate(payload, sendResponse) {
 
 async function handleExplain(payload, sendResponse) {
   try {
-    const result = await explain(payload?.phrase, payload?.targetLang, { context: payload?.context });
+    const result = await explain(payload?.phrase, payload?.targetLang, {
+      context: payload?.context,
+      origin: payload?.origin,
+    });
     sendResponse(ok(result));
   } catch (e) {
     sendResponse(err(e.code || 'unknown', e.message));

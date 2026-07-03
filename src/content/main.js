@@ -11,6 +11,7 @@ import {
   showUpsell,
   hideModal,
   showExplainButton,
+  showExplainDisabled,
   showExplainLoading,
   showExplainResult,
   showExplainError,
@@ -52,7 +53,9 @@ function requestTranslate(text, context, targetLang, engineOverride) {
 function requestExplain(phrase, context, targetLang) {
   return chrome.runtime.sendMessage({
     type: MSG.EXPLAIN,
-    payload: { phrase, context, targetLang },
+    // origin scopes the explain cache per-site (T-026, SPEC §6) — computed
+    // here since the service worker has no page context of its own.
+    payload: { phrase, context, targetLang, origin: location.origin },
   });
 }
 
@@ -73,12 +76,30 @@ function explainSectionLabels() {
 }
 
 /**
- * Wire the Explain button for the phrase currently shown in the modal.
- * Capability gating (hiding the button when the active engine can't
- * explain) is T-026 — for now every successful translation offers it, and
- * an unsupported engine surfaces as a normal explain_unsupported error.
+ * Wire the Explain button for the phrase currently shown in the modal,
+ * gated by whether the active engine actually supports Explain (T-026,
+ * SPEC §4: "hide or disable the Explain button with a hint to configure an
+ * LLM key" when the only working engine is on-device). Fails closed — if
+ * capability can't even be checked, show the disabled hint rather than a
+ * button likely to error.
  */
-function offerExplain(text, context, targetLang) {
+async function offerExplain(text, context, targetLang) {
+  let canExplain = false;
+  try {
+    const capRes = await chrome.runtime.sendMessage({ type: MSG.GET_CAPABILITIES, payload: {} });
+    canExplain = !!capRes?.ok && !!capRes.data.canExplain;
+  } catch {
+    // Leave canExplain false — see fail-closed note above.
+  }
+
+  if (!canExplain) {
+    showExplainDisabled(
+      chrome.i18n.getMessage('modal_explain_button'),
+      chrome.i18n.getMessage('modal_explain_disabled_hint'),
+    );
+    return;
+  }
+
   showExplainButton(chrome.i18n.getMessage('modal_explain_button'), async () => {
     showExplainLoading(chrome.i18n.getMessage('modal_explain_loading'));
     try {
