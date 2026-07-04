@@ -148,4 +148,4 @@ Rules:
 
 - Which BYO-key engine to implement first in M3 for production (Gemini cheapest to test vs OpenAI most common vs DeepSeek cheapest overall)?
 - Popup quick-translate box (type/paste text) in MVP or defer?
-- Should the trigger icon be suppressible per-site (blocklist) from day one?
+- ~~Should the trigger icon be suppressible per-site (blocklist) from day one?~~ **Partially resolved (2026-07-04):** a global on/off toggle now exists in the popup (`extensionEnabled` in `chrome.storage.local`, gates both the selection-icon and context-menu paths, live via `chrome.storage.onChanged` — see task.jsonl T-037). A per-*site* blocklist (vs. this global switch) is still open — same open item as the per-site auto-translate rules already scoped for the options page.

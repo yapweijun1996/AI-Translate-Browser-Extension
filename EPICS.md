@@ -53,7 +53,7 @@ Ship it.
 
 ## E7 — Production hardening (ROADMAP v1.0)
 
-Not yet task-broken-down. Reliability (tests, hostile pages), performance budgets, security audit, UX polish (shortcuts, dark mode, per-site disable). Break into tasks when E1–E6 are done.
+Not yet task-broken-down. Reliability (tests, hostile pages), performance budgets, security audit, UX polish (shortcuts, dark mode, per-site disable — a global on/off toggle shipped ahead of schedule instead, T-037; per-*site* blocklist still open). Break into tasks when E1–E6 are done.
 
 ## E8 — Full-page bilingual translation (ROADMAP v1.x)
 

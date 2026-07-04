@@ -21,7 +21,8 @@ Goal: trustworthy for daily use; store-public.
 - **Reliability:** graceful behavior on hostile pages (iframes, strict-CSP sites, heavy SPAs); automated test suite (unit + Playwright extension tests); error telemetry that respects privacy (opt-in only)
 - **Performance:** selection→icon latency < 50ms; modal open→first translated token < 1.5s on trial gateway; cache hit rate measured
 - **Security review:** permissions audit, key handling audit, dependency audit (`npm audit` clean), Web Store policy compliance re-check
-- **UX polish:** keyboard shortcuts, dark mode, per-site disable (blocklist), popup quick-translate box
+- **UX polish:** keyboard shortcuts, dark mode, ~~per-site disable (blocklist)~~ — a simpler *global* on/off kill switch shipped ahead of schedule instead (T-037, 2026-07-04, popup toggle gating both the selection-icon and context-menu paths, live via `chrome.storage.onChanged`); a true per-*site* blocklist is still open — popup quick-translate box
+- Manual modal resize (T-034, 2026-07-03) and a redesigned SVG-sourced logo (T-038, 2026-07-04) also shipped ahead of schedule, both added ad hoc from direct owner requests rather than originally roadmapped here
 - **Docs:** user-facing help page + privacy policy in all 6 locales
 
 ## v1.x — Power features
