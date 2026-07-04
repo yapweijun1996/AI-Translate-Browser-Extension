@@ -1,0 +1,24 @@
+<svg viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <!-- Brand blue matches the extension's UI (#2563eb — modal buttons, popup toggle). -->
+  <rect x="4" y="4" width="120" height="120" rx="26" fill="#2563eb" />
+
+  <!-- Speech bubble: a single, universal "conversation" shape — no alphabet/
+       script inside it, so it reads the same across all 6 locales this
+       extension ships in, instead of leaning on a specific letterform the
+       way some translate icons do. Body + tail as two plain shapes (rather
+       than one hand-rolled path) so the seam between them stays exact. -->
+  <rect x="22" y="28" width="84" height="52" rx="18" fill="#fff" />
+  <path d="M42 79 L36 102 L64 79 Z" fill="#fff" />
+  <!-- Re-squares the tail's top corners flush against the bubble's straight
+       bottom edge (the rect's own bottom-left corner is rounded, but the
+       tail sits well clear of that curve). -->
+  <rect x="40" y="72" width="26" height="8" fill="#fff" />
+
+  <!-- 4-point sparkle inside the bubble: the "AI" marker (same visual family
+       as Gemini/Copilot-style sparkles), in the brand blue against the white
+       bubble. -->
+  <path
+    d="M64 37 L68.24 49.76 L81 54 L68.24 58.24 L64 71 L59.76 58.24 L47 54 L59.76 49.76 Z"
+    fill="#2563eb"
+  />
+</svg>

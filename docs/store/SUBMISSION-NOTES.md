@@ -39,5 +39,5 @@ Must point to a **hosted, public URL** — not this repo file directly. Publish 
 
 ## Store icon / screenshots
 
-- Icon: `public/icons/icon-128.png` (T-030) satisfies the 128×128 store icon requirement.
+- Icon: `public/icons/icon-128.png` (T-030, redesigned T-038) satisfies the 128×128 store icon requirement. SVG source lives at `public/icons/src/icon.svg` — edit that and re-rasterize to `icon-{16,32,48,128}.png` rather than hand-editing the PNGs.
 - Screenshots (1280×800 or 640×400, at least one required): not yet captured — needs a real loaded-extension screenshot pass, same manual-browser constraint as T-012. Take these once T-012's manual QA pass happens (or as part of T-032).
