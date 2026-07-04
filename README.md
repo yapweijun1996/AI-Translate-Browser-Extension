@@ -4,7 +4,7 @@ Select text on any webpage → a small icon appears → click it → get an inst
 
 Chrome/Edge extension, Manifest V3. Ships with a free trial engine (zero setup) — users who want more bring their own API key (OpenAI / DeepSeek / Gemini).
 
-> **Status: MVP feature-complete through M5 polish** (T-001…T-038). Builds and loads unpacked (`npm install && npm run build` → load `dist/` at chrome://extensions). Only the actual Chrome Web Store submission (T-032) remains, blocked on the owner's own Developer Dashboard account + a published privacy-policy URL. See [task.jsonl](task.jsonl) for the full history.
+> **Status: MVP feature-complete through M5 polish** (T-001…T-039). Builds and loads unpacked (`npm install && npm run build` → load `dist/` at chrome://extensions). Only the actual Chrome Web Store submission (T-032) remains, blocked on the owner's own Developer Dashboard account + a published privacy-policy URL. See [task.jsonl](task.jsonl) for the full history.
 
 ## For engineers — read in this order
 

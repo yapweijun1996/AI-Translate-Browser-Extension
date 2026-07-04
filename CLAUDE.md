@@ -2,7 +2,7 @@
 
 ## Status
 
-MVP feature-complete through M5 polish (2026-07-04, T-001…T-038): selection→icon→translate→Explain pipeline, all 4 BYOK engines + on-device + trial-gateway, options page, context menu, manual modal resize, browser-native TTS (speak buttons + voice picker + auto-play), a popup on/off kill switch, and a redesigned SVG-sourced logo are all shipped and live-verified. T-032 (Chrome Web Store submission) remains **blocked** — needs the owner's own Developer Dashboard account and a published (hosted, public-URL) privacy policy; everything QA-able short of actual submission is done. Junior engineers build from the docs + task list.
+MVP feature-complete through M5 polish (2026-07-04, T-001…T-039): selection→icon→translate→Explain pipeline, all 4 BYOK engines + on-device + trial-gateway, options page, context menu, manual modal resize, browser-native TTS (speak buttons + voice picker + auto-play), a popup on/off kill switch, a redesigned SVG-sourced logo, and an Explain-panel expand-all/collapse-all control with a persisted default are all shipped and live-verified. T-032 (Chrome Web Store submission) remains **blocked** — needs the owner's own Developer Dashboard account and a published (hosted, public-URL) privacy policy; everything QA-able short of actual submission is done. Junior engineers build from the docs + task list.
 
 ## Documentation map (keep in sync)
 
@@ -10,7 +10,7 @@ MVP feature-complete through M5 polish (2026-07-04, T-001…T-038): selection→
 - [SPEC.md](SPEC.md) — the contract (UX, architecture, engines, i18n, errors)
 - [ROADMAP.md](ROADMAP.md) — v0.x MVP → v1.0 production → v2.0 business
 - [EPICS.md](EPICS.md) — E1–E8 with exit criteria
-- [task.jsonl](task.jsonl) — T-001…T-038 work queue (one JSON per line; never delete lines)
+- [task.jsonl](task.jsonl) — T-001…T-039 work queue (one JSON per line; never delete lines)
 - docs/ — [ARCHITECTURE](docs/ARCHITECTURE.md), [DEVELOPMENT](docs/DEVELOPMENT.md), [CODING-STANDARDS](docs/CODING-STANDARDS.md), [I18N](docs/I18N.md), [ENGINES](docs/ENGINES.md), [REFERENCE-SNIPPETS](docs/REFERENCE-SNIPPETS.md), [store/](docs/store/) (privacy policy + Web Store listing, 6 locales), [qa/](docs/qa/) (manual QA checklists)
 - [LICENSE](LICENSE) — MIT
 
