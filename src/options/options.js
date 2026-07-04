@@ -174,7 +174,14 @@ async function renderTtsVoicePickers() {
     select.value = savedPref?.voiceURI && matches.some((v) => v.voiceURI === savedPref.voiceURI) ? savedPref.voiceURI : '';
 
     select.addEventListener('change', async () => {
-      const next = { ...stored };
+      // Read fresh rather than spreading the outer `stored` snapshot —
+      // `stored` is captured ONCE when the page loaded and shared by every
+      // row's closure. If the user picks a voice for zh-CN, then for ja, the
+      // ja handler's `{...stored}` would still be the pre-zh-CN snapshot and
+      // silently drop the zh-CN pick when it saves. Every language's picker
+      // shares this same bug unless each one re-reads storage at save time.
+      const latest = (await chrome.storage.local.get(TTS_VOICES_STORAGE_KEY))[TTS_VOICES_STORAGE_KEY] || {};
+      const next = { ...latest };
       if (!select.value) {
         delete next[code];
       } else {
@@ -236,10 +243,20 @@ function buildEngineRow({ value, label, hint, available, checked }) {
   return wrap;
 }
 
+// Bumped at the start of every renderEnginePicker() call. Saving two BYOK
+// keys back-to-back (e.g. Gemini then OpenAI) fires this twice in close
+// succession — both await a LIST_ENGINES round trip + a storage read, and
+// without this guard, whichever happened to resolve LAST would win even if
+// it was actually the OLDER (stale) call, silently redrawing the picker
+// with data from before the second key was even saved.
+let enginePickerRenderSeq = 0;
+
 async function renderEnginePicker() {
+  const renderId = ++enginePickerRenderSeq;
   const res = await chrome.runtime.sendMessage({ type: MSG.LIST_ENGINES, payload: {} });
   const engines = res?.ok ? res.data.engines : [];
   const currentPreference = (await chrome.storage.local.get(ENGINE_ID_STORAGE_KEY))[ENGINE_ID_STORAGE_KEY];
+  if (renderId !== enginePickerRenderSeq) return; // a newer render started while this one was in flight
 
   enginePickerEl.innerHTML = '';
   enginePickerEl.appendChild(

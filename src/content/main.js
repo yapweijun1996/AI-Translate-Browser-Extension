@@ -126,6 +126,18 @@ function explainSectionLabels() {
   };
 }
 
+// Bumped at the start of every translateSelection() call; each call captures
+// its own value and checks it again after every await before touching the
+// modal. The modal is a single reused instance (module-level singleton in
+// modal.js), not one per translation — nothing previously stopped an older,
+// slower translation's response from landing (and rendering) after a newer
+// selection had already replaced it, silently overwriting what the user is
+// currently looking at with a stale result. Selecting and translating two
+// things in quick succession (a very ordinary thing to do) could trigger
+// this; there was no reproduction needed to see it in the code, just two
+// concurrent async chains writing into the same module-level DOM.
+let requestSeq = 0;
+
 /**
  * Wire the Explain button for the phrase currently shown in the modal,
  * gated by whether the active engine actually supports Explain (T-026,
@@ -133,8 +145,11 @@ function explainSectionLabels() {
  * LLM key" when the only working engine is on-device). Fails closed — if
  * capability can't even be checked, show the disabled hint rather than a
  * button likely to error.
+ * @param {number} requestId this translation's stamp from translateSelection() —
+ *   checked after every await so a newer translation's modal state is never
+ *   overwritten by this one finishing late.
  */
-async function offerExplain(text, context, targetLang) {
+async function offerExplain(text, context, targetLang, requestId) {
   let canExplain = false;
   try {
     const capRes = await chrome.runtime.sendMessage({ type: MSG.GET_CAPABILITIES, payload: {} });
@@ -142,6 +157,7 @@ async function offerExplain(text, context, targetLang) {
   } catch {
     // Leave canExplain false — see fail-closed note above.
   }
+  if (requestId !== requestSeq) return; // a newer translation has since replaced the modal
 
   if (!canExplain) {
     showExplainDisabled(
@@ -155,12 +171,14 @@ async function offerExplain(text, context, targetLang) {
     showExplainLoading(chrome.i18n.getMessage('modal_explain_loading'));
     try {
       const res = await requestExplain(text, context, targetLang);
+      if (requestId !== requestSeq) return; // ditto — a newer translation may have started mid-request
       if (res?.ok) {
         showExplainResult(text, res.data, explainSectionLabels());
       } else {
         showExplainError(res?.error?.message || chrome.i18n.getMessage('error_generic'));
       }
     } catch (e) {
+      if (requestId !== requestSeq) return;
       showExplainError(e?.message || chrome.i18n.getMessage('error_generic'));
     }
   });
@@ -171,8 +189,9 @@ async function offerExplain(text, context, targetLang) {
  * of a plain error (SPEC §4/§9): open Settings, try again tomorrow, or (if
  * the on-device engine happens to be available right now) translate this
  * one selection with it immediately as a free alternative.
+ * @param {number} requestId see offerExplain's doc — same staleness guard.
  */
-async function showTrialQuotaUpsell(text, context, targetLang) {
+async function showTrialQuotaUpsell(text, context, targetLang, requestId) {
   let onDeviceAvailable = false;
   try {
     const listRes = await chrome.runtime.sendMessage({ type: MSG.LIST_ENGINES, payload: {} });
@@ -181,6 +200,7 @@ async function showTrialQuotaUpsell(text, context, targetLang) {
     // If we can't even ask, just omit the on-device option — the other two
     // upsell actions (settings / dismiss) don't depend on this.
   }
+  if (requestId !== requestSeq) return; // a newer translation has since replaced the modal
 
   showUpsell(chrome.i18n.getMessage('error_trial_quota_exhausted'), {
     settingsLabel: chrome.i18n.getMessage('error_upsell_settings_button'),
@@ -190,12 +210,18 @@ async function showTrialQuotaUpsell(text, context, targetLang) {
     ...(onDeviceAvailable && {
       onDeviceLabel: chrome.i18n.getMessage('error_upsell_on_device_button'),
       onUseOnDevice: async () => {
+        // A fresh request in its own right (retrying via a different
+        // engine) — bump the sequence so a newer selection made while this
+        // is in flight correctly supersedes it too, same as any other
+        // translation.
+        const retryId = ++requestSeq;
         showModal(text, lastRect, {
           closeLabel: chrome.i18n.getMessage('modal_close_label'),
           loadingLabel: chrome.i18n.getMessage('modal_loading_text'),
           ...(await ttsButtonOpts('source')),
         });
         const res = await requestTranslate(text, context, targetLang, 'on-device');
+        if (retryId !== requestSeq) return;
         if (res?.ok) {
           // No offerExplain() here: this retry deliberately forces the
           // on-device engine, which never supports Explain (docs/ENGINES.md)
@@ -211,6 +237,10 @@ async function showTrialQuotaUpsell(text, context, targetLang) {
 }
 
 async function translateSelection(text, context) {
+  // Claim this as the current translation before anything async happens —
+  // any earlier call still in flight will see requestSeq has moved on and
+  // stop short of rendering its (now stale) result over this one.
+  const requestId = ++requestSeq;
   showModal(text, lastRect, {
     closeLabel: chrome.i18n.getMessage('modal_close_label'),
     loadingLabel: chrome.i18n.getMessage('modal_loading_text'),
@@ -219,18 +249,22 @@ async function translateSelection(text, context) {
   try {
     const targetLang = await getTargetLang();
     const res = await requestTranslate(text, context, targetLang);
+    if (requestId !== requestSeq) return; // superseded while the request was in flight
     if (res?.ok) {
       showResult(res.data.translated, await ttsButtonOpts('target', targetLang));
+      if (requestId !== requestSeq) return; // ttsButtonOpts awaits storage reads too
       if (isTtsSupported() && (await getTtsAutoplay())) {
+        if (requestId !== requestSeq) return;
         speak(res.data.translated, targetLang, await getTtsVoicePref(targetLang));
       }
-      offerExplain(text, context, targetLang);
+      offerExplain(text, context, targetLang, requestId);
     } else if (res?.error?.code === 'trial_quota_exhausted') {
-      await showTrialQuotaUpsell(text, context, targetLang);
+      await showTrialQuotaUpsell(text, context, targetLang, requestId);
     } else {
       showError(res?.error?.message || chrome.i18n.getMessage('error_generic'));
     }
   } catch (e) {
+    if (requestId !== requestSeq) return;
     showError(e?.message || chrome.i18n.getMessage('error_generic'));
   }
 }
