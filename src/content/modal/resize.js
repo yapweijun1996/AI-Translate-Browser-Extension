@@ -122,11 +122,20 @@ export function wireResize(box, contentEl, handleEl, edge) {
     } else if (edge === 'bottom') {
       const height = Math.min(window.innerHeight - startRect.top - EDGE_MARGIN, Math.max(MIN_BOX_HEIGHT, startRect.height + dy));
       box.style.height = `${height}px`;
+      // .modal is deliberately overflow:visible (so the handles stay
+      // hit-testable) — .modal-content is the only element that actually
+      // clips content, via its own max-height. Without updating it here too,
+      // it stays at the PRE-drag cap for the whole drag, so tall content
+      // visibly spills past the box's real-time (shrinking) outline until
+      // release, instead of scrolling inside it like it does once dragging
+      // stops.
+      contentEl.style.maxHeight = `${height}px`;
     } else if (edge === 'top') {
       const maxHeight = startRect.bottom - EDGE_MARGIN;
       const height = Math.min(maxHeight, Math.max(MIN_BOX_HEIGHT, startRect.height - dy));
       box.style.height = `${height}px`;
       box.style.top = `${startRect.bottom - height}px`;
+      contentEl.style.maxHeight = `${height}px`;
     }
   };
 
