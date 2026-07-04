@@ -169,5 +169,11 @@
   },
   "explain_section_memory_tip": {
     "message": "Petua mengingat"
+  },
+  "explain_expand_all": {
+    "message": "Kembangkan semua"
+  },
+  "explain_collapse_all": {
+    "message": "Kuncupkan semua"
   }
 }

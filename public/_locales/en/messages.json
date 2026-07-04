@@ -226,5 +226,13 @@
   "explain_section_memory_tip": {
     "message": "Memory tip",
     "description": "Section label in the Explain panel for a mnemonic to help remember the word."
+  },
+  "explain_expand_all": {
+    "message": "Expand all",
+    "description": "Toggle control in the Explain panel that opens every collapsible section at once."
+  },
+  "explain_collapse_all": {
+    "message": "Collapse all",
+    "description": "Same control as explain_expand_all, shown once every collapsible section is already open."
   }
 }

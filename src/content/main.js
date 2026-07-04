@@ -33,6 +33,20 @@ onModalResize((size) => {
   chrome.storage.local.set({ [MODAL_SIZE_STORAGE_KEY]: size });
 });
 
+// Whether the Explain payload's collapsible sections (collocations/word
+// family/synonyms/antonyms/memory tip) should start expanded — set only via
+// the in-modal "expand all/collapse all" toggle (no options-page UI for
+// this), so it's a main.js-local setting same as MODAL_SIZE_STORAGE_KEY
+// above, not a shared/settings-keys.js entry. Absent means collapsed (the
+// original default, before this preference existed). Deliberately NOT
+// updated by individual per-section clicks — only the explicit toggle-all
+// action changes what future Explain payloads start as.
+const EXPLAIN_EXPANDED_STORAGE_KEY = 'explainSectionsExpanded';
+let explainSectionsExpanded = false;
+chrome.storage.local.get(EXPLAIN_EXPANDED_STORAGE_KEY).then((stored) => {
+  explainSectionsExpanded = stored[EXPLAIN_EXPANDED_STORAGE_KEY] === true;
+});
+
 // Popup on/off toggle (kill switch, not a setup step — absent means on).
 // Read once at load and kept live via storage.onChanged so flipping it in
 // the popup takes effect on already-open tabs immediately, no reload
@@ -142,6 +156,8 @@ function explainSectionLabels() {
     synonymsLabel: chrome.i18n.getMessage('explain_section_synonyms'),
     antonymsLabel: chrome.i18n.getMessage('explain_section_antonyms'),
     memoryTipLabel: chrome.i18n.getMessage('explain_section_memory_tip'),
+    expandAllLabel: chrome.i18n.getMessage('explain_expand_all'),
+    collapseAllLabel: chrome.i18n.getMessage('explain_collapse_all'),
   };
 }
 
@@ -192,7 +208,16 @@ async function offerExplain(text, context, targetLang, requestId) {
       const res = await requestExplain(text, context, targetLang);
       if (requestId !== requestSeq) return; // ditto — a newer translation may have started mid-request
       if (res?.ok) {
-        showExplainResult(text, res.data, explainSectionLabels());
+        showExplainResult(text, res.data, explainSectionLabels(), {
+          defaultExpanded: explainSectionsExpanded,
+          // Only the explicit toggle-all action changes the future default —
+          // individual per-section clicks stay purely visual (see the const's
+          // own comment above).
+          onToggleAll: (expanded) => {
+            explainSectionsExpanded = expanded;
+            chrome.storage.local.set({ [EXPLAIN_EXPANDED_STORAGE_KEY]: expanded });
+          },
+        });
       } else {
         showExplainError(res?.error?.message || chrome.i18n.getMessage('error_generic'));
       }

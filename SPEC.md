@@ -74,7 +74,7 @@ Port the reference explain design ([REFERENCE-SNIPPETS §5](docs/REFERENCE-SNIPP
 - Strict-JSON prompt, schema-versioned payload (`schemaVersion`), loose-parse fallback (strip code fences, regex-extract `{...}`).
 - Payload: phonetic (IPA), partOfSpeech, cefrLevel, definition in source language + target language, in-context meaning, 3 graded examples (increasing CEFR, vocabulary simpler than the target word), collocations, wordFamily, synonyms/antonyms, memoryTip.
 - Context: send the surrounding paragraph (capture via selection's `commonAncestorContainer`, truncated to ~1200 chars) so the explanation is context-specific.
-- Render: headword + badges (POS, CEFR), definition block, collapsible sections for collocations/word family/synonyms. Escape all dynamic HTML ([REFERENCE-SNIPPETS §8](docs/REFERENCE-SNIPPETS.md)).
+- Render: headword + badges (POS, CEFR), definition block, collapsible sections for collocations/word family/synonyms/antonyms/memory tip — default collapsed, with one "expand all/collapse all" control above them whose last-chosen state persists (`chrome.storage.local`) as the default for future Explain lookups (T-039); individual per-section clicks stay session-only and never change that saved default. Escape all dynamic HTML ([REFERENCE-SNIPPETS §8](docs/REFERENCE-SNIPPETS.md)).
 
 ## 6. Caching
 

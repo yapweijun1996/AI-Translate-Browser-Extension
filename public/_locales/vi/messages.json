@@ -169,5 +169,11 @@
   },
   "explain_section_memory_tip": {
     "message": "Mẹo ghi nhớ"
+  },
+  "explain_expand_all": {
+    "message": "Mở rộng tất cả"
+  },
+  "explain_collapse_all": {
+    "message": "Thu gọn tất cả"
   }
 }

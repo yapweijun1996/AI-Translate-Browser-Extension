@@ -169,5 +169,11 @@
   },
   "explain_section_memory_tip": {
     "message": "覚え方のヒント"
+  },
+  "explain_expand_all": {
+    "message": "すべて展開"
+  },
+  "explain_collapse_all": {
+    "message": "すべて折りたたむ"
   }
 }

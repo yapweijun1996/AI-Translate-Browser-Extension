@@ -208,12 +208,14 @@ export function showUpsell(message, opts) {
  * HTML shape. Thin wrapper around explain-panel.js's own version purely to
  * add the scroll-to-top reset, which is this file's concern (contentEl is
  * private to modal.js), not explain-panel's.
+ * @param {{defaultExpanded: boolean, onToggleAll: (expanded: boolean) => void}} [opts]
+ *   see explain-panel.js's own showExplainResult for what these do.
  */
-export function showExplainResult(headword, payload, sectionLabels) {
+export function showExplainResult(headword, payload, sectionLabels, opts) {
   // Same reasoning as showModal()'s reset: show the explanation starting
   // from its own top, not wherever the container happened to be scrolled.
   contentEl.scrollTop = 0;
-  renderExplainResult(headword, payload, sectionLabels);
+  renderExplainResult(headword, payload, sectionLabels, opts);
 }
 
 export function hideModal() {

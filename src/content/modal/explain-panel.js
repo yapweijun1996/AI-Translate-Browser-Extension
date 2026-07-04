@@ -91,26 +91,66 @@ export function showExplainError(message) {
  * Render the Explain payload (see explain-render.js for the HTML shape).
  * @param {string} headword
  * @param {object} payload
- * @param {object} sectionLabels
+ * @param {object} sectionLabels also carries expandAllLabel/collapseAllLabel (main.js)
+ * @param {{defaultExpanded?: boolean, onToggleAll?: (expanded: boolean) => void}} [opts]
+ *   defaultExpanded: the user's saved starting state for collapsible sections.
+ *   onToggleAll: called ONLY by the explicit toggle-all control, with the new
+ *   aggregate state, so main.js can persist it as the future default —
+ *   individual per-section clicks never call this (see wireExplainCollapsibles).
  */
-export function showExplainResult(headword, payload, sectionLabels) {
+export function showExplainResult(headword, payload, sectionLabels, opts = {}) {
   if (!explainBody) return;
   explainBtn.disabled = false;
   explainBody.className = 'modal-explain-body';
-  explainBody.innerHTML = renderExplainHtml(headword, payload, sectionLabels);
+  explainBody.innerHTML = renderExplainHtml(headword, payload, sectionLabels, opts.defaultExpanded);
   explainBody.hidden = false;
-  wireExplainCollapsibles();
+  wireExplainCollapsibles(sectionLabels, opts.onToggleAll);
 }
 
-/** Click-to-toggle for `.explain-block.is-collapsible` sections. */
-function wireExplainCollapsibles() {
-  explainBody.querySelectorAll('.explain-block.is-collapsible .explain-label').forEach((label) => {
+/**
+ * Click-to-toggle for individual `.explain-block.is-collapsible` sections,
+ * plus the "expand all/collapse all" control rendered above them (omitted
+ * entirely by explain-render.js when there's nothing collapsible to toggle).
+ * @param {{expandAllLabel: string, collapseAllLabel: string}} sectionLabels
+ * @param {(expanded: boolean) => void} [onToggleAll]
+ */
+function wireExplainCollapsibles(sectionLabels, onToggleAll) {
+  const blocks = explainBody.querySelectorAll('.explain-block.is-collapsible');
+  const toggleAllEl = explainBody.querySelector('.explain-toggle-all');
+
+  // Reflects individual clicks back onto the toggle-all control's label —
+  // if the user has manually left even one section collapsed, the control
+  // should still offer "expand all", not claim everything's already open.
+  const syncToggleAllLabel = () => {
+    if (!toggleAllEl) return;
+    const allExpanded = [...blocks].every((b) => b.dataset.collapsed !== '1');
+    toggleAllEl.dataset.expanded = allExpanded ? '1' : '0';
+    toggleAllEl.textContent = allExpanded ? sectionLabels.collapseAllLabel : sectionLabels.expandAllLabel;
+  };
+
+  blocks.forEach((b) => {
+    const label = b.querySelector('.explain-label');
     label.addEventListener('click', () => {
-      const b = label.parentElement;
       const collapsed = b.dataset.collapsed === '1';
       b.dataset.collapsed = collapsed ? '0' : '1';
       const toggle = b.querySelector('.explain-toggle');
       if (toggle) toggle.textContent = collapsed ? '−' : '+';
+      syncToggleAllLabel();
     });
+  });
+
+  toggleAllEl?.addEventListener('click', () => {
+    // Any section still collapsed means "expand all" is the next action;
+    // only when every section is already open does the control collapse
+    // everything instead — the standard expand-all/collapse-all convention.
+    const expandAll = [...blocks].some((b) => b.dataset.collapsed === '1');
+    blocks.forEach((b) => {
+      b.dataset.collapsed = expandAll ? '0' : '1';
+      const toggle = b.querySelector('.explain-toggle');
+      if (toggle) toggle.textContent = expandAll ? '−' : '+';
+    });
+    toggleAllEl.dataset.expanded = expandAll ? '1' : '0';
+    toggleAllEl.textContent = expandAll ? sectionLabels.collapseAllLabel : sectionLabels.expandAllLabel;
+    onToggleAll?.(expandAll);
   });
 }

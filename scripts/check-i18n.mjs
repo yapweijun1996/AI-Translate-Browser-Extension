@@ -20,7 +20,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
 const LOCALES = ['en', 'zh_CN', 'ja', 'ko', 'ms', 'vi'];
 // Keep in sync with docs/I18N.md's "Key naming" table.
-const KEY_PREFIX_RE = /^(ext|popup|options|modal|menu|error|engine_label|explain_section)_[A-Za-z0-9_]+$/;
+const KEY_PREFIX_RE = /^(ext|popup|options|modal|menu|error|engine_label|explain_section|explain_expand|explain_collapse)_[A-Za-z0-9_]+$/;
 const SUPPRESS_RE = /\/\/\s*i18n-ok\b/;
 
 let errors = [];

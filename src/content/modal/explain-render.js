@@ -16,16 +16,20 @@ import { escapeHtml } from '../../shared/dom.js';
  * painful to build as ~50 createElement calls).
  * @param {string} headword the originally-selected phrase (already shown in the source row; repeated here as the Explain block's own heading)
  * @param {object} payload SPEC §5 shape from EXPLAIN — schemaVersion, phonetic, partOfSpeech, cefrLevel, definitionSrc, definitionTgt, context, examples[], collocations[], wordFamily[], synonyms[], antonyms[], memoryTip
- * @param {{collocationsLabel: string, wordFamilyLabel: string, synonymsLabel: string, antonymsLabel: string, memoryTipLabel: string, definitionLabel: string, examplesLabel: string, contextLabel: string}} sectionLabels i18n labels for each block (T-025 doesn't hardcode English)
+ * @param {{collocationsLabel: string, wordFamilyLabel: string, synonymsLabel: string, antonymsLabel: string, memoryTipLabel: string, definitionLabel: string, examplesLabel: string, contextLabel: string, expandAllLabel: string, collapseAllLabel: string}} sectionLabels i18n labels for each block (T-025 doesn't hardcode English)
+ * @param {boolean} [defaultExpanded] the user's saved preference (main.js) for whether
+ *   collapsible sections start expanded or collapsed — false (collapsed) if omitted.
  * @returns {string} the full innerHTML for .modal-explain-body
  */
-export function renderExplainHtml(headword, payload, sectionLabels) {
+export function renderExplainHtml(headword, payload, sectionLabels, defaultExpanded = false) {
+  const collapsedAttr = defaultExpanded ? '0' : '1';
+  const toggleGlyph = defaultExpanded ? '−' : '+';
   const block = (body, opts = {}) =>
     body
       ? `<div class="explain-block${opts.collapsible ? ' is-collapsible' : ''}"${
-          opts.collapsible ? ' data-collapsed="1"' : ''
+          opts.collapsible ? ` data-collapsed="${collapsedAttr}"` : ''
         }>
-           <div class="explain-label">${escapeHtml(opts.label || '')}${opts.collapsible ? ' <span class="explain-toggle">+</span>' : ''}</div>
+           <div class="explain-label">${escapeHtml(opts.label || '')}${opts.collapsible ? ` <span class="explain-toggle">${toggleGlyph}</span>` : ''}</div>
            <div class="explain-body-text">${body}</div>
          </div>`
       : '';
@@ -112,5 +116,15 @@ export function renderExplainHtml(headword, payload, sectionLabels) {
     ? block(escapeHtml(payload.memoryTip), { label: sectionLabels.memoryTipLabel, collapsible: true })
     : '';
 
-  return head + definitions + context + examples + collocations + wordFamily + synonyms + antonyms + memoryTip;
+  const collapsibleSections = collocations + wordFamily + synonyms + antonyms + memoryTip;
+  // Only show the toggle-all control when there's at least one collapsible
+  // section to toggle — a payload with none (e.g. explain_unsupported's
+  // graceful-degradation shape) would otherwise show a dead control.
+  const toggleAll = collapsibleSections
+    ? `<div class="explain-toggle-all" data-expanded="${defaultExpanded ? '1' : '0'}">${escapeHtml(
+        defaultExpanded ? sectionLabels.collapseAllLabel : sectionLabels.expandAllLabel,
+      )}</div>`
+    : '';
+
+  return head + definitions + context + examples + toggleAll + collapsibleSections;
 }

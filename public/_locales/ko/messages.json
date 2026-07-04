@@ -169,5 +169,11 @@
   },
   "explain_section_memory_tip": {
     "message": "암기 팁"
+  },
+  "explain_expand_all": {
+    "message": "모두 펼치기"
+  },
+  "explain_collapse_all": {
+    "message": "모두 접기"
   }
 }

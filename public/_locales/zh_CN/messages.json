@@ -169,5 +169,11 @@
   },
   "explain_section_memory_tip": {
     "message": "记忆技巧"
+  },
+  "explain_expand_all": {
+    "message": "展开全部"
+  },
+  "explain_collapse_all": {
+    "message": "收起全部"
   }
 }

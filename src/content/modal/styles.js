@@ -324,6 +324,20 @@ export const MODAL_CSS = `
   .explain-block.is-collapsible[data-collapsed='1'] .explain-body-text {
     display: none;
   }
+  .explain-toggle-all {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #eee;
+    font-size: 12px;
+    font-weight: 600;
+    color: #2563eb;
+    cursor: pointer;
+    user-select: none;
+  }
+  .explain-toggle-all:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+  }
   .explain-def-src {
     color: #444;
   }
