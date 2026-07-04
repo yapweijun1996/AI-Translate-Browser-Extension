@@ -86,7 +86,10 @@ async function ttsButtonOpts(which, lang) {
   const key = which === 'source' ? 'onSpeakSource' : 'onSpeakTarget';
   return {
     speakLabel: chrome.i18n.getMessage(which === 'source' ? 'modal_speak_source_label' : 'modal_speak_target_label'),
-    [key]: (text) => speak(text, lang, voicePref),
+    // onDone (from modal.js's wireSpeakButton) un-lights the button when the
+    // utterance finishes on its own — wired to onError too, so a failed
+    // utterance doesn't leave the button stuck in its speaking state either.
+    [key]: (text, onDone) => speak(text, lang, voicePref, { onEnd: onDone, onError: onDone }),
     onStopSpeaking: () => stopSpeaking(),
   };
 }

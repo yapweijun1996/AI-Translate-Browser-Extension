@@ -283,10 +283,13 @@ const MODAL_CSS = `
   .modal-upsell-btn-primary:hover {
     background: #1d4ed8;
   }
+  /* No max-height/overflow of its own (dropped when .modal-content became
+     the single scroll container) — an inner 320px cap here would make the
+     manual resize feature useless for exactly the content it exists for:
+     dragging the box taller wouldn't reveal any more of the Explain payload,
+     just add a second, nested scrollbar. */
   .modal-explain-body {
     margin-top: 10px;
-    max-height: 320px;
-    overflow-y: auto;
     font-size: 13px;
   }
   .modal-explain-body.is-loading,
@@ -461,18 +464,23 @@ function createSpeakButton() {
 /**
  * Wire a speak button to toggle play/stop for `text`. onSpeak must return
  * true if it actually started speaking (mirrors tts.js's speak() return
- * value) — main.js supplies onSpeak/onStop since this module stays
- * chrome-API-free and doesn't import tts.js itself.
+ * value) and call the `onDone` it's handed when the utterance finishes on
+ * its own — without that, the button would stay lit in its "speaking"
+ * state forever after natural playback end, and replaying would take two
+ * clicks (a no-op "stop" first). main.js supplies onSpeak/onStop since
+ * this module stays chrome-API-free and doesn't import tts.js itself.
  * @param {HTMLButtonElement} btn
  * @param {string} text
  * @param {string} label i18n accessible name
- * @param {(text: string) => boolean} onSpeak
+ * @param {(text: string, onDone: () => void) => boolean} onSpeak
  * @param {() => void} onStop
  */
 function wireSpeakButton(btn, text, label, onSpeak, onStop) {
   btn.hidden = false;
   btn.setAttribute('aria-label', label);
   btn.title = label;
+  // Stale state from a previous open/wiring must not leak into this one.
+  btn.classList.remove('is-speaking');
   stopSpeakingCb = onStop;
   btn.onclick = () => {
     if (btn.classList.contains('is-speaking')) {
@@ -483,7 +491,7 @@ function wireSpeakButton(btn, text, label, onSpeak, onStop) {
     // Only one utterance plays at a time (tts.js cancels any other before
     // starting) — drop the "speaking" look from whichever button had it.
     box.querySelectorAll('.modal-speak-btn.is-speaking').forEach((b) => b.classList.remove('is-speaking'));
-    if (onSpeak(text)) btn.classList.add('is-speaking');
+    if (onSpeak(text, () => btn.classList.remove('is-speaking'))) btn.classList.add('is-speaking');
   };
 }
 
@@ -784,9 +792,19 @@ function wireResize(handleEl, edge) {
       // back down if its current content doesn't need all that room, while
       // userHeightCap (applied via position()'s max-height) remembers how
       // tall the user is willing to let it get for a future longer payload.
-      userHeightCap = Math.round(box.getBoundingClientRect().height);
+      const rectAtRelease = box.getBoundingClientRect();
+      userHeightCap = Math.round(rectAtRelease.height);
       box.style.height = '';
       contentEl.style.maxHeight = `${userHeightCap}px`;
+      if (edge === 'top') {
+        // A top-edge drag anchors the BOTTOM edge — if the cap conversion
+        // just shrank the box (content smaller than the dragged height),
+        // re-derive top so the bottom stays where the user left it, instead
+        // of leaving top pinned and letting the bottom float up away from
+        // the selection the box was anchored to.
+        const newHeight = box.getBoundingClientRect().height;
+        box.style.top = `${Math.max(EDGE_MARGIN, rectAtRelease.bottom - newHeight)}px`;
+      }
     }
     resizeCb?.({ width: Math.round(box.getBoundingClientRect().width), height: userHeightCap ?? Math.round(box.getBoundingClientRect().height) });
   };
@@ -803,9 +821,10 @@ function wireResize(handleEl, edge) {
  * Open the modal anchored to `rect`, showing `sourceText` and a loading state.
  * @param {string} sourceText
  * @param {DOMRect} rect selection bounding rect from the detector
- * @param {{closeLabel: string, loadingLabel: string, speakLabel?: string, onSpeakSource?: (text: string) => boolean, onStopSpeaking?: () => void}} labels
+ * @param {{closeLabel: string, loadingLabel: string, speakLabel?: string, onSpeakSource?: (text: string, onDone: () => void) => boolean, onStopSpeaking?: () => void}} labels
  *   onSpeakSource/onStopSpeaking are omitted entirely (not just falsy) when TTS isn't supported —
- *   same fail-closed convention as onUseOnDevice in showUpsell().
+ *   same fail-closed convention as onUseOnDevice in showUpsell(). onSpeakSource must invoke
+ *   onDone when playback finishes on its own (see wireSpeakButton).
  */
 export function showModal(sourceText, rect, { closeLabel, loadingLabel, speakLabel, onSpeakSource, onStopSpeaking }) {
   if (!rect) return;
@@ -834,8 +853,8 @@ export function showModal(sourceText, rect, { closeLabel, loadingLabel, speakLab
 /**
  * Render a successful translation result.
  * @param {string} translatedText
- * @param {{speakLabel?: string, onSpeakTarget?: (text: string) => boolean, onStopSpeaking?: () => void}} [opts]
- *   Same omit-when-unsupported convention as showModal's onSpeakSource.
+ * @param {{speakLabel?: string, onSpeakTarget?: (text: string, onDone: () => void) => boolean, onStopSpeaking?: () => void}} [opts]
+ *   Same omit-when-unsupported and onDone conventions as showModal's onSpeakSource.
  */
 export function showResult(translatedText, { speakLabel, onSpeakTarget, onStopSpeaking } = {}) {
   if (!targetEl) return;
@@ -1087,11 +1106,14 @@ function wireExplainCollapsibles() {
 }
 
 export function hideModal() {
-  if (box) box.classList.remove('visible');
+  if (!box) return;
+  box.classList.remove('visible');
   // Closing via Esc/outside-click/× doesn't go through main.js, so this
   // module has to remember how to stop speech itself rather than relying on
-  // the caller to notice the modal closed.
+  // the caller to notice the modal closed. Clear the buttons' speaking look
+  // too — it would otherwise still be lit on the next open.
   stopSpeakingCb?.();
+  box.querySelectorAll('.modal-speak-btn.is-speaking').forEach((b) => b.classList.remove('is-speaking'));
 }
 
 export function isModalVisible() {
