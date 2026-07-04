@@ -110,6 +110,12 @@
   "popup_no_engine": {
     "message": "利用可能な翻訳エンジンがまだありません。"
   },
+  "popup_enabled_label": {
+    "message": "有効"
+  },
+  "popup_disabled_hint": {
+    "message": "AI Translate はオフになっています。オンにすると選択したテキストを翻訳できます。"
+  },
   "engine_label_deepseek": {
     "message": "DeepSeek(あなたのAPIキー)"
   },

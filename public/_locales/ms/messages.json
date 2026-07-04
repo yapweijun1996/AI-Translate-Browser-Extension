@@ -110,6 +110,12 @@
   "popup_no_engine": {
     "message": "Tiada enjin terjemahan tersedia lagi."
   },
+  "popup_enabled_label": {
+    "message": "Diaktifkan"
+  },
+  "popup_disabled_hint": {
+    "message": "AI Translate telah dimatikan. Hidupkan semula untuk menterjemah teks yang dipilih."
+  },
   "engine_label_deepseek": {
     "message": "DeepSeek (kunci API anda)"
   },

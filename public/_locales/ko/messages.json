@@ -110,6 +110,12 @@
   "popup_no_engine": {
     "message": "아직 사용 가능한 번역 엔진이 없습니다."
   },
+  "popup_enabled_label": {
+    "message": "사용"
+  },
+  "popup_disabled_hint": {
+    "message": "AI Translate가 꺼져 있습니다. 다시 켜면 선택한 텍스트를 번역할 수 있습니다."
+  },
   "engine_label_deepseek": {
     "message": "DeepSeek (내 API 키)"
   },

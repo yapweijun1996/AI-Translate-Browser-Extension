@@ -13,3 +13,9 @@ export const TTS_VOICES_STORAGE_KEY = 'ttsVoices';
 
 /** Whether to automatically speak the translation result as soon as it arrives. */
 export const TTS_AUTOPLAY_STORAGE_KEY = 'ttsAutoPlay';
+
+/** Global on/off switch (popup toggle) for the selection icon + context-menu
+ * translate. Absent/undefined means enabled — this is a kill switch a user
+ * flips occasionally, not a setup step, so it must default to on without
+ * ever being explicitly written on install. */
+export const EXTENSION_ENABLED_STORAGE_KEY = 'extensionEnabled';

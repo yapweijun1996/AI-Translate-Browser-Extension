@@ -14,6 +14,63 @@
         font-size: 15px;
         margin: 0 0 10px;
       }
+      .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid #e6e6e8;
+      }
+      .toggle-label {
+        font-size: 13px;
+        font-weight: 500;
+      }
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 36px;
+        height: 20px;
+        flex-shrink: 0;
+      }
+      .toggle-switch input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        opacity: 0;
+        cursor: pointer;
+      }
+      .toggle-track {
+        position: absolute;
+        inset: 0;
+        background: #d0d0d5;
+        border-radius: 999px;
+        transition: background-color 0.15s ease;
+      }
+      .toggle-track::before {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 16px;
+        height: 16px;
+        border-radius: 50%;
+        background: #fff;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+        transition: transform 0.15s ease;
+      }
+      .toggle-switch input:checked + .toggle-track {
+        background: #2563eb;
+      }
+      .toggle-switch input:checked + .toggle-track::before {
+        transform: translateX(16px);
+      }
+      .toggle-switch input:focus-visible + .toggle-track {
+        outline: 2px solid #2563eb;
+        outline-offset: 2px;
+      }
       .status-row {
         display: flex;
         align-items: baseline;
@@ -38,6 +95,11 @@
         line-height: 1.4;
         margin: 10px 0 14px;
       }
+      body.is-disabled .status-row,
+      body.is-disabled .no-engine,
+      body.is-disabled #usageHint {
+        display: none;
+      }
       button {
         width: 100%;
         padding: 8px;
@@ -56,6 +118,16 @@
   <body>
     <h1 data-i18n="ext_name"></h1>
 
+    <div class="toggle-row">
+      <span class="toggle-label" data-i18n="popup_enabled_label"></span>
+      <label class="toggle-switch">
+        <input type="checkbox" id="enabledToggle" />
+        <span class="toggle-track" aria-hidden="true"></span>
+      </label>
+    </div>
+
+    <p class="hint" id="disabledHint" hidden data-i18n="popup_disabled_hint"></p>
+
     <div id="engineStatus">
       <div class="status-row" id="engineStatusRow" hidden>
         <span class="status-label" data-i18n="popup_current_engine_label"></span>
@@ -64,7 +136,7 @@
       <p class="no-engine" id="noEngineNote" hidden data-i18n="popup_no_engine"></p>
     </div>
 
-    <p class="hint" data-i18n="popup_usage_hint"></p>
+    <p class="hint" id="usageHint" data-i18n="popup_usage_hint"></p>
 
     <button type="button" id="openSettingsBtn" data-i18n="popup_settings_button"></button>
 

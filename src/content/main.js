@@ -19,7 +19,7 @@ import {
   onModalResize,
 } from './modal.js';
 import { isTtsSupported, speak, stopSpeaking } from './tts.js';
-import { TTS_VOICES_STORAGE_KEY, TTS_AUTOPLAY_STORAGE_KEY } from '../shared/settings-keys.js';
+import { TTS_VOICES_STORAGE_KEY, TTS_AUTOPLAY_STORAGE_KEY, EXTENSION_ENABLED_STORAGE_KEY } from '../shared/settings-keys.js';
 
 // Only read/written here — a single-file setting, so it doesn't belong in
 // shared/settings-keys.js (that file is for settings more than one
@@ -31,6 +31,25 @@ chrome.storage.local.get(MODAL_SIZE_STORAGE_KEY).then((stored) => {
 });
 onModalResize((size) => {
   chrome.storage.local.set({ [MODAL_SIZE_STORAGE_KEY]: size });
+});
+
+// Popup on/off toggle (kill switch, not a setup step — absent means on).
+// Read once at load and kept live via storage.onChanged so flipping it in
+// the popup takes effect on already-open tabs immediately, no reload
+// needed. Gates both trigger paths below (selection icon + context menu);
+// toggling off mid-session also tears down anything already showing so the
+// page doesn't look "stuck" translated.
+let extensionEnabled = true;
+chrome.storage.local.get(EXTENSION_ENABLED_STORAGE_KEY).then((stored) => {
+  extensionEnabled = stored[EXTENSION_ENABLED_STORAGE_KEY] !== false;
+});
+chrome.storage.onChanged.addListener((changes, area) => {
+  if (area !== 'local' || !changes[EXTENSION_ENABLED_STORAGE_KEY]) return;
+  extensionEnabled = changes[EXTENSION_ENABLED_STORAGE_KEY].newValue !== false;
+  if (!extensionEnabled) {
+    hideTriggerIcon();
+    hideModal();
+  }
 });
 
 // Content script entry: selection → trigger icon → modal. Translation is
@@ -272,6 +291,7 @@ async function translateSelection(text, context) {
 let lastRect = null;
 
 onSelection((text, rect) => {
+  if (!extensionEnabled) return;
   // Selections made inside our own UI must never trigger the icon.
   if (isInsideHost(window.getSelection()?.anchorNode)) return;
   if (!rect) return;
@@ -302,6 +322,7 @@ document.addEventListener('scroll', () => hideTriggerIcon(), { capture: true, pa
 // chrome.runtime.sendMessage — hence the exact-type check below.
 chrome.runtime.onMessage.addListener((message) => {
   if (message?.type !== MSG.MENU_TRANSLATE_SELECTION) return;
+  if (!extensionEnabled) return;
   const sel = window.getSelection();
   if (!sel || sel.isCollapsed) return;
   const text = message.payload?.text || sel.toString().trim();

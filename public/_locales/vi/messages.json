@@ -110,6 +110,12 @@
   "popup_no_engine": {
     "message": "Chưa có công cụ dịch nào khả dụng."
   },
+  "popup_enabled_label": {
+    "message": "Bật"
+  },
+  "popup_disabled_hint": {
+    "message": "AI Translate hiện đang tắt. Bật lại để dịch văn bản đã chọn."
+  },
   "engine_label_deepseek": {
     "message": "DeepSeek (khóa API của bạn)"
   },

@@ -147,6 +147,14 @@
     "message": "No translation engine is available yet.",
     "description": "Shown in the popup when no engine is currently usable."
   },
+  "popup_enabled_label": {
+    "message": "Enabled",
+    "description": "Label next to the popup's on/off toggle switch."
+  },
+  "popup_disabled_hint": {
+    "message": "AI Translate is turned off. Turn it back on to translate selected text.",
+    "description": "Shown in the popup when the user has switched the extension off."
+  },
   "engine_label_deepseek": {
     "message": "DeepSeek (your API key)",
     "description": "Display name for the DeepSeek BYOK engine in the picker."
