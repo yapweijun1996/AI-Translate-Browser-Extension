@@ -175,5 +175,237 @@
   },
   "explain_collapse_all": {
     "message": "Kuncupkan semua"
+  },
+  "options_nav_general": {
+    "message": "Umum",
+    "description": "Settings V2: options_nav_general"
+  },
+  "options_nav_translation": {
+    "message": "Terjemahan",
+    "description": "Settings V2: options_nav_translation"
+  },
+  "options_nav_providers": {
+    "message": "Penyedia (BYOK)",
+    "description": "Settings V2: options_nav_providers"
+  },
+  "options_nav_speech": {
+    "message": "Pertuturan",
+    "description": "Settings V2: options_nav_speech"
+  },
+  "options_nav_privacy": {
+    "message": "Privasi",
+    "description": "Settings V2: options_nav_privacy"
+  },
+  "options_subtitle": {
+    "message": "Konfigurasikan enjin terjemahan, kunci API, bahasa dan keutamaan suara.",
+    "description": "Settings V2: options_subtitle"
+  },
+  "options_general_section_heading": {
+    "message": "Keutamaan Umum",
+    "description": "Settings V2: options_general_section_heading"
+  },
+  "options_general_section_desc": {
+    "message": "Tetapkan bahasa sasaran utama dan lihat butiran sambungan.",
+    "description": "Settings V2: options_general_section_desc"
+  },
+  "options_target_lang_desc": {
+    "message": "Teks yang dipilih pada halaman web akan diterjemahkan ke dalam bahasa ini secara lalai.",
+    "description": "Settings V2: options_target_lang_desc"
+  },
+  "options_engine_desc": {
+    "message": "Pilih enjin yang memproses permintaan terjemahan dan penerangan anda.",
+    "description": "Settings V2: options_engine_desc"
+  },
+  "options_providers_desc": {
+    "message": "Konfigurasikan kunci API anda sendiri untuk terjemahan AI terus tanpa had kuota percuma.",
+    "description": "Settings V2: options_providers_desc"
+  },
+  "options_privacy_heading": {
+    "message": "Privasi & Keselamatan",
+    "description": "Settings V2: options_privacy_heading"
+  },
+  "options_privacy_desc": {
+    "message": "Bagaimana kelayakan dan data pelayaran anda dilindungi.",
+    "description": "Settings V2: options_privacy_desc"
+  },
+  "options_status_recommended": {
+    "message": "Disyorkan",
+    "description": "Settings V2: options_status_recommended"
+  },
+  "options_status_ready": {
+    "message": "Sedia",
+    "description": "Settings V2: options_status_ready"
+  },
+  "options_status_private_ready": {
+    "message": "Privasi / Sedia",
+    "description": "Settings V2: options_status_private_ready"
+  },
+  "options_status_key_required": {
+    "message": "Kunci API diperlukan",
+    "description": "Settings V2: options_status_key_required"
+  },
+  "options_status_unsupported": {
+    "message": "Tidak disokong pada peranti ini",
+    "description": "Settings V2: options_status_unsupported"
+  },
+  "options_engine_trial_hint": {
+    "message": "Terjemahan get laluan demo tanpa persediaan. Terhad untuk kegunaan percubaan.",
+    "description": "Settings V2: options_engine_trial_hint"
+  },
+  "options_engine_on_device_hint": {
+    "message": "Dijalankan secara setempat dalam Chrome. 100% peribadi — teks tidak pernah meninggalkan peranti (Terjemahan sahaja; Terangkan tidak disokong).",
+    "description": "Settings V2: options_engine_on_device_hint"
+  },
+  "options_engine_gemini_hint": {
+    "message": "Model pantas melalui Google Gemini API (gemini-2.0-flash)。",
+    "description": "Settings V2: options_engine_gemini_hint"
+  },
+  "options_engine_openai_hint": {
+    "message": "Terjemahan berkualiti tinggi melalui OpenAI API (gpt-5.4-mini)。",
+    "description": "Settings V2: options_engine_openai_hint"
+  },
+  "options_engine_deepseek_hint": {
+    "message": "Model serasi OpenAI yang menjimatkan kos melalui DeepSeek API (deepseek-v4-flash)。",
+    "description": "Settings V2: options_engine_deepseek_hint"
+  },
+  "options_engine_configure_action": {
+    "message": "Konfigurasikan kunci",
+    "description": "Settings V2: options_engine_configure_action"
+  },
+  "options_provider_status_configured": {
+    "message": "Kunci dikonfigurasikan",
+    "description": "Settings V2: options_provider_status_configured"
+  },
+  "options_provider_status_not_configured": {
+    "message": "Tiada kunci disimpan",
+    "description": "Settings V2: options_provider_status_not_configured"
+  },
+  "options_provider_masked_empty": {
+    "message": "Tiada kunci API dikonfigurasikan",
+    "description": "Settings V2: options_provider_masked_empty"
+  },
+  "options_provider_test_btn": {
+    "message": "Uji sambungan",
+    "description": "Settings V2: options_provider_test_btn"
+  },
+  "options_provider_testing": {
+    "message": "Menguji...",
+    "description": "Settings V2: options_provider_testing"
+  },
+  "options_provider_test_success": {
+    "message": "Sambungan berjaya",
+    "description": "Settings V2: options_provider_test_success"
+  },
+  "options_provider_test_failed": {
+    "message": "Sambungan gagal",
+    "description": "Settings V2: options_provider_test_failed"
+  },
+  "options_provider_edit_btn": {
+    "message": "Gantikan",
+    "description": "Settings V2: options_provider_edit_btn"
+  },
+  "options_provider_remove_btn": {
+    "message": "Padam",
+    "description": "Settings V2: options_provider_remove_btn"
+  },
+  "options_provider_cancel_btn": {
+    "message": "Batal",
+    "description": "Settings V2: options_provider_cancel_btn"
+  },
+  "options_provider_save_btn": {
+    "message": "Simpan kunci",
+    "description": "Settings V2: options_provider_save_btn"
+  },
+  "options_provider_key_saved": {
+    "message": "Kunci disimpan",
+    "description": "Settings V2: options_provider_key_saved"
+  },
+  "options_provider_key_removed": {
+    "message": "Kunci dipadamkan",
+    "description": "Settings V2: options_provider_key_removed"
+  },
+  "options_provider_show_key": {
+    "message": "Tunjukkan kunci",
+    "description": "Settings V2: options_provider_show_key"
+  },
+  "options_provider_hide_key": {
+    "message": "Sembunyikan kunci",
+    "description": "Settings V2: options_provider_hide_key"
+  },
+  "options_tts_test_voice_btn": {
+    "message": "Dengar",
+    "description": "Settings V2: options_tts_test_voice_btn"
+  },
+  "options_tts_test_sample": {
+    "message": "Halo, ini ialah sampel suara pertuturan.",
+    "description": "Settings V2: options_tts_test_sample"
+  },
+  "options_tts_voices_heading": {
+    "message": "Suara Sistem Dipasang",
+    "description": "Settings V2: options_tts_voices_heading"
+  },
+  "options_privacy_local_storage_title": {
+    "message": "Disimpan secara setempat dalam pelayar anda",
+    "description": "Settings V2: options_privacy_local_storage_title"
+  },
+  "options_privacy_local_storage_desc": {
+    "message": "Kunci API disimpan secara eksklusif dalam chrome.storage.local pada peranti anda. Ia tidak pernah disegerakkan ke akaun awan atau pangkalan data jauh.",
+    "description": "Settings V2: options_privacy_local_storage_desc"
+  },
+  "options_privacy_direct_requests_title": {
+    "message": "Trafik terus ke pembekal API rasmi",
+    "description": "Settings V2: options_privacy_direct_requests_title"
+  },
+  "options_privacy_direct_requests_desc": {
+    "message": "Apabila menggunakan Gemini, OpenAI, atau DeepSeek, permintaan dihantar terus dari pelayar anda ke titik akhir rasmi pembekal. Kunci anda tidak pernah melalui pelayan pembangun sambungan.",
+    "description": "Settings V2: options_privacy_direct_requests_desc"
+  },
+  "options_privacy_no_tracking_title": {
+    "message": "Sifar telemetri & penjejakan",
+    "description": "Settings V2: options_privacy_no_tracking_title"
+  },
+  "options_privacy_no_tracking_desc": {
+    "message": "Sambungan ini tidak mengandungi analitik, pengelogan aktiviti pengguna, atau skrip penjejakan. Apa yang anda terjemahkan kekal peribadi sepenuhnya.",
+    "description": "Settings V2: options_privacy_no_tracking_desc"
+  },
+  "options_engine_auto_name": {
+    "message": "Automatik",
+    "description": "Settings Shell V2: options_engine_auto_name"
+  },
+  "options_engine_setup_required": {
+    "message": "Persediaan diperlukan →",
+    "description": "Settings Shell V2: options_engine_setup_required"
+  },
+  "options_tts_current_voice_heading": {
+    "message": "Suara untuk Bahasa Sasaran",
+    "description": "Settings Shell V2: options_tts_current_voice_heading"
+  },
+  "options_tts_current_voice_desc": {
+    "message": "Suara utama yang digunakan semasa membaca terjemahan dengan kuat.",
+    "description": "Settings Shell V2: options_tts_current_voice_desc"
+  },
+  "options_tts_manage_all_voices": {
+    "message": "Urus suara untuk semua bahasa",
+    "description": "Settings Shell V2: options_tts_manage_all_voices"
+  },
+  "options_tts_manage_all_desc": {
+    "message": "Sesuaikan suara sistem khusus untuk bahasa sasaran lain yang disokong.",
+    "description": "Settings Shell V2: options_tts_manage_all_desc"
+  },
+  "options_menu_btn_label": {
+    "message": "Togol menu navigasi",
+    "description": "Settings Shell V2: options_menu_btn_label"
+  },
+  "options_general_about_heading": {
+    "message": "Mengenai AI Translate",
+    "description": "Settings Shell V2: options_general_about_heading"
+  },
+  "options_general_about_desc": {
+    "message": "Sambungan pelayar terjemahan web dan pembelajaran bahasa berkuasa AI.",
+    "description": "Settings Shell V2: options_general_about_desc"
+  },
+  "options_general_version_label": {
+    "message": "Versi",
+    "description": "Settings Shell V2: options_general_version_label"
   }
 }

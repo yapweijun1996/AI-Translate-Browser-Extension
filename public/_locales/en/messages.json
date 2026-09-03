@@ -234,5 +234,237 @@
   "explain_collapse_all": {
     "message": "Collapse all",
     "description": "Same control as explain_expand_all, shown once every collapsible section is already open."
+  },
+  "options_nav_general": {
+    "message": "General",
+    "description": "Settings V2: options_nav_general"
+  },
+  "options_nav_translation": {
+    "message": "Translation",
+    "description": "Settings V2: options_nav_translation"
+  },
+  "options_nav_providers": {
+    "message": "Providers",
+    "description": "Settings V2: options_nav_providers"
+  },
+  "options_nav_speech": {
+    "message": "Speech",
+    "description": "Settings V2: options_nav_speech"
+  },
+  "options_nav_privacy": {
+    "message": "Privacy",
+    "description": "Settings V2: options_nav_privacy"
+  },
+  "options_subtitle": {
+    "message": "Configure translation engines, API keys, languages, and voice preferences.",
+    "description": "Settings V2: options_subtitle"
+  },
+  "options_general_section_heading": {
+    "message": "General Preferences",
+    "description": "Settings V2: options_general_section_heading"
+  },
+  "options_general_section_desc": {
+    "message": "Set your primary target translation language and view extension details.",
+    "description": "Settings V2: options_general_section_desc"
+  },
+  "options_target_lang_desc": {
+    "message": "Highlighted text on web pages will be translated into this language by default.",
+    "description": "Settings V2: options_target_lang_desc"
+  },
+  "options_engine_desc": {
+    "message": "Select which engine processes your translation and explanation requests.",
+    "description": "Settings V2: options_engine_desc"
+  },
+  "options_providers_desc": {
+    "message": "Configure your own API keys for direct, unmetered AI translation.",
+    "description": "Settings V2: options_providers_desc"
+  },
+  "options_privacy_heading": {
+    "message": "Privacy & Security",
+    "description": "Settings V2: options_privacy_heading"
+  },
+  "options_privacy_desc": {
+    "message": "How your credentials and browsing data are protected.",
+    "description": "Settings V2: options_privacy_desc"
+  },
+  "options_status_recommended": {
+    "message": "Recommended",
+    "description": "Settings V2: options_status_recommended"
+  },
+  "options_status_ready": {
+    "message": "Ready",
+    "description": "Settings V2: options_status_ready"
+  },
+  "options_status_private_ready": {
+    "message": "Private / Ready",
+    "description": "Settings V2: options_status_private_ready"
+  },
+  "options_status_key_required": {
+    "message": "API key required",
+    "description": "Settings V2: options_status_key_required"
+  },
+  "options_status_unsupported": {
+    "message": "Unsupported on this device",
+    "description": "Settings V2: options_status_unsupported"
+  },
+  "options_engine_trial_hint": {
+    "message": "Zero-setup cloud translation powered by demo gateway. Rate-limited for trial use.",
+    "description": "Settings V2: options_engine_trial_hint"
+  },
+  "options_engine_on_device_hint": {
+    "message": "Runs locally in Chrome. 100% private — text never leaves your device. (Translation only; Explain not supported).",
+    "description": "Settings V2: options_engine_on_device_hint"
+  },
+  "options_engine_gemini_hint": {
+    "message": "Fast multimodal models via Google Gemini API (gemini-2.0-flash).",
+    "description": "Settings V2: options_engine_gemini_hint"
+  },
+  "options_engine_openai_hint": {
+    "message": "High-quality translations via OpenAI API (gpt-5.4-mini).",
+    "description": "Settings V2: options_engine_openai_hint"
+  },
+  "options_engine_deepseek_hint": {
+    "message": "Cost-effective OpenAI-compatible models via DeepSeek API (deepseek-v4-flash).",
+    "description": "Settings V2: options_engine_deepseek_hint"
+  },
+  "options_engine_configure_action": {
+    "message": "Configure key",
+    "description": "Settings V2: options_engine_configure_action"
+  },
+  "options_provider_status_configured": {
+    "message": "Key configured",
+    "description": "Settings V2: options_provider_status_configured"
+  },
+  "options_provider_status_not_configured": {
+    "message": "No key saved",
+    "description": "Settings V2: options_provider_status_not_configured"
+  },
+  "options_provider_masked_empty": {
+    "message": "No API key configured",
+    "description": "Settings V2: options_provider_masked_empty"
+  },
+  "options_provider_test_btn": {
+    "message": "Test connection",
+    "description": "Settings V2: options_provider_test_btn"
+  },
+  "options_provider_testing": {
+    "message": "Testing...",
+    "description": "Settings V2: options_provider_testing"
+  },
+  "options_provider_test_success": {
+    "message": "Connected successfully",
+    "description": "Settings V2: options_provider_test_success"
+  },
+  "options_provider_test_failed": {
+    "message": "Connection failed",
+    "description": "Settings V2: options_provider_test_failed"
+  },
+  "options_provider_edit_btn": {
+    "message": "Replace",
+    "description": "Settings V2: options_provider_edit_btn"
+  },
+  "options_provider_remove_btn": {
+    "message": "Remove",
+    "description": "Settings V2: options_provider_remove_btn"
+  },
+  "options_provider_cancel_btn": {
+    "message": "Cancel",
+    "description": "Settings V2: options_provider_cancel_btn"
+  },
+  "options_provider_save_btn": {
+    "message": "Save key",
+    "description": "Settings V2: options_provider_save_btn"
+  },
+  "options_provider_key_saved": {
+    "message": "Key saved",
+    "description": "Settings V2: options_provider_key_saved"
+  },
+  "options_provider_key_removed": {
+    "message": "Key removed",
+    "description": "Settings V2: options_provider_key_removed"
+  },
+  "options_provider_show_key": {
+    "message": "Show key",
+    "description": "Settings V2: options_provider_show_key"
+  },
+  "options_provider_hide_key": {
+    "message": "Hide key",
+    "description": "Settings V2: options_provider_hide_key"
+  },
+  "options_tts_test_voice_btn": {
+    "message": "Listen",
+    "description": "Settings V2: options_tts_test_voice_btn"
+  },
+  "options_tts_test_sample": {
+    "message": "Hello, this is a voice sample.",
+    "description": "Settings V2: options_tts_test_sample"
+  },
+  "options_tts_voices_heading": {
+    "message": "Installed Voices",
+    "description": "Settings V2: options_tts_voices_heading"
+  },
+  "options_privacy_local_storage_title": {
+    "message": "Stored locally in your browser",
+    "description": "Settings V2: options_privacy_local_storage_title"
+  },
+  "options_privacy_local_storage_desc": {
+    "message": "API keys are saved exclusively in chrome.storage.local on your device. They are never synced to any cloud account or remote database.",
+    "description": "Settings V2: options_privacy_local_storage_desc"
+  },
+  "options_privacy_direct_requests_title": {
+    "message": "Direct-to-provider traffic",
+    "description": "Settings V2: options_privacy_direct_requests_title"
+  },
+  "options_privacy_direct_requests_desc": {
+    "message": "When using Gemini, OpenAI, or DeepSeek, requests travel directly from your browser to the official provider endpoints. Your keys never pass through the extension developer's server.",
+    "description": "Settings V2: options_privacy_direct_requests_desc"
+  },
+  "options_privacy_no_tracking_title": {
+    "message": "Zero telemetry & tracking",
+    "description": "Settings V2: options_privacy_no_tracking_title"
+  },
+  "options_privacy_no_tracking_desc": {
+    "message": "The extension contains no analytics, user activity logging, or tracking scripts. What you translate remains entirely private.",
+    "description": "Settings V2: options_privacy_no_tracking_desc"
+  },
+  "options_engine_auto_name": {
+    "message": "Automatic",
+    "description": "Settings Shell V2: options_engine_auto_name"
+  },
+  "options_engine_setup_required": {
+    "message": "Setup required →",
+    "description": "Settings Shell V2: options_engine_setup_required"
+  },
+  "options_tts_current_voice_heading": {
+    "message": "Voice for Target Language",
+    "description": "Settings Shell V2: options_tts_current_voice_heading"
+  },
+  "options_tts_current_voice_desc": {
+    "message": "The primary voice used when reading translations aloud.",
+    "description": "Settings Shell V2: options_tts_current_voice_desc"
+  },
+  "options_tts_manage_all_voices": {
+    "message": "Manage voices for all languages",
+    "description": "Settings Shell V2: options_tts_manage_all_voices"
+  },
+  "options_tts_manage_all_desc": {
+    "message": "Customize specific system voices for other supported target languages.",
+    "description": "Settings Shell V2: options_tts_manage_all_desc"
+  },
+  "options_menu_btn_label": {
+    "message": "Toggle navigation menu",
+    "description": "Settings Shell V2: options_menu_btn_label"
+  },
+  "options_general_about_heading": {
+    "message": "About AI Translate",
+    "description": "Settings Shell V2: options_general_about_heading"
+  },
+  "options_general_about_desc": {
+    "message": "AI-powered web translation and language learning extension.",
+    "description": "Settings Shell V2: options_general_about_desc"
+  },
+  "options_general_version_label": {
+    "message": "Version",
+    "description": "Settings Shell V2: options_general_version_label"
   }
 }

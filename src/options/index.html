@@ -1,153 +1,1310 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title data-i18n="options_heading"></title>
     <style>
+      :root {
+        --bg-page: #f8fafc;
+        --bg-card: #ffffff;
+        --bg-subtle: #f1f5f9;
+        --bg-hover: #f8fafc;
+        --border-subtle: #e2e8f0;
+        --border-strong: #cbd5e1;
+        --text-primary: #0f172a;
+        --text-secondary: #475569;
+        --text-muted: #64748b;
+        --primary: #2563eb;
+        --primary-hover: #1d4ed8;
+        --primary-light: #eff6ff;
+        --primary-focus: rgba(37, 99, 235, 0.2);
+        --danger: #dc2626;
+        --danger-light: #fef2f2;
+        --danger-border: #fecaca;
+        --success: #16a34a;
+        --success-light: #f0fdf4;
+        --success-border: #bbf7d0;
+        --warning: #d97706;
+        --warning-light: #fffbeb;
+        --warning-border: #fde68a;
+        --topbar-height: 58px;
+        --sidebar-width: 230px;
+        --radius-sm: 6px;
+        --radius-md: 10px;
+        --radius-lg: 14px;
+        --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
       body {
-        max-width: 640px;
-        margin: 40px auto;
-        padding: 0 16px;
-        font-family: system-ui, sans-serif;
-        color: #1a1a1a;
-      }
-      h1 {
-        font-size: 20px;
-      }
-      h2 {
-        font-size: 15px;
-        margin: 0 0 8px;
-      }
-      section {
-        margin: 28px 0;
-        padding-top: 20px;
-        border-top: 1px solid #e5e5e5;
-      }
-      section:first-of-type {
-        border-top: none;
-      }
-      p {
-        color: #555;
-        font-size: 13px;
+        background-color: var(--bg-page);
+        color: var(--text-primary);
+        font-family: var(--font-family);
+        font-size: 14px;
         line-height: 1.5;
+        height: 100vh;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
       }
-      .engine-row {
+
+      :focus-visible {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
+      /* ------------------------------------------------------------------- */
+      /* 1. Persistent Topbar                                                */
+      /* ------------------------------------------------------------------- */
+      .app-topbar {
+        height: var(--topbar-height);
+        background: #ffffff;
+        border-bottom: 1px solid var(--border-subtle);
         display: flex;
         align-items: center;
-        gap: 8px;
-        padding: 6px 0;
-        font-size: 14px;
+        justify-content: space-between;
+        padding: 0 20px;
+        flex-shrink: 0;
+        z-index: 50;
       }
-      .engine-row label {
-        flex: 1;
-      }
-      .engine-status {
-        font-size: 12px;
-        padding: 2px 8px;
-        border-radius: 10px;
-        background: #eee;
-        color: #555;
-      }
-      .engine-status.is-available {
-        background: #e3f4e6;
-        color: #1e7a34;
-      }
-      .engine-status.is-unavailable {
-        background: #f4e3e3;
-        color: #a02525;
-      }
-      .engine-hint {
-        margin: 2px 0 10px 24px;
-        color: #777;
-        font-size: 12px;
-      }
-      .key-field {
-        margin-bottom: 16px;
-      }
-      .key-field:last-child {
-        margin-bottom: 0;
-      }
-      .key-row {
+
+      .topbar-left {
         display: flex;
-        gap: 8px;
         align-items: center;
-        margin-top: 6px;
+        gap: 12px;
       }
-      .key-row input {
-        flex: 1;
-        padding: 6px 8px;
-        font-size: 13px;
-      }
-      .key-row button {
-        padding: 6px 12px;
-        font-size: 13px;
+
+      .menu-toggle-btn {
+        display: none;
+        align-items: center;
+        justify-content: center;
+        width: 38px;
+        height: 38px;
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-sm);
+        background: #fff;
+        color: var(--text-primary);
         cursor: pointer;
       }
-      .save-note {
-        font-size: 12px;
-        color: #1e7a34;
-        margin-left: 4px;
+
+      .menu-toggle-btn:hover {
+        background: var(--bg-subtle);
       }
-      select {
-        padding: 6px 8px;
-        font-size: 13px;
-        min-width: 220px;
-      }
-      .tts-autoplay-row {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        margin-bottom: 14px;
-        cursor: pointer;
-      }
-      .tts-voice-row {
+
+      .topbar-brand {
         display: flex;
         align-items: center;
         gap: 10px;
-        padding: 5px 0;
+        text-decoration: none;
+        color: inherit;
+      }
+
+      .topbar-logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 7px;
+        display: block;
+      }
+
+      .topbar-title {
+        font-size: 15px;
+        font-weight: 700;
+        letter-spacing: -0.01em;
+        color: var(--text-primary);
+      }
+
+      .topbar-divider {
+        color: var(--border-strong);
         font-size: 14px;
+        font-weight: 300;
       }
-      .tts-voice-row label {
-        flex: 0 0 140px;
+
+      .topbar-section-label {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text-secondary);
       }
-      .tts-voice-row select {
+
+      .topbar-right {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .version-pill {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--text-muted);
+        background: var(--bg-subtle);
+        padding: 3px 8px;
+        border-radius: 999px;
+        border: 1px solid var(--border-subtle);
+      }
+
+      /* ------------------------------------------------------------------- */
+      /* 2. Shell Body (Sidebar + Content Viewport)                          */
+      /* ------------------------------------------------------------------- */
+      .app-shell-body {
+        flex: 1;
+        display: flex;
+        min-height: 0;
+        position: relative;
+      }
+
+      /* Persistent Sidebar */
+      .app-sidebar {
+        width: var(--sidebar-width);
+        background: #ffffff;
+        border-right: 1px solid var(--border-subtle);
+        display: flex;
+        flex-direction: column;
+        flex-shrink: 0;
+        padding: 16px 12px;
+        overflow-y: auto;
+      }
+
+      .nav-menu {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 9px 12px;
+        border-radius: var(--radius-md);
+        color: var(--text-secondary);
+        font-weight: 500;
+        font-size: 13.5px;
+        text-decoration: none;
+        transition: all 0.12s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+      }
+
+      .nav-item:hover {
+        background-color: var(--bg-hover);
+        color: var(--text-primary);
+      }
+
+      .nav-item.is-active,
+      .nav-item[aria-current='page'] {
+        background-color: var(--primary-light);
+        color: var(--primary);
+        font-weight: 600;
+        border-color: #bfdbfe;
+      }
+
+      .nav-icon {
+        width: 17px;
+        height: 17px;
+        flex-shrink: 0;
+        color: currentColor;
+      }
+
+      /* Drawer Backdrop for mobile */
+      .drawer-backdrop {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.4);
+        z-index: 90;
+        backdrop-filter: blur(2px);
+      }
+
+      /* Content Viewport */
+      .content-viewport {
         flex: 1;
         min-width: 0;
+        overflow-y: auto;
+        padding: 28px 32px 64px;
+        background: var(--bg-page);
+      }
+
+      .content-container {
+        max-width: 960px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      /* Single Active View Management */
+      .settings-view {
+        display: flex;
+        flex-direction: column;
+        gap: 22px;
+      }
+
+      .settings-view[hidden] {
+        display: none !important;
+      }
+
+      .view-header {
+        margin-bottom: 2px;
+      }
+
+      .view-title {
+        font-size: 20px;
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        color: var(--text-primary);
+        margin-bottom: 4px;
+      }
+
+      .view-desc {
+        font-size: 13.5px;
+        color: var(--text-secondary);
+        max-width: 680px;
+      }
+
+      /* Cards */
+      .settings-card {
+        background: var(--bg-card);
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-lg);
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+        overflow: hidden;
+      }
+
+      .card-header {
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border-subtle);
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+      }
+
+      .card-title {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 2px;
+      }
+
+      .card-desc {
+        font-size: 13px;
+        color: var(--text-secondary);
+        line-height: 1.45;
+      }
+
+      .card-body {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+
+      /* Form controls */
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .form-label {
+        font-size: 13px;
+        font-weight: 600;
+        color: var(--text-primary);
+      }
+
+      .form-helper {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      select.form-control,
+      input[type='text'].form-control,
+      input[type='password'].form-control {
+        width: 100%;
+        max-width: 360px;
+        padding: 8px 12px;
+        font-size: 13.5px;
+        font-family: inherit;
+        color: var(--text-primary);
+        background-color: #fff;
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-md);
+        transition: all 0.15s ease;
+      }
+
+      select.form-control:focus,
+      input.form-control:focus {
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px var(--primary-focus);
+      }
+
+      /* Buttons */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 7px 14px;
+        font-size: 13px;
+        font-weight: 500;
+        font-family: inherit;
+        border-radius: var(--radius-md);
+        border: 1px solid transparent;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        text-decoration: none;
+        min-height: 36px;
+        white-space: nowrap;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: #fff;
+        border-color: var(--primary);
+      }
+
+      .btn-primary:hover {
+        background: var(--primary-hover);
+      }
+
+      .btn-secondary {
+        background: #fff;
+        color: var(--text-primary);
+        border-color: var(--border-strong);
+      }
+
+      .btn-secondary:hover {
+        background: var(--bg-subtle);
+      }
+
+      .btn-danger {
+        background: #fff;
+        color: var(--danger);
+        border-color: var(--danger-border);
+      }
+
+      .btn-danger:hover {
+        background: var(--danger-light);
+      }
+
+      .btn-sm {
+        padding: 4px 10px;
+        font-size: 12px;
+        min-height: 28px;
+        border-radius: var(--radius-sm);
+      }
+
+      .btn:disabled {
+        opacity: 0.55;
+        cursor: not-allowed;
+        pointer-events: none;
+      }
+
+      /* Badges & Chips */
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 11.5px;
+        font-weight: 600;
+        padding: 2px 8px;
+        border-radius: 999px;
+        line-height: 1.4;
+      }
+
+      .badge-ready {
+        background: var(--success-light);
+        color: var(--success);
+        border: 1px solid var(--success-border);
+      }
+
+      .badge-warning {
+        background: var(--warning-light);
+        color: var(--warning);
+        border: 1px solid var(--warning-border);
+      }
+
+      .badge-neutral {
+        background: var(--bg-subtle);
+        color: var(--text-muted);
+        border: 1px solid var(--border-subtle);
+      }
+
+      .badge-recommended {
+        background: var(--primary-light);
+        color: var(--primary);
+        border: 1px solid #bfdbfe;
+      }
+
+      .action-chip-link {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--primary);
+        text-decoration: none;
+        padding: 2px 6px;
+        border-radius: 4px;
+        transition: background 0.12s ease;
+      }
+
+      .action-chip-link:hover {
+        background: var(--primary-light);
+        text-decoration: underline;
+      }
+
+      /* ------------------------------------------------------------------- */
+      /* 3. Translation Engine Rows (Compact & Clear)                       */
+      /* ------------------------------------------------------------------- */
+      .engine-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .engine-row-card {
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 12px 16px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+        background: #fff;
+      }
+
+      .engine-row-card:hover {
+        border-color: var(--border-strong);
+        background: #fafafa;
+      }
+
+      .engine-row-card.is-selected {
+        border-color: var(--primary);
+        background: #f8fafc;
+        box-shadow: 0 0 0 1px var(--primary);
+      }
+
+      .engine-row-card.is-disabled {
+        cursor: default;
+        background: #fff;
+      }
+
+      .engine-row-card.is-disabled:hover {
+        border-color: var(--border-subtle);
+      }
+
+      .engine-radio-input {
+        margin-top: 3px;
+        cursor: pointer;
+        accent-color: var(--primary);
+        width: 16px;
+        height: 16px;
+        flex-shrink: 0;
+      }
+
+      .engine-row-info {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .engine-title-bar {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 2px;
+      }
+
+      .engine-title-text {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-primary);
+      }
+
+      .engine-hint-text {
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        line-height: 1.45;
+      }
+
+      /* ------------------------------------------------------------------- */
+      /* 4. Dedicated Provider Cards (BYOK)                                  */
+      /* ------------------------------------------------------------------- */
+      .providers-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+      }
+
+      .provider-card {
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        padding: 16px;
+        background: #fff;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        transition: border-color 0.15s ease;
+      }
+
+      .provider-card:hover {
+        border-color: var(--border-strong);
+      }
+
+      .provider-header-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .provider-identity-group {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .provider-badge-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13.5px;
+        font-weight: 700;
+        background: var(--bg-subtle);
+        color: var(--text-secondary);
+        flex-shrink: 0;
+      }
+
+      .provider-badge-avatar.gemini {
+        background: #eef2ff;
+        color: #4f46e5;
+      }
+
+      .provider-badge-avatar.openai {
+        background: #ecfdf5;
+        color: #059669;
+      }
+
+      .provider-badge-avatar.deepseek {
+        background: #f0f9ff;
+        color: #0284c7;
+      }
+
+      .provider-label-stack {
+        display: flex;
+        flex-direction: column;
+      }
+
+      .provider-title-name {
+        font-weight: 600;
+        font-size: 14px;
+        color: var(--text-primary);
+      }
+
+      .provider-model-spec {
+        font-size: 12px;
+        color: var(--text-muted);
+      }
+
+      .provider-summary-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 12px;
+        background: var(--bg-subtle);
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-subtle);
+      }
+
+      .masked-credential {
+        font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .masked-credential.is-empty {
+        font-family: inherit;
+        color: var(--text-muted);
+        font-style: italic;
+      }
+
+      .provider-action-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+
+      .provider-edit-drawer {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 14px;
+        background: #fbfcfe;
+        border: 1px solid var(--border-strong);
+        border-radius: var(--radius-md);
+      }
+
+      .provider-edit-drawer[hidden] {
+        display: none !important;
+      }
+
+      .edit-input-group {
+        display: flex;
+        position: relative;
+      }
+
+      .edit-input-group input {
+        max-width: none;
+        flex: 1;
+        padding-right: 64px;
+      }
+
+      .toggle-visibility-btn {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: none;
+        color: var(--text-muted);
+        cursor: pointer;
+        padding: 4px;
+        font-size: 12px;
+        font-weight: 500;
+        border-radius: 4px;
+      }
+
+      .toggle-visibility-btn:hover {
+        color: var(--text-primary);
+      }
+
+      .edit-actions-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .portal-out-link {
+        font-size: 12px;
+        color: var(--primary);
+        text-decoration: none;
+      }
+
+      .portal-out-link:hover {
+        text-decoration: underline;
+      }
+
+      .edit-buttons-wrap {
+        display: flex;
+        gap: 6px;
+      }
+
+      .inline-notice {
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+      }
+
+      .inline-notice.is-success {
+        background: var(--success-light);
+        color: var(--success);
+      }
+
+      .inline-notice.is-error {
+        background: var(--danger-light);
+        color: var(--danger);
+      }
+
+      /* ------------------------------------------------------------------- */
+      /* 5. Text-to-Speech View (Clean + Advanced Voice Matrix)             */
+      /* ------------------------------------------------------------------- */
+      .toggle-control-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 42px;
+        height: 24px;
+        flex-shrink: 0;
+      }
+
+      .toggle-switch input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+        margin: 0;
+        z-index: 2;
+      }
+
+      .toggle-track {
+        position: absolute;
+        inset: 0;
+        background-color: var(--border-strong);
+        border-radius: 999px;
+        transition: background-color 0.2s ease;
+      }
+
+      .toggle-track::before {
+        content: '';
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background-color: #fff;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        transition: transform 0.2s ease;
+      }
+
+      .toggle-switch input:checked + .toggle-track {
+        background-color: var(--primary);
+      }
+
+      .toggle-switch input:checked + .toggle-track::before {
+        transform: translateX(18px);
+      }
+
+      .toggle-switch input:focus-visible + .toggle-track {
+        outline: 2px solid var(--primary);
+        outline-offset: 2px;
+      }
+
+      .primary-voice-card {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .voice-row-picker {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .voice-row-picker select {
+        flex: 1;
+        max-width: 400px;
+      }
+
+      /* Collapsible Advanced Voices Panel */
+      .advanced-voices-details {
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-md);
+        background: #fff;
+        overflow: hidden;
+      }
+
+      .advanced-voices-summary {
+        padding: 12px 16px;
+        font-size: 13.5px;
+        font-weight: 600;
+        color: var(--text-primary);
+        cursor: pointer;
+        user-select: none;
+        background: var(--bg-subtle);
+        list-style: none;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .advanced-voices-summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .advanced-voices-summary::after {
+        content: '↓';
+        font-size: 13px;
+        color: var(--text-muted);
+        transition: transform 0.15s ease;
+      }
+
+      .advanced-voices-details[open] .advanced-voices-summary::after {
+        transform: rotate(180deg);
+      }
+
+      .advanced-voices-body {
+        padding: 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .matrix-voice-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 8px 12px;
+        border: 1px solid var(--border-subtle);
+        border-radius: var(--radius-sm);
+        background: #fff;
+      }
+
+      .matrix-lang-label {
+        flex: 0 0 130px;
+        font-weight: 600;
+        font-size: 13px;
+      }
+
+      .matrix-voice-control {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .matrix-voice-control select {
+        flex: 1;
+        max-width: none;
+      }
+
+      /* ------------------------------------------------------------------- */
+      /* 6. Privacy & Trust Pillars                                          */
+      /* ------------------------------------------------------------------- */
+      .privacy-pillars-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .trust-pillar {
+        display: flex;
+        gap: 12px;
+        padding: 14px;
+        border-radius: var(--radius-md);
+        background: var(--bg-subtle);
+        border: 1px solid var(--border-subtle);
+      }
+
+      .pillar-glyph {
+        font-size: 18px;
+        line-height: 1;
+        flex-shrink: 0;
+        margin-top: 2px;
+      }
+
+      .pillar-content h3 {
+        font-size: 13.5px;
+        font-weight: 600;
+        margin-bottom: 2px;
+        color: var(--text-primary);
+      }
+
+      .pillar-content p {
+        font-size: 12.5px;
+        color: var(--text-secondary);
+        line-height: 1.45;
+      }
+
+      .info-callout {
+        padding: 12px 14px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: var(--radius-md);
+        color: #1e40af;
+        font-size: 13px;
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      /* Save Toast */
+      .save-toast {
+        position: fixed;
+        bottom: 24px;
+        right: 24px;
+        background: #0f172a;
+        color: #fff;
+        padding: 8px 16px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        opacity: 0;
+        transform: translateY(10px);
+        transition: all 0.2s ease;
+        pointer-events: none;
+        z-index: 100;
+      }
+
+      .save-toast.is-visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* ------------------------------------------------------------------- */
+      /* 7. Responsive Drawer Layout for Tablet & Mobile (<=860px)           */
+      /* ------------------------------------------------------------------- */
+      @media (max-width: 860px) {
+        .menu-toggle-btn {
+          display: flex;
+        }
+
+        .drawer-backdrop.is-open {
+          display: block;
+        }
+
+        .app-sidebar {
+          position: fixed;
+          top: 0;
+          bottom: 0;
+          left: 0;
+          width: 260px;
+          z-index: 100;
+          box-shadow: 4px 0 20px rgba(0, 0, 0, 0.12);
+          transform: translateX(-100%);
+          transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .app-sidebar.is-open {
+          transform: translateX(0);
+        }
+
+        .content-viewport {
+          padding: 20px 16px 48px;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .matrix-voice-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+
+        .matrix-lang-label {
+          flex: none;
+        }
+
+        .matrix-voice-control {
+          width: 100%;
+        }
+
+        .provider-header-row {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+
+        .provider-summary-bar {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 8px;
+        }
+
+        .provider-action-group {
+          width: 100%;
+          justify-content: flex-start;
+          flex-wrap: wrap;
+        }
+
+        .edit-actions-row {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+        }
+
+        .edit-buttons-wrap {
+          width: 100%;
+          justify-content: flex-end;
+        }
       }
     </style>
   </head>
   <body>
-    <h1 data-i18n="options_heading"></h1>
+    <!-- Persistent Topbar -->
+    <header class="app-topbar">
+      <div class="topbar-left">
+        <button type="button" id="menuToggleBtn" class="menu-toggle-btn" aria-label="Toggle navigation menu" data-i18n-aria="options_menu_btn_label">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
 
-    <section>
-      <h2 data-i18n="options_engine_section_heading"></h2>
-      <div id="enginePicker"><!-- rendered by options.js from LIST_ENGINES --></div>
-    </section>
+        <a href="#general" class="topbar-brand">
+          <img class="topbar-logo" src="../../icons/icon-48.png" alt="AI Translate Logo" width="28" height="28" />
+          <span class="topbar-title" data-i18n="ext_name"></span>
+        </a>
 
-    <section>
-      <h2 data-i18n="options_keys_section_heading"></h2>
-      <div id="keyFields"><!-- rendered by options.js from BYOK_KEY_FIELDS --></div>
-    </section>
+        <span class="topbar-divider">|</span>
+        <span class="topbar-section-label" data-i18n="options_heading"></span>
+      </div>
 
-    <section>
-      <h2 data-i18n="options_target_lang_heading"></h2>
-      <select id="targetLang"><!-- populated by options.js from shared/languages.js --></select>
-    </section>
+      <div class="topbar-right">
+        <span class="version-pill">v0.1.0</span>
+      </div>
+    </header>
 
-    <section>
-      <h2 data-i18n="options_tts_section_heading"></h2>
-      <p data-i18n="options_tts_section_note"></p>
-      <label class="tts-autoplay-row">
-        <input type="checkbox" id="ttsAutoplay" />
-        <span data-i18n="options_tts_autoplay_label"></span>
-      </label>
-      <div id="ttsVoices"><!-- rendered by options.js from speechSynthesis.getVoices() --></div>
-    </section>
+    <!-- Shell Body -->
+    <div class="app-shell-body">
+      <!-- Mobile Drawer Backdrop -->
+      <div id="drawerBackdrop" class="drawer-backdrop" aria-hidden="true"></div>
 
-    <section>
-      <h2 data-i18n="options_ui_lang_heading"></h2>
-      <p data-i18n="options_ui_lang_note"></p>
-    </section>
+      <!-- Persistent Sidebar (Becomes Drawer on Mobile) -->
+      <aside id="appSidebar" class="app-sidebar" aria-label="Settings navigation">
+        <nav class="nav-menu">
+          <a href="#general" id="nav-general" class="nav-item is-active" data-route="general">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+            <span data-i18n="options_nav_general"></span>
+          </a>
+
+          <a href="#translation" id="nav-translation" class="nav-item" data-route="translation">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 8l6 6"></path>
+              <path d="M4 14l6-6 2-3"></path>
+              <path d="M2 5h12"></path>
+              <path d="M7 2h1"></path>
+              <path d="M22 22l-5-10-5 10"></path>
+              <path d="M14 18h6"></path>
+            </svg>
+            <span data-i18n="options_nav_translation"></span>
+          </a>
+
+          <a href="#providers" id="nav-providers" class="nav-item" data-route="providers">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
+            </svg>
+            <span data-i18n="options_nav_providers"></span>
+          </a>
+
+          <a href="#speech" id="nav-speech" class="nav-item" data-route="speech">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+            </svg>
+            <span data-i18n="options_nav_speech"></span>
+          </a>
+
+          <a href="#privacy" id="nav-privacy" class="nav-item" data-route="privacy">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+            <span data-i18n="options_nav_privacy"></span>
+          </a>
+        </nav>
+      </aside>
+
+      <!-- Active Content Viewport -->
+      <main id="contentViewport" class="content-viewport">
+        <div class="content-container">
+
+          <!-- ----------------------------------------------------------- -->
+          <!-- VIEW 1: GENERAL                                             -->
+          <!-- ----------------------------------------------------------- -->
+          <section id="view-general" class="settings-view" role="tabpanel" aria-labelledby="nav-general">
+            <header class="view-header">
+              <h1 class="view-title" data-i18n="options_general_section_heading"></h1>
+              <p class="view-desc" data-i18n="options_general_section_desc"></p>
+            </header>
+
+            <div class="settings-card">
+              <div class="card-header">
+                <div>
+                  <h2 class="card-title" data-i18n="options_target_lang_heading"></h2>
+                  <p class="card-desc" data-i18n="options_target_lang_desc"></p>
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="form-group">
+                  <label for="targetLang" class="form-label" data-i18n="options_target_lang_heading"></label>
+                  <select id="targetLang" class="form-control"></select>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="card-header">
+                <div>
+                  <h2 class="card-title" data-i18n="options_ui_lang_heading"></h2>
+                  <p class="card-desc" data-i18n="options_ui_lang_note"></p>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <div class="card-header">
+                <div>
+                  <h2 class="card-title" data-i18n="options_general_about_heading"></h2>
+                  <p class="card-desc" data-i18n="options_general_about_desc"></p>
+                </div>
+              </div>
+              <div class="card-body">
+                <p class="card-desc">
+                  <strong data-i18n="options_general_version_label"></strong>: 0.1.0 (Manifest V3)
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <!-- ----------------------------------------------------------- -->
+          <!-- VIEW 2: TRANSLATION (Engine Selection Only)                 -->
+          <!-- ----------------------------------------------------------- -->
+          <section id="view-translation" class="settings-view" role="tabpanel" aria-labelledby="nav-translation" hidden>
+            <header class="view-header">
+              <h1 class="view-title" data-i18n="options_engine_section_heading"></h1>
+              <p class="view-desc" data-i18n="options_engine_desc"></p>
+            </header>
+
+            <div class="settings-card">
+              <div class="card-body">
+                <div id="enginePicker" class="engine-list" role="radiogroup" aria-label="Translation engine selection">
+                  <!-- Populated by options.js -->
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ----------------------------------------------------------- -->
+          <!-- VIEW 3: PROVIDERS (BYOK API Keys)                           -->
+          <!-- ----------------------------------------------------------- -->
+          <section id="view-providers" class="settings-view" role="tabpanel" aria-labelledby="nav-providers" hidden>
+            <header class="view-header">
+              <h1 class="view-title" data-i18n="options_keys_section_heading"></h1>
+              <p class="view-desc" data-i18n="options_providers_desc"></p>
+            </header>
+
+            <div class="settings-card">
+              <div class="card-body">
+                <div id="providersList" class="providers-grid">
+                  <!-- Populated by options.js -->
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- ----------------------------------------------------------- -->
+          <!-- VIEW 4: SPEECH (Text-to-Speech)                             -->
+          <!-- ----------------------------------------------------------- -->
+          <section id="view-speech" class="settings-view" role="tabpanel" aria-labelledby="nav-speech" hidden>
+            <header class="view-header">
+              <h1 class="view-title" data-i18n="options_tts_section_heading"></h1>
+              <p class="view-desc" data-i18n="options_tts_section_note"></p>
+            </header>
+
+            <div class="settings-card">
+              <div class="card-body">
+                <div class="toggle-control-row">
+                  <div>
+                    <span class="form-label" data-i18n="options_tts_autoplay_label"></span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="ttsAutoplay" />
+                    <span class="toggle-track" aria-hidden="true"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Primary Voice for Target Language -->
+            <div class="settings-card">
+              <div class="card-header">
+                <div>
+                  <h2 class="card-title" data-i18n="options_tts_current_voice_heading"></h2>
+                  <p class="card-desc" data-i18n="options_tts_current_voice_desc"></p>
+                </div>
+              </div>
+              <div class="card-body">
+                <div id="primaryVoiceContainer" class="primary-voice-card">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Collapsible Advanced Voice Matrix -->
+            <details class="advanced-voices-details">
+              <summary class="advanced-voices-summary" data-i18n="options_tts_manage_all_voices"></summary>
+              <div class="advanced-voices-body">
+                <p class="form-helper" data-i18n="options_tts_manage_all_desc"></p>
+                <div id="ttsVoicesMatrix" class="matrix-voice-list">
+                  <!-- Populated dynamically -->
+                </div>
+              </div>
+            </details>
+          </section>
+
+          <!-- ----------------------------------------------------------- -->
+          <!-- VIEW 5: PRIVACY & TRUST                                     -->
+          <!-- ----------------------------------------------------------- -->
+          <section id="view-privacy" class="settings-view" role="tabpanel" aria-labelledby="nav-privacy" hidden>
+            <header class="view-header">
+              <h1 class="view-title" data-i18n="options_privacy_heading"></h1>
+              <p class="view-desc" data-i18n="options_privacy_desc"></p>
+            </header>
+
+            <div class="settings-card">
+              <div class="card-body">
+                <div class="privacy-pillars-grid">
+                  <div class="trust-pillar">
+                    <span class="pillar-glyph" aria-hidden="true">🛡️</span>
+                    <div class="pillar-content">
+                      <h3 data-i18n="options_privacy_local_storage_title"></h3>
+                      <p data-i18n="options_privacy_local_storage_desc"></p>
+                    </div>
+                  </div>
+
+                  <div class="trust-pillar">
+                    <span class="pillar-glyph" aria-hidden="true">🚀</span>
+                    <div class="pillar-content">
+                      <h3 data-i18n="options_privacy_direct_requests_title"></h3>
+                      <p data-i18n="options_privacy_direct_requests_desc"></p>
+                    </div>
+                  </div>
+
+                  <div class="trust-pillar">
+                    <span class="pillar-glyph" aria-hidden="true">🔒</span>
+                    <div class="pillar-content">
+                      <h3 data-i18n="options_privacy_no_tracking_title"></h3>
+                      <p data-i18n="options_privacy_no_tracking_desc"></p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </main>
+    </div>
+
+    <!-- Notification Toast -->
+    <div id="saveToast" class="save-toast" role="status" aria-live="polite">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <polyline points="20 6 9 17 4 12"></polyline>
+      </svg>
+      <span id="saveToastText" data-i18n="options_saved_confirmation"></span>
+    </div>
 
     <script type="module" src="./options.js"></script>
   </body>

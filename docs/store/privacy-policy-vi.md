@@ -17,11 +17,11 @@ Dữ liệu duy nhất mà tiện ích này xử lý là:
 
 Dữ liệu này chỉ được gửi đến đúng một nơi: **công cụ dịch bạn đang sử dụng**, và chỉ vào thời điểm bạn yêu cầu dịch hoặc giải thích — không bao giờ tự động, không bao giờ chạy ngầm, và không bao giờ áp dụng cho văn bản bạn chưa chọn.
 
-### Công cụ 1 — Dùng thử miễn phí (mặc định, không cần thiết lập)
+### Công cụ 1 — Bản demo miễn phí (mặc định, không cần thiết lập)
 
-- Văn bản và ngữ cảnh bạn chọn được gửi qua HTTPS đến cổng dịch của nhà phát triển (`gpt.yapweijun1996.com`), cổng này chuyển tiếp đến một mô hình ngôn ngữ AI để tạo ra kết quả.
-- Cổng này áp dụng giới hạn sử dụng hàng ngày cho mỗi lượt cài đặt. Nó chỉ theo dõi **số lượt sử dụng** (để thực thi giới hạn hàng ngày) — nó **không** lưu trữ nội dung yêu cầu của bạn hoặc bản dịch/giải thích được trả về. Sau khi yêu cầu của bạn được xử lý xong, bản thân văn bản không được lưu giữ.
-- Khi đạt giới hạn hàng ngày, tiện ích không âm thầm báo lỗi — nó hiển thị cho bạn tùy chọn thêm khóa API riêng (bên dưới) hoặc thử lại vào ngày hôm sau.
+- Trước yêu cầu đầu tiên, tiện ích nhận một mã phiên demo ngắn hạn, được liên kết với Origin, từ cổng demo của nhà phát triển (`gpt.yapweijun1996.com/demo/session`). Không có khóa API nào được tích hợp hoặc gửi đi.
+- Văn bản và ngữ cảnh bạn chọn được gửi qua HTTPS đến `gpt.yapweijun1996.com/demo/v1/responses`, sau đó được chuyển tiếp đến một mô hình ngôn ngữ AI. Mã phiên demo chỉ được giữ trong bộ nhớ của service worker và sẽ được cấp lại khi hết hạn.
+- Khi đạt giới hạn demo, tiện ích không âm thầm báo lỗi — nó hiển thị cho bạn tùy chọn thêm khóa API riêng (bên dưới) hoặc thử lại sau.
 
 ### Công cụ 2 — Trên thiết bị (riêng tư, không cần mạng)
 

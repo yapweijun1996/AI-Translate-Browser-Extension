@@ -175,5 +175,237 @@
   },
   "explain_collapse_all": {
     "message": "收起全部"
+  },
+  "options_nav_general": {
+    "message": "常规",
+    "description": "Settings V2: options_nav_general"
+  },
+  "options_nav_translation": {
+    "message": "翻译引擎",
+    "description": "Settings V2: options_nav_translation"
+  },
+  "options_nav_providers": {
+    "message": "服务商 (BYOK)",
+    "description": "Settings V2: options_nav_providers"
+  },
+  "options_nav_speech": {
+    "message": "语音朗读",
+    "description": "Settings V2: options_nav_speech"
+  },
+  "options_nav_privacy": {
+    "message": "隐私与安全",
+    "description": "Settings V2: options_nav_privacy"
+  },
+  "options_subtitle": {
+    "message": "配置翻译引擎、API 密钥、偏好语言及语音朗读选项。",
+    "description": "Settings V2: options_subtitle"
+  },
+  "options_general_section_heading": {
+    "message": "常规偏好",
+    "description": "Settings V2: options_general_section_heading"
+  },
+  "options_general_section_desc": {
+    "message": "设置选中文本时的默认翻译目标语言，并查看扩展信息。",
+    "description": "Settings V2: options_general_section_desc"
+  },
+  "options_target_lang_desc": {
+    "message": "在网页上划选文本时，默认将其翻译为该目标语言。",
+    "description": "Settings V2: options_target_lang_desc"
+  },
+  "options_engine_desc": {
+    "message": "选择执行网页文本翻译及词义详解的引擎。",
+    "description": "Settings V2: options_engine_desc"
+  },
+  "options_providers_desc": {
+    "message": "配置你的专属 API 密钥，直接调用第三方大模型进行无限制翻译。",
+    "description": "Settings V2: options_providers_desc"
+  },
+  "options_privacy_heading": {
+    "message": "隐私与安全",
+    "description": "Settings V2: options_privacy_heading"
+  },
+  "options_privacy_desc": {
+    "message": "了解你的密钥凭据和浏览数据是如何被保护的。",
+    "description": "Settings V2: options_privacy_desc"
+  },
+  "options_status_recommended": {
+    "message": "推荐",
+    "description": "Settings V2: options_status_recommended"
+  },
+  "options_status_ready": {
+    "message": "就绪",
+    "description": "Settings V2: options_status_ready"
+  },
+  "options_status_private_ready": {
+    "message": "隐私 / 就绪",
+    "description": "Settings V2: options_status_private_ready"
+  },
+  "options_status_key_required": {
+    "message": "需要配置密钥",
+    "description": "Settings V2: options_status_key_required"
+  },
+  "options_status_unsupported": {
+    "message": "此设备/环境不受支持",
+    "description": "Settings V2: options_status_unsupported"
+  },
+  "options_engine_trial_hint": {
+    "message": "免配置演示网关翻译。开箱即用，设有试用额度限制。",
+    "description": "Settings V2: options_engine_trial_hint"
+  },
+  "options_engine_on_device_hint": {
+    "message": "在 Chrome 本地运行。100% 隐私安全，文本绝不离开设备（仅支持翻译，不支持详解）。",
+    "description": "Settings V2: options_engine_on_device_hint"
+  },
+  "options_engine_gemini_hint": {
+    "message": "基于 Google Gemini API 的快速多模态大模型 (gemini-2.0-flash)。",
+    "description": "Settings V2: options_engine_gemini_hint"
+  },
+  "options_engine_openai_hint": {
+    "message": "基于 OpenAI API 的高质量自然语言翻译 (gpt-5.4-mini)。",
+    "description": "Settings V2: options_engine_openai_hint"
+  },
+  "options_engine_deepseek_hint": {
+    "message": "高性价比且兼容 OpenAI 接口的 DeepSeek API 模型 (deepseek-v4-flash)。",
+    "description": "Settings V2: options_engine_deepseek_hint"
+  },
+  "options_engine_configure_action": {
+    "message": "配置密钥",
+    "description": "Settings V2: options_engine_configure_action"
+  },
+  "options_provider_status_configured": {
+    "message": "已配置密钥",
+    "description": "Settings V2: options_provider_status_configured"
+  },
+  "options_provider_status_not_configured": {
+    "message": "未保存密钥",
+    "description": "Settings V2: options_provider_status_not_configured"
+  },
+  "options_provider_masked_empty": {
+    "message": "尚未配置任何 API 密钥",
+    "description": "Settings V2: options_provider_masked_empty"
+  },
+  "options_provider_test_btn": {
+    "message": "测试连接",
+    "description": "Settings V2: options_provider_test_btn"
+  },
+  "options_provider_testing": {
+    "message": "正在测试...",
+    "description": "Settings V2: options_provider_testing"
+  },
+  "options_provider_test_success": {
+    "message": "连接测试成功",
+    "description": "Settings V2: options_provider_test_success"
+  },
+  "options_provider_test_failed": {
+    "message": "连接失败",
+    "description": "Settings V2: options_provider_test_failed"
+  },
+  "options_provider_edit_btn": {
+    "message": "更换",
+    "description": "Settings V2: options_provider_edit_btn"
+  },
+  "options_provider_remove_btn": {
+    "message": "清除",
+    "description": "Settings V2: options_provider_remove_btn"
+  },
+  "options_provider_cancel_btn": {
+    "message": "取消",
+    "description": "Settings V2: options_provider_cancel_btn"
+  },
+  "options_provider_save_btn": {
+    "message": "保存密钥",
+    "description": "Settings V2: options_provider_save_btn"
+  },
+  "options_provider_key_saved": {
+    "message": "密钥已保存",
+    "description": "Settings V2: options_provider_key_saved"
+  },
+  "options_provider_key_removed": {
+    "message": "密钥已清除",
+    "description": "Settings V2: options_provider_key_removed"
+  },
+  "options_provider_show_key": {
+    "message": "显示密钥",
+    "description": "Settings V2: options_provider_show_key"
+  },
+  "options_provider_hide_key": {
+    "message": "隐藏密钥",
+    "description": "Settings V2: options_provider_hide_key"
+  },
+  "options_tts_test_voice_btn": {
+    "message": "试听",
+    "description": "Settings V2: options_tts_test_voice_btn"
+  },
+  "options_tts_test_sample": {
+    "message": "你好，这是语音朗读效果测试。",
+    "description": "Settings V2: options_tts_test_sample"
+  },
+  "options_tts_voices_heading": {
+    "message": "已安装的系统语音",
+    "description": "Settings V2: options_tts_voices_heading"
+  },
+  "options_privacy_local_storage_title": {
+    "message": "仅保存在你本地浏览器中",
+    "description": "Settings V2: options_privacy_local_storage_title"
+  },
+  "options_privacy_local_storage_desc": {
+    "message": "用户提供的 API 密钥仅保存在本地设备上的 chrome.storage.local 中，绝不会同步到云端账户或第三方数据库。",
+    "description": "Settings V2: options_privacy_local_storage_desc"
+  },
+  "options_privacy_direct_requests_title": {
+    "message": "浏览器直连服务商官方 API",
+    "description": "Settings V2: options_privacy_direct_requests_title"
+  },
+  "options_privacy_direct_requests_desc": {
+    "message": "使用 Gemini、OpenAI 或 DeepSeek 时，请求会由浏览器后台直接发往各厂商官方接口。你的密钥和翻译内容绝不经过开发者自建服务器。",
+    "description": "Settings V2: options_privacy_direct_requests_desc"
+  },
+  "options_privacy_no_tracking_title": {
+    "message": "零分析与追踪",
+    "description": "Settings V2: options_privacy_no_tracking_title"
+  },
+  "options_privacy_no_tracking_desc": {
+    "message": "本扩展不包含任何数据统计、用户行为记录或追踪代码。你翻译的任何内容均完全属于你自己。",
+    "description": "Settings V2: options_privacy_no_tracking_desc"
+  },
+  "options_engine_auto_name": {
+    "message": "自动选择",
+    "description": "Settings Shell V2: options_engine_auto_name"
+  },
+  "options_engine_setup_required": {
+    "message": "需要配置 →",
+    "description": "Settings Shell V2: options_engine_setup_required"
+  },
+  "options_tts_current_voice_heading": {
+    "message": "当前目标语言语音",
+    "description": "Settings Shell V2: options_tts_current_voice_heading"
+  },
+  "options_tts_current_voice_desc": {
+    "message": "朗读该语言的翻译结果时使用的首选系统发音人。",
+    "description": "Settings Shell V2: options_tts_current_voice_desc"
+  },
+  "options_tts_manage_all_voices": {
+    "message": "管理所有语言语音",
+    "description": "Settings Shell V2: options_tts_manage_all_voices"
+  },
+  "options_tts_manage_all_desc": {
+    "message": "为其他支持的目标语言单独指定已安装的系统语音。",
+    "description": "Settings Shell V2: options_tts_manage_all_desc"
+  },
+  "options_menu_btn_label": {
+    "message": "切换导航菜单",
+    "description": "Settings Shell V2: options_menu_btn_label"
+  },
+  "options_general_about_heading": {
+    "message": "关于 AI Translate",
+    "description": "Settings Shell V2: options_general_about_heading"
+  },
+  "options_general_about_desc": {
+    "message": "基于人工智能的网页划词翻译与语言学习浏览器扩展。",
+    "description": "Settings Shell V2: options_general_about_desc"
+  },
+  "options_general_version_label": {
+    "message": "版本",
+    "description": "Settings Shell V2: options_general_version_label"
   }
 }

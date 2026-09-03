@@ -175,5 +175,237 @@
   },
   "explain_collapse_all": {
     "message": "모두 접기"
+  },
+  "options_nav_general": {
+    "message": "일반",
+    "description": "Settings V2: options_nav_general"
+  },
+  "options_nav_translation": {
+    "message": "번역 엔진",
+    "description": "Settings V2: options_nav_translation"
+  },
+  "options_nav_providers": {
+    "message": "제공자 (BYOK)",
+    "description": "Settings V2: options_nav_providers"
+  },
+  "options_nav_speech": {
+    "message": "음성 읽기",
+    "description": "Settings V2: options_nav_speech"
+  },
+  "options_nav_privacy": {
+    "message": "개인정보 보호",
+    "description": "Settings V2: options_nav_privacy"
+  },
+  "options_subtitle": {
+    "message": "번역 엔진, API 키, 언어 및 음성 설정을 맞춤 구성합니다.",
+    "description": "Settings V2: options_subtitle"
+  },
+  "options_general_section_heading": {
+    "message": "일반 설정",
+    "description": "Settings V2: options_general_section_heading"
+  },
+  "options_general_section_desc": {
+    "message": "기본 번역 대상 언어를 설정하고 확장 프로그램 정보를 확인합니다.",
+    "description": "Settings V2: options_general_section_desc"
+  },
+  "options_target_lang_desc": {
+    "message": "웹페이지에서 선택한 텍스트는 기본적으로 이 언어로 번역됩니다.",
+    "description": "Settings V2: options_target_lang_desc"
+  },
+  "options_engine_desc": {
+    "message": "번역 및 단어 설명 요청을 처리할 엔진을 선택합니다.",
+    "description": "Settings V2: options_engine_desc"
+  },
+  "options_providers_desc": {
+    "message": "자체 API 키를 설정하여 무제한 AI 번역을 직접 이용할 수 있습니다.",
+    "description": "Settings V2: options_providers_desc"
+  },
+  "options_privacy_heading": {
+    "message": "개인정보 보호 및 보안",
+    "description": "Settings V2: options_privacy_heading"
+  },
+  "options_privacy_desc": {
+    "message": "자격 증명과 브라우징 데이터가 어떻게 보호되는지 확인하세요.",
+    "description": "Settings V2: options_privacy_desc"
+  },
+  "options_status_recommended": {
+    "message": "추천",
+    "description": "Settings V2: options_status_recommended"
+  },
+  "options_status_ready": {
+    "message": "준비됨",
+    "description": "Settings V2: options_status_ready"
+  },
+  "options_status_private_ready": {
+    "message": "비공개 / 준비됨",
+    "description": "Settings V2: options_status_private_ready"
+  },
+  "options_status_key_required": {
+    "message": "API 키 필요",
+    "description": "Settings V2: options_status_key_required"
+  },
+  "options_status_unsupported": {
+    "message": "이 기기에서 지원되지 않음",
+    "description": "Settings V2: options_status_unsupported"
+  },
+  "options_engine_trial_hint": {
+    "message": "설정이 필요 없는 데모 게이트웨이 번역입니다. 체험용 사용량이 제한됩니다.",
+    "description": "Settings V2: options_engine_trial_hint"
+  },
+  "options_engine_on_device_hint": {
+    "message": "Chrome에서 로컬로 실행됩니다. 100% 비공개로 텍스트가 기기를 벗어나지 않습니다 (번역 전용, 설명 미지원).",
+    "description": "Settings V2: options_engine_on_device_hint"
+  },
+  "options_engine_gemini_hint": {
+    "message": "Google Gemini API를 통한 빠른 멀티모달 모델 (gemini-2.0-flash)。",
+    "description": "Settings V2: options_engine_gemini_hint"
+  },
+  "options_engine_openai_hint": {
+    "message": "OpenAI API를 통한 고품질 자연어 번역 (gpt-5.4-mini)。",
+    "description": "Settings V2: options_engine_openai_hint"
+  },
+  "options_engine_deepseek_hint": {
+    "message": "OpenAI 호환 및 가성비 뛰어난 DeepSeek API (deepseek-v4-flash)。",
+    "description": "Settings V2: options_engine_deepseek_hint"
+  },
+  "options_engine_configure_action": {
+    "message": "키 설정",
+    "description": "Settings V2: options_engine_configure_action"
+  },
+  "options_provider_status_configured": {
+    "message": "키 구성됨",
+    "description": "Settings V2: options_provider_status_configured"
+  },
+  "options_provider_status_not_configured": {
+    "message": "저장된 키 없음",
+    "description": "Settings V2: options_provider_status_not_configured"
+  },
+  "options_provider_masked_empty": {
+    "message": "구성된 API 키가 없습니다",
+    "description": "Settings V2: options_provider_masked_empty"
+  },
+  "options_provider_test_btn": {
+    "message": "연결 테스트",
+    "description": "Settings V2: options_provider_test_btn"
+  },
+  "options_provider_testing": {
+    "message": "테스트 중...",
+    "description": "Settings V2: options_provider_testing"
+  },
+  "options_provider_test_success": {
+    "message": "연결 성공",
+    "description": "Settings V2: options_provider_test_success"
+  },
+  "options_provider_test_failed": {
+    "message": "연결 실패",
+    "description": "Settings V2: options_provider_test_failed"
+  },
+  "options_provider_edit_btn": {
+    "message": "변경",
+    "description": "Settings V2: options_provider_edit_btn"
+  },
+  "options_provider_remove_btn": {
+    "message": "삭제",
+    "description": "Settings V2: options_provider_remove_btn"
+  },
+  "options_provider_cancel_btn": {
+    "message": "취소",
+    "description": "Settings V2: options_provider_cancel_btn"
+  },
+  "options_provider_save_btn": {
+    "message": "키 저장",
+    "description": "Settings V2: options_provider_save_btn"
+  },
+  "options_provider_key_saved": {
+    "message": "키가 저장되었습니다",
+    "description": "Settings V2: options_provider_key_saved"
+  },
+  "options_provider_key_removed": {
+    "message": "키가 삭제되었습니다",
+    "description": "Settings V2: options_provider_key_removed"
+  },
+  "options_provider_show_key": {
+    "message": "키 보기",
+    "description": "Settings V2: options_provider_show_key"
+  },
+  "options_provider_hide_key": {
+    "message": "키 숨기기",
+    "description": "Settings V2: options_provider_hide_key"
+  },
+  "options_tts_test_voice_btn": {
+    "message": "미리듣기",
+    "description": "Settings V2: options_tts_test_voice_btn"
+  },
+  "options_tts_test_sample": {
+    "message": "안녕하세요, 음성 미리듣기 샘플입니다.",
+    "description": "Settings V2: options_tts_test_sample"
+  },
+  "options_tts_voices_heading": {
+    "message": "설치된 시스템 음성",
+    "description": "Settings V2: options_tts_voices_heading"
+  },
+  "options_privacy_local_storage_title": {
+    "message": "사용자 브라우저 로컬에만 저장",
+    "description": "Settings V2: options_privacy_local_storage_title"
+  },
+  "options_privacy_local_storage_desc": {
+    "message": "API 키는 사용자 기기의 chrome.storage.local에만 저장됩니다. 클라우드 계정이나 원격 데이터베이스로 절대 동기화되지 않습니다.",
+    "description": "Settings V2: options_privacy_local_storage_desc"
+  },
+  "options_privacy_direct_requests_title": {
+    "message": "제공자 공식 API로 직접 통신",
+    "description": "Settings V2: options_privacy_direct_requests_title"
+  },
+  "options_privacy_direct_requests_desc": {
+    "message": "Gemini, OpenAI, DeepSeek 사용 시 요청은 브라우저에서 제공자의 공식 엔드포인트로 직접 전송됩니다. 사용자의 키는 확장 프로그램 개발자 서버를 거치지 않습니다.",
+    "description": "Settings V2: options_privacy_direct_requests_desc"
+  },
+  "options_privacy_no_tracking_title": {
+    "message": "원격 측정 및 추적 없음",
+    "description": "Settings V2: options_privacy_no_tracking_title"
+  },
+  "options_privacy_no_tracking_desc": {
+    "message": "이 확장 프로그램에는 분석, 사용자 활동 기록 또는 추적 스크립트가 포함되어 있지 않습니다. 번역하는 내용은 완전히 비공개로 유지됩니다.",
+    "description": "Settings V2: options_privacy_no_tracking_desc"
+  },
+  "options_engine_auto_name": {
+    "message": "자동 선택",
+    "description": "Settings Shell V2: options_engine_auto_name"
+  },
+  "options_engine_setup_required": {
+    "message": "설정 필요 →",
+    "description": "Settings Shell V2: options_engine_setup_required"
+  },
+  "options_tts_current_voice_heading": {
+    "message": "현재 대상 언어 음성",
+    "description": "Settings Shell V2: options_tts_current_voice_heading"
+  },
+  "options_tts_current_voice_desc": {
+    "message": "번역 결과를 소리 내어 읽을 때 사용하는 기본 음성입니다.",
+    "description": "Settings Shell V2: options_tts_current_voice_desc"
+  },
+  "options_tts_manage_all_voices": {
+    "message": "모든 언어 음성 관리",
+    "description": "Settings Shell V2: options_tts_manage_all_voices"
+  },
+  "options_tts_manage_all_desc": {
+    "message": "지원되는 다른 대상 언어에 대해 개별 시스템 음성을 설정합니다.",
+    "description": "Settings Shell V2: options_tts_manage_all_desc"
+  },
+  "options_menu_btn_label": {
+    "message": "내비게이션 메뉴 전환",
+    "description": "Settings Shell V2: options_menu_btn_label"
+  },
+  "options_general_about_heading": {
+    "message": "AI Translate 정보",
+    "description": "Settings Shell V2: options_general_about_heading"
+  },
+  "options_general_about_desc": {
+    "message": "AI 기반 웹페이지 번역 및 언어 학습 브라우저 확장 프로그램.",
+    "description": "Settings Shell V2: options_general_about_desc"
+  },
+  "options_general_version_label": {
+    "message": "버전",
+    "description": "Settings Shell V2: options_general_version_label"
   }
 }

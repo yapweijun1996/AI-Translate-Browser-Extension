@@ -175,5 +175,237 @@
   },
   "explain_collapse_all": {
     "message": "すべて折りたたむ"
+  },
+  "options_nav_general": {
+    "message": "一般",
+    "description": "Settings V2: options_nav_general"
+  },
+  "options_nav_translation": {
+    "message": "翻訳エンジン",
+    "description": "Settings V2: options_nav_translation"
+  },
+  "options_nav_providers": {
+    "message": "プロバイダー (BYOK)",
+    "description": "Settings V2: options_nav_providers"
+  },
+  "options_nav_speech": {
+    "message": "音声読み上げ",
+    "description": "Settings V2: options_nav_speech"
+  },
+  "options_nav_privacy": {
+    "message": "プライバシー",
+    "description": "Settings V2: options_nav_privacy"
+  },
+  "options_subtitle": {
+    "message": "翻訳エンジン、APIキー、言語、音声設定をカスタマイズします。",
+    "description": "Settings V2: options_subtitle"
+  },
+  "options_general_section_heading": {
+    "message": "一般設定",
+    "description": "Settings V2: options_general_section_heading"
+  },
+  "options_general_section_desc": {
+    "message": "翻訳先の言語と拡張機能の基本情報を設定します。",
+    "description": "Settings V2: options_general_section_desc"
+  },
+  "options_target_lang_desc": {
+    "message": "ウェブページで選択したテキストはデフォルトでこの言語に翻訳されます。",
+    "description": "Settings V2: options_target_lang_desc"
+  },
+  "options_engine_desc": {
+    "message": "翻訳および解説リクエストを処理するエンジンを選択します。",
+    "description": "Settings V2: options_engine_desc"
+  },
+  "options_providers_desc": {
+    "message": "独自の API キーを設定して、直接かつ無制限の AI 翻訳を利用します。",
+    "description": "Settings V2: options_providers_desc"
+  },
+  "options_privacy_heading": {
+    "message": "プライバシーとセキュリティ",
+    "description": "Settings V2: options_privacy_heading"
+  },
+  "options_privacy_desc": {
+    "message": "認証情報とブラウジングデータの保護方法について説明します。",
+    "description": "Settings V2: options_privacy_desc"
+  },
+  "options_status_recommended": {
+    "message": "推奨",
+    "description": "Settings V2: options_status_recommended"
+  },
+  "options_status_ready": {
+    "message": "準備完了",
+    "description": "Settings V2: options_status_ready"
+  },
+  "options_status_private_ready": {
+    "message": "プライベート / 準備完了",
+    "description": "Settings V2: options_status_private_ready"
+  },
+  "options_status_key_required": {
+    "message": "APIキーが必要です",
+    "description": "Settings V2: options_status_key_required"
+  },
+  "options_status_unsupported": {
+    "message": "このデバイスでは非対応",
+    "description": "Settings V2: options_status_unsupported"
+  },
+  "options_engine_trial_hint": {
+    "message": "設定不要のデモゲートウェイ翻訳。すぐに使え、試用制限があります。",
+    "description": "Settings V2: options_engine_trial_hint"
+  },
+  "options_engine_on_device_hint": {
+    "message": "Chrome 内でローカル実行。テキストが外部に出ない 100% プライベート設計（翻訳のみ、解説非対応）。",
+    "description": "Settings V2: options_engine_on_device_hint"
+  },
+  "options_engine_gemini_hint": {
+    "message": "Google Gemini API による高速なマルチモーダルモデル (gemini-2.0-flash)。",
+    "description": "Settings V2: options_engine_gemini_hint"
+  },
+  "options_engine_openai_hint": {
+    "message": "OpenAI API による高品質で自然な翻訳 (gpt-5.4-mini)。",
+    "description": "Settings V2: options_engine_openai_hint"
+  },
+  "options_engine_deepseek_hint": {
+    "message": "OpenAI 互換でコストパフォーマンスに優れた DeepSeek API (deepseek-v4-flash)。",
+    "description": "Settings V2: options_engine_deepseek_hint"
+  },
+  "options_engine_configure_action": {
+    "message": "キーを設定",
+    "description": "Settings V2: options_engine_configure_action"
+  },
+  "options_provider_status_configured": {
+    "message": "キー設定済み",
+    "description": "Settings V2: options_provider_status_configured"
+  },
+  "options_provider_status_not_configured": {
+    "message": "未設定",
+    "description": "Settings V2: options_provider_status_not_configured"
+  },
+  "options_provider_masked_empty": {
+    "message": "APIキーが設定されていません",
+    "description": "Settings V2: options_provider_masked_empty"
+  },
+  "options_provider_test_btn": {
+    "message": "接続テスト",
+    "description": "Settings V2: options_provider_test_btn"
+  },
+  "options_provider_testing": {
+    "message": "テスト中...",
+    "description": "Settings V2: options_provider_testing"
+  },
+  "options_provider_test_success": {
+    "message": "接続に成功しました",
+    "description": "Settings V2: options_provider_test_success"
+  },
+  "options_provider_test_failed": {
+    "message": "接続に失敗しました",
+    "description": "Settings V2: options_provider_test_failed"
+  },
+  "options_provider_edit_btn": {
+    "message": "変更",
+    "description": "Settings V2: options_provider_edit_btn"
+  },
+  "options_provider_remove_btn": {
+    "message": "削除",
+    "description": "Settings V2: options_provider_remove_btn"
+  },
+  "options_provider_cancel_btn": {
+    "message": "キャンセル",
+    "description": "Settings V2: options_provider_cancel_btn"
+  },
+  "options_provider_save_btn": {
+    "message": "キーを保存",
+    "description": "Settings V2: options_provider_save_btn"
+  },
+  "options_provider_key_saved": {
+    "message": "キーを保存しました",
+    "description": "Settings V2: options_provider_key_saved"
+  },
+  "options_provider_key_removed": {
+    "message": "キーを削除しました",
+    "description": "Settings V2: options_provider_key_removed"
+  },
+  "options_provider_show_key": {
+    "message": "キーを表示",
+    "description": "Settings V2: options_provider_show_key"
+  },
+  "options_provider_hide_key": {
+    "message": "キーを非表示",
+    "description": "Settings V2: options_provider_hide_key"
+  },
+  "options_tts_test_voice_btn": {
+    "message": "試聴",
+    "description": "Settings V2: options_tts_test_voice_btn"
+  },
+  "options_tts_test_sample": {
+    "message": "こんにちは、音声読み上げのテストです。",
+    "description": "Settings V2: options_tts_test_sample"
+  },
+  "options_tts_voices_heading": {
+    "message": "利用可能なシステム音声",
+    "description": "Settings V2: options_tts_voices_heading"
+  },
+  "options_privacy_local_storage_title": {
+    "message": "ブラウザのローカル環境にのみ保存",
+    "description": "Settings V2: options_privacy_local_storage_title"
+  },
+  "options_privacy_local_storage_desc": {
+    "message": "API キーは端末内の chrome.storage.local にのみ保存されます。クラウドアカウントや外部データベースへ同期されることはありません。",
+    "description": "Settings V2: options_privacy_local_storage_desc"
+  },
+  "options_privacy_direct_requests_title": {
+    "message": "プロバイダー公式 API への直接通信",
+    "description": "Settings V2: options_privacy_direct_requests_title"
+  },
+  "options_privacy_direct_requests_desc": {
+    "message": "Gemini、OpenAI、DeepSeek を使用する場合、リクエストはブラウザから各社の公式エンドポイントへ直接送信されます。拡張機能開発者のサーバーを経由することはありません。",
+    "description": "Settings V2: options_privacy_direct_requests_desc"
+  },
+  "options_privacy_no_tracking_title": {
+    "message": "テレメトリ・行動追跡ゼロ",
+    "description": "Settings V2: options_privacy_no_tracking_title"
+  },
+  "options_privacy_no_tracking_desc": {
+    "message": "本拡張機能にはアクセス解析、行動記録、トラッキングスクリプトは一切含まれていません。翻訳内容は完全にあなたのものです。",
+    "description": "Settings V2: options_privacy_no_tracking_desc"
+  },
+  "options_engine_auto_name": {
+    "message": "自動選択",
+    "description": "Settings Shell V2: options_engine_auto_name"
+  },
+  "options_engine_setup_required": {
+    "message": "設定が必要 →",
+    "description": "Settings Shell V2: options_engine_setup_required"
+  },
+  "options_tts_current_voice_heading": {
+    "message": "現在の翻訳先言語の音声",
+    "description": "Settings Shell V2: options_tts_current_voice_heading"
+  },
+  "options_tts_current_voice_desc": {
+    "message": "翻訳結果を読み上げる際に優先して使用されるシステム音声です。",
+    "description": "Settings Shell V2: options_tts_current_voice_desc"
+  },
+  "options_tts_manage_all_voices": {
+    "message": "すべての言語の音声を管理",
+    "description": "Settings Shell V2: options_tts_manage_all_voices"
+  },
+  "options_tts_manage_all_desc": {
+    "message": "他の対応言語に対して個別にシステム音声を割り当てます。",
+    "description": "Settings Shell V2: options_tts_manage_all_desc"
+  },
+  "options_menu_btn_label": {
+    "message": "ナビゲーションメニューを切り替え",
+    "description": "Settings Shell V2: options_menu_btn_label"
+  },
+  "options_general_about_heading": {
+    "message": "AI Translate について",
+    "description": "Settings Shell V2: options_general_about_heading"
+  },
+  "options_general_about_desc": {
+    "message": "AI を活用したウェブページ翻訳および語学学習ブラウザ拡張機能。",
+    "description": "Settings Shell V2: options_general_about_desc"
+  },
+  "options_general_version_label": {
+    "message": "バージョン",
+    "description": "Settings Shell V2: options_general_version_label"
   }
 }

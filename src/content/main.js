@@ -47,6 +47,13 @@ chrome.storage.local.get(EXPLAIN_EXPANDED_STORAGE_KEY).then((stored) => {
   explainSectionsExpanded = stored[EXPLAIN_EXPANDED_STORAGE_KEY] === true;
 });
 
+// Guard against extension context invalidation (happens when the extension is
+// reloaded/updated while an existing webpage tab stays open). In an orphaned
+// content script, chrome.runtime.id and chrome.i18n are undefined.
+function isExtensionValid() {
+  return Boolean(typeof chrome !== 'undefined' && chrome.runtime?.id && chrome.i18n?.getMessage);
+}
+
 // Popup on/off toggle (kill switch, not a setup step — absent means on).
 // Read once at load and kept live via storage.onChanged so flipping it in
 // the popup takes effect on already-open tabs immediately, no reload
@@ -281,6 +288,7 @@ async function showTrialQuotaUpsell(text, context, targetLang, requestId) {
 }
 
 async function translateSelection(text, context) {
+  if (!isExtensionValid()) return;
   // Claim this as the current translation before anything async happens —
   // any earlier call still in flight will see requestSeq has moved on and
   // stop short of rendering its (now stale) result over this one.
@@ -316,6 +324,7 @@ async function translateSelection(text, context) {
 let lastRect = null;
 
 onSelection((text, rect) => {
+  if (!isExtensionValid()) return;
   if (!extensionEnabled) return;
   // Selections made inside our own UI must never trigger the icon.
   if (isInsideHost(window.getSelection()?.anchorNode)) return;
@@ -335,10 +344,14 @@ onSelection((text, rect) => {
 // scroll (its viewport anchor is stale the moment the page moves). The modal
 // stays open independently — it has its own dismissal (Esc / outside / ×).
 document.addEventListener('selectionchange', () => {
+  if (!isExtensionValid()) return;
   const sel = window.getSelection();
   if ((!sel || sel.isCollapsed) && isTriggerIconVisible()) hideTriggerIcon();
 });
-document.addEventListener('scroll', () => hideTriggerIcon(), { capture: true, passive: true });
+document.addEventListener('scroll', () => {
+  if (!isExtensionValid()) return;
+  hideTriggerIcon();
+}, { capture: true, passive: true });
 
 // T-029: "Translate selection" in the native right-click menu re-enters the
 // exact same pipeline the trigger icon uses. The worker targets only this
@@ -346,6 +359,7 @@ document.addEventListener('scroll', () => hideTriggerIcon(), { capture: true, pa
 // listener still sees every OTHER message broadcast extension-wide via
 // chrome.runtime.sendMessage — hence the exact-type check below.
 chrome.runtime.onMessage.addListener((message) => {
+  if (!isExtensionValid()) return;
   if (message?.type !== MSG.MENU_TRANSLATE_SELECTION) return;
   if (!extensionEnabled) return;
   const sel = window.getSelection();

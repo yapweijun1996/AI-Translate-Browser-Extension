@@ -17,11 +17,11 @@ Satu-satunya data yang diproses oleh sambungan ini ialah:
 
 Data ini dihantar ke satu destinasi sahaja: **enjin terjemahan yang sedang anda gunakan**, dan hanya pada saat anda meminta terjemahan atau penerangan — tidak pernah secara automatik, tidak pernah di latar belakang, dan tidak pernah untuk teks yang belum anda pilih.
 
-### Enjin 1 — Percubaan percuma (lalai, tiada persediaan)
+### Enjin 1 — Demo percuma (lalai, tiada persediaan)
 
-- Teks dan konteks yang anda pilih dihantar melalui HTTPS ke get laluan terjemahan pembangun (`gpt.yapweijun1996.com`), yang menghantarnya kepada model bahasa AI untuk menghasilkan keputusan.
-- Get laluan ini menguatkuasakan had penggunaan harian bagi setiap pemasangan. Ia menjejaki **bilangan penggunaan sahaja** (untuk menguatkuasakan had harian) — ia **tidak** menyimpan kandungan permintaan anda atau terjemahan/penerangan yang dikembalikan. Setelah permintaan anda dijawab, teks itu sendiri tidak disimpan.
-- Apabila had harian dicapai, sambungan tidak gagal secara senyap — ia menunjukkan pilihan untuk menambah kunci API anda sendiri (di bawah) atau cuba lagi keesokan harinya.
+- Sebelum permintaan pertama, sambungan mendapatkan token sesi demo yang singkat dan terikat pada Origin daripada get laluan demo pembangun (`gpt.yapweijun1996.com/demo/session`). Tiada kunci API disertakan atau dihantar.
+- Teks dan konteks yang anda pilih dihantar melalui HTTPS ke `gpt.yapweijun1996.com/demo/v1/responses` dan diteruskan kepada model bahasa AI. Token demo hanya disimpan dalam memori pekerja perkhidmatan dan diperbaharui apabila tamat tempoh.
+- Apabila had demo dicapai, sambungan tidak gagal secara senyap — ia menunjukkan pilihan untuk menambah kunci API anda sendiri (di bawah) atau cuba lagi kemudian.
 
 ### Enjin 2 — Dalam peranti (persendirian, tiada rangkaian)
 

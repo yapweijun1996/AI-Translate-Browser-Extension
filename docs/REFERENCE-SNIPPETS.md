@@ -63,98 +63,40 @@ function captureContext(selectedText) {
 }
 ```
 
-## §3 Trial gateway client — XOR key + SSE streaming (for T-014)
+## §3 Demo gateway client — short-lived session token (for T-014)
 
-OpenAI-compatible `/v1/responses` with streaming SSE. Streaming is required (avoids Cloudflare's 100s edge timeout). `temperature` must NOT be forwarded — gpt-5.x reasoning models reject it with a 400. Always pass explicit `reasoning.effort` (gateway default is `xhigh`, drains quota).
+The current zero-setup path uses the owner's browser demo API. The session request has no Authorization header; the gateway validates the browser-supplied Origin. The returned `dmo_...` token is sent only to the Demo Responses endpoint.
 
 ```js
-const GATEWAY_URL = 'https://gpt.yapweijun1996.com/v1/responses';
-const DEFAULT_MODEL = 'gpt-5.4-mini';
-const XOR_SEED = '20260515';
-// XOR-obfuscated gateway key (obfuscation only, NOT crypto — acceptable here
-// because the gateway enforces a daily limit server-side and the key is revocable).
-const ENCRYPTED_DEFAULT_KEY =
-  '085071109003002001087084003002084015001086006001081000083087002004085002001086080087081002083012005081000001081002085087001082007087006087002006005000010';
+const gateway = "https://gpt.yapweijun1996.com";
 
-let cachedKey = null;
+const sessionRes = await fetch(`${gateway}/demo/session`, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ project_id: "ai-translate" }),
+});
+if (!sessionRes.ok) throw new Error(`Session failed: ${sessionRes.status}`);
+const { token } = await sessionRes.json();
 
-function decryptKey(cipher, seed) {
-  const bytes = [];
-  for (let i = 0; i < cipher.length; i += 3) {
-    const n = parseInt(cipher.slice(i, i + 3), 10);
-    const kc = seed.charCodeAt((i / 3) % seed.length);
-    bytes.push(n ^ kc);
-  }
-  return new TextDecoder().decode(new Uint8Array(bytes));
-}
-
-function getDefaultKey() {
-  if (!cachedKey) cachedKey = decryptKey(ENCRYPTED_DEFAULT_KEY, XOR_SEED);
-  return cachedKey;
-}
-
-export async function callGateway({ prompt, model, apiKey, maxOutputTokens, reasoningEffort = 'low', signal }) {
-  const key = apiKey || getDefaultKey();
-  const body = {
-    model: model || DEFAULT_MODEL,
-    input: [{ role: 'user', content: [{ type: 'input_text', text: prompt }] }],
-    stream: true,
-    reasoning: { effort: reasoningEffort }
-  };
-  if (typeof maxOutputTokens === 'number') body.max_output_tokens = maxOutputTokens;
-
-  const res = await fetch(GATEWAY_URL, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${key}`,
-      'Content-Type': 'application/json',
-      'Accept': 'text/event-stream'
-    },
-    body: JSON.stringify(body),
-    signal
-  });
-  if (!res.ok) throw await mapHttpError(res);       // → central error mapper (T-021)
-  if (!res.body) throw new Error('empty response body');
-
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-  let streamed = '';
-  let finalText = '';
-
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    let idx;
-    while ((idx = buffer.indexOf('\n\n')) !== -1) {
-      const frame = buffer.slice(0, idx);
-      buffer = buffer.slice(idx + 2);
-      const dataLines = frame.split('\n').filter(l => l.startsWith('data:'));
-      if (!dataLines.length) continue;
-      const payload = dataLines.map(l => l.slice(5).trimStart()).join('\n');
-      if (payload === '[DONE]') continue;
-      let evt;
-      try { evt = JSON.parse(payload); } catch { continue; }
-      const t = evt?.type || '';
-      if (t === 'response.output_text.delta' && typeof evt.delta === 'string') {
-        streamed += evt.delta;
-      } else if (t === 'response.completed' && evt.response?.output) {
-        for (const item of evt.response.output) {
-          if (item.type === 'message') {
-            for (const c of (item.content || [])) {
-              if (typeof c.text === 'string') finalText += c.text;
-            }
-          }
-        }
-      } else if (t === 'error') {
-        throw new Error(evt.error?.message || 'gateway stream error');
-      }
-    }
-  }
-  return (finalText || streamed).trim();
-}
+const response = await fetch(`${gateway}/demo/v1/responses`, {
+  method: "POST",
+  headers: {
+    "Authorization": `Bearer ${token}`,
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    model: "demo-fast",
+    input: prompt,
+  }),
+});
+if (!response.ok) throw new Error(`Demo request failed: ${response.status}`);
+const json = await response.json();
 ```
+
+The extension implementation additionally caches the short-lived token in
+service-worker memory, coalesces concurrent session requests, refreshes after
+a 401, and extracts text from the Responses API JSON result. No gateway key
+or XOR cipher is shipped.
 
 ## §4 Translate prompt (for T-023)
 

@@ -1,44 +1,24 @@
-// Trial gateway engine adapter — the zero-setup default (SPEC §4, ENGINES.md
-// "Engine 1"). Owner-controlled OpenAI-compatible gateway with a daily
-// server-side quota; the bundled key is XOR-obfuscated (not real crypto —
-// acceptable because the gateway enforces the limit and the key is
-// revocable), ported from REFERENCE-SNIPPETS §3.
-//
-// capabilities().explain is false until T-024 adds the Explain prompt/schema
-// to this adapter — translate() alone is what T-014 delivers.
+// Demo gateway engine adapter — the zero-setup default (SPEC §4,
+// ENGINES.md "Engine 1"). The gateway issues a short-lived, origin-bound
+// demo token; no gateway/API key is bundled in the extension.
 
 import { EngineError } from './errors.js';
 import { mapHttpError, mapNetworkError, extractErrorMessage } from '../error-mapper.js';
 import { buildExplainPrompt, parseExplainResponse } from '../explain-schema.js';
 import { detectSourceLanguage } from '../lang-detect.js';
 
-const GATEWAY_URL = 'https://gpt.yapweijun1996.com/v1/responses';
-const DEFAULT_MODEL = 'gpt-5.4-mini';
+const GATEWAY_BASE = 'https://gpt.yapweijun1996.com';
+const SESSION_URL = `${GATEWAY_BASE}/demo/session`;
+const RESPONSES_URL = `${GATEWAY_BASE}/demo/v1/responses`;
+// This project id must be registered for the extension's exact Origin at the gateway.
+const DEMO_PROJECT_ID = 'ai-translate';
+const DEMO_MODEL = 'demo-fast';
 const REQUEST_TIMEOUT_MS = 30000;
-const XOR_SEED = '20260515';
-// XOR-obfuscated gateway key — obfuscation only, NOT crypto, acceptable here
-// only because the gateway enforces a daily limit server-side and the key
-// is revocable (docs/ENGINES.md). The plaintext key must never appear in
-// this repo, logs, or error messages.
-const ENCRYPTED_DEFAULT_KEY =
-  '085071109003002001087084003002084015001086006001081000083087002004085002001086080087081002083012005081000001081002085087001082007087006087002006005000010';
+const TOKEN_REFRESH_SKEW_MS = 5000;
 
-let cachedKey = null;
-
-function decryptKey(cipher, seed) {
-  const bytes = [];
-  for (let i = 0; i < cipher.length; i += 3) {
-    const n = parseInt(cipher.slice(i, i + 3), 10);
-    const kc = seed.charCodeAt((i / 3) % seed.length);
-    bytes.push(n ^ kc);
-  }
-  return new TextDecoder().decode(new Uint8Array(bytes));
-}
-
-function getDefaultKey() {
-  if (!cachedKey) cachedKey = decryptKey(ENCRYPTED_DEFAULT_KEY, XOR_SEED);
-  return cachedKey;
-}
+let sessionToken = null;
+let sessionExpiresAt = 0;
+let sessionPromise = null;
 
 /** Always applies a 30s ceiling, additionally aborting if the caller's own signal fires. */
 function withTimeout(externalSignal) {
@@ -47,97 +27,135 @@ function withTimeout(externalSignal) {
 }
 
 /**
- * Call the gateway's /v1/responses endpoint with streaming SSE and return
- * the assembled plain-text output. Streaming is required — it avoids
- * Cloudflare's 100s edge timeout on longer outputs. `temperature` is
- * intentionally never forwarded — gpt-5.x reasoning models reject it with a
- * 400 — and `reasoning.effort` is always explicit (the gateway's own default
- * is 'xhigh', which drains quota).
- * @param {string} prompt
- * @param {{reasoningEffort?: string, maxOutputTokens?: number, signal?: AbortSignal}} [opts]
+ * Obtain one origin-bound demo token and share concurrent session requests.
+ * The token is deliberately kept only in service-worker memory; MV3 worker
+ * restarts simply obtain a fresh short-lived session.
+ * @param {AbortSignal} [signal]
  * @returns {Promise<string>}
  */
-async function callGateway(prompt, { reasoningEffort = 'low', maxOutputTokens, signal } = {}) {
-  const body = {
-    model: DEFAULT_MODEL,
-    input: [{ role: 'user', content: [{ type: 'input_text', text: prompt }] }],
-    stream: true,
-    reasoning: { effort: reasoningEffort },
-  };
-  if (typeof maxOutputTokens === 'number') body.max_output_tokens = maxOutputTokens;
+async function getSessionToken(signal) {
+  if (sessionToken && sessionExpiresAt - TOKEN_REFRESH_SKEW_MS > Date.now()) return sessionToken;
+  if (sessionPromise) return sessionPromise;
 
+  sessionPromise = (async () => {
+    let res;
+    try {
+      // No Authorization header: the demo session endpoint validates the
+      // browser's automatically supplied Origin (and optional Turnstile token).
+      res = await fetch(SESSION_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ project_id: DEMO_PROJECT_ID }),
+        signal: withTimeout(signal),
+      });
+    } catch (cause) {
+      throw mapNetworkError(cause, 'Demo gateway');
+    }
+    if (!res.ok) {
+      const bodyMessage = await extractErrorMessage(res);
+      throw mapHttpError({
+        status: res.status,
+        bodyMessage,
+        providerName: 'Demo gateway',
+        isTrialGateway: true,
+      });
+    }
+
+    let data;
+    try {
+      data = await res.json();
+    } catch {
+      throw new EngineError('gateway_error', 'Demo gateway returned an invalid session response.');
+    }
+    if (typeof data?.token !== 'string' || !data.token.startsWith('dmo_')) {
+      throw new EngineError('gateway_error', 'Demo gateway returned an invalid session token.');
+    }
+
+    sessionToken = data.token;
+    const expiresIn = Number(data.expires_in);
+    const expiresAt =
+      typeof data.expires_at === 'string' ? Date.parse(data.expires_at) : Number(data.expires_at);
+    sessionExpiresAt = Number.isFinite(expiresIn)
+      ? Date.now() + Math.max(1, expiresIn) * 1000
+      : Number.isFinite(expiresAt) && expiresAt > Date.now()
+        ? expiresAt
+        : Date.now() + 5 * 60 * 1000;
+    return sessionToken;
+  })().finally(() => {
+    sessionPromise = null;
+  });
+
+  return sessionPromise;
+}
+
+function extractResponseText(data) {
+  if (typeof data?.output_text === 'string') return data.output_text;
+  const outputText = Array.isArray(data?.output)
+    ? data.output
+        .flatMap((item) => (Array.isArray(item?.content) ? item.content : []))
+        .map((part) => (typeof part?.text === 'string' ? part.text : ''))
+        .join('')
+    : '';
+  if (outputText) return outputText;
+  const chatText = data?.choices?.[0]?.message?.content;
+  return typeof chatText === 'string' ? chatText : '';
+}
+
+/**
+ * Call the non-streaming Demo Responses endpoint and return plain text.
+ * The public demo API uses a short-lived dmo_ bearer token and the single
+ * `demo-fast` model; unlike the old private gateway path, it does not require
+ * the extension to carry an owner key or send SSE-specific request fields.
+ * @param {string} prompt
+ * @param {{signal?: AbortSignal, retried?: boolean}} [opts]
+ * @returns {Promise<string>}
+ */
+async function callGateway(prompt, { signal, retried = false } = {}) {
+  const token = await getSessionToken(signal);
   let res;
   try {
-    res = await fetch(GATEWAY_URL, {
+    res = await fetch(RESPONSES_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${getDefaultKey()}`,
+        Authorization: `Bearer ${token}`,
         'Content-Type': 'application/json',
-        Accept: 'text/event-stream',
       },
-      body: JSON.stringify(body),
+      body: JSON.stringify({ model: DEMO_MODEL, input: prompt }),
       signal: withTimeout(signal),
     });
   } catch (cause) {
-    throw mapNetworkError(cause, 'Trial gateway');
+    throw mapNetworkError(cause, 'Demo gateway');
   }
 
+  // A worker may retain a token until the server rejects it. Refresh once,
+  // then surface the second failure instead of retrying indefinitely.
+  if (res.status === 401 && !retried) {
+    sessionToken = null;
+    sessionExpiresAt = 0;
+    return callGateway(prompt, { signal, retried: true });
+  }
   if (!res.ok) {
     const bodyMessage = await extractErrorMessage(res);
-    // isTrialGateway:true — a 429 here means the free daily allowance ran
-    // out, which must trigger the BYOK upsell (SPEC §4/§9), unlike a BYOK
-    // engine's own quota (see gemini.js/openai.js/deepseek.js, which don't
-    // pass this flag).
-    throw mapHttpError({ status: res.status, bodyMessage, providerName: 'Trial gateway', isTrialGateway: true });
-  }
-  if (!res.body) {
-    throw new EngineError('network', 'Trial gateway returned an empty response body.');
+    throw mapHttpError({
+      status: res.status,
+      bodyMessage,
+      providerName: 'Demo gateway',
+      isTrialGateway: true,
+    });
   }
 
-  const reader = res.body.getReader();
-  const decoder = new TextDecoder();
-  let buffer = '';
-  let streamed = '';
-  let finalText = '';
-
-  while (true) {
-    const { value, done } = await reader.read();
-    if (done) break;
-    buffer += decoder.decode(value, { stream: true });
-    let idx;
-    while ((idx = buffer.indexOf('\n\n')) !== -1) {
-      const frame = buffer.slice(0, idx);
-      buffer = buffer.slice(idx + 2);
-      const dataLines = frame.split('\n').filter((l) => l.startsWith('data:'));
-      if (!dataLines.length) continue;
-      const payload = dataLines.map((l) => l.slice(5).trimStart()).join('\n');
-      if (payload === '[DONE]') continue;
-      let evt;
-      try {
-        evt = JSON.parse(payload);
-      } catch {
-        continue;
-      }
-      const t = evt?.type || '';
-      if (t === 'response.output_text.delta' && typeof evt.delta === 'string') {
-        streamed += evt.delta;
-      } else if (t === 'response.completed' && evt.response?.output) {
-        for (const item of evt.response.output) {
-          if (item.type === 'message') {
-            for (const c of item.content || []) {
-              if (typeof c.text === 'string') finalText += c.text;
-            }
-          }
-        }
-      } else if (t === 'error') {
-        throw new EngineError('gateway_error', evt.error?.message || 'Trial gateway stream error.');
-      }
-    }
+  let data;
+  try {
+    data = await res.json();
+  } catch {
+    throw new EngineError('gateway_error', 'Demo gateway returned an invalid response.');
   }
-  return (finalText || streamed).trim();
+  const text = extractResponseText(data);
+  if (!text) throw new EngineError('gateway_error', 'Demo gateway returned an empty response.');
+  return text.trim();
 }
 
-/** Translate prompt — REFERENCE-SNIPPETS §4, generalized to web content. */
+/** Translate prompt — generalized from REFERENCE-SNIPPETS §4 to web content. */
 function buildTranslatePrompt({ text, targetLang }) {
   return (
     `You are translating web page content to ${targetLang}.\n\n` +
@@ -156,18 +174,17 @@ function buildTranslatePrompt({ text, targetLang }) {
 /** @type {import('./registry.js').EngineAdapter} */
 export const trialGatewayAdapter = {
   id: 'trial-gateway',
-  // Always available — the bundled key needs no user setup. A future kill
-  // switch (e.g. a remote disable flag) could make this conditional, but
-  // that's not needed for the MVP.
+  // The demo session has no user setup, so availability is determined by the
+  // request itself (including the gateway's registered-Origin check).
   async isAvailable() {
     return true;
   },
   capabilities() {
-    return { translate: true, explain: true, streaming: true };
+    return { translate: true, explain: true, streaming: false };
   },
   async translate(text, targetLang, { signal } = {}) {
     const prompt = buildTranslatePrompt({ text, targetLang });
-    return callGateway(prompt, { reasoningEffort: 'low', signal });
+    return callGateway(prompt, { signal });
   },
   async explain(phrase, targetLang, { context, signal } = {}) {
     const sourceLang = detectSourceLanguage(phrase);
@@ -177,7 +194,7 @@ export const trialGatewayAdapter = {
       sourceLangName: sourceLang.name,
       targetLang,
     });
-    const raw = await callGateway(prompt, { reasoningEffort: 'low', maxOutputTokens: 1600, signal });
+    const raw = await callGateway(prompt, { signal });
     return parseExplainResponse(raw, sourceLang);
   },
 };

@@ -175,5 +175,237 @@
   },
   "explain_collapse_all": {
     "message": "Thu gọn tất cả"
+  },
+  "options_nav_general": {
+    "message": "Chung",
+    "description": "Settings V2: options_nav_general"
+  },
+  "options_nav_translation": {
+    "message": "Dịch thuật",
+    "description": "Settings V2: options_nav_translation"
+  },
+  "options_nav_providers": {
+    "message": "Nhà cung cấp (BYOK)",
+    "description": "Settings V2: options_nav_providers"
+  },
+  "options_nav_speech": {
+    "message": "Giọng nói",
+    "description": "Settings V2: options_nav_speech"
+  },
+  "options_nav_privacy": {
+    "message": "Quyền riêng tư",
+    "description": "Settings V2: options_nav_privacy"
+  },
+  "options_subtitle": {
+    "message": "Cấu hình công cụ dịch, khóa API, ngôn ngữ và tùy chọn giọng đọc.",
+    "description": "Settings V2: options_subtitle"
+  },
+  "options_general_section_heading": {
+    "message": "Tùy chọn chung",
+    "description": "Settings V2: options_general_section_heading"
+  },
+  "options_general_section_desc": {
+    "message": "Đặt ngôn ngữ đích chính và xem thông tin tiện ích.",
+    "description": "Settings V2: options_general_section_desc"
+  },
+  "options_target_lang_desc": {
+    "message": "Văn bản được chọn trên trang web sẽ được dịch sang ngôn ngữ này theo mặc định.",
+    "description": "Settings V2: options_target_lang_desc"
+  },
+  "options_engine_desc": {
+    "message": "Chọn công cụ xử lý yêu cầu dịch thuật và giải thích của bạn.",
+    "description": "Settings V2: options_engine_desc"
+  },
+  "options_providers_desc": {
+    "message": "Cấu hình khóa API riêng của bạn để dịch AI trực tiếp và không giới hạn.",
+    "description": "Settings V2: options_providers_desc"
+  },
+  "options_privacy_heading": {
+    "message": "Quyền riêng tư & Bảo mật",
+    "description": "Settings V2: options_privacy_heading"
+  },
+  "options_privacy_desc": {
+    "message": "Cách thức thông tin đăng nhập và dữ liệu duyệt web của bạn được bảo vệ.",
+    "description": "Settings V2: options_privacy_desc"
+  },
+  "options_status_recommended": {
+    "message": "Khuyên dùng",
+    "description": "Settings V2: options_status_recommended"
+  },
+  "options_status_ready": {
+    "message": "Sẵn sàng",
+    "description": "Settings V2: options_status_ready"
+  },
+  "options_status_private_ready": {
+    "message": "Riêng tư / Sẵn sàng",
+    "description": "Settings V2: options_status_private_ready"
+  },
+  "options_status_key_required": {
+    "message": "Cần khóa API",
+    "description": "Settings V2: options_status_key_required"
+  },
+  "options_status_unsupported": {
+    "message": "Không hỗ trợ trên thiết bị này",
+    "description": "Settings V2: options_status_unsupported"
+  },
+  "options_engine_trial_hint": {
+    "message": "Dịch thuật qua cổng demo không cần cài đặt. Giới hạn cho mục đích dùng thử.",
+    "description": "Settings V2: options_engine_trial_hint"
+  },
+  "options_engine_on_device_hint": {
+    "message": "Chạy cục bộ trong Chrome. Riêng tư 100% — văn bản không bao giờ rời khỏi thiết bị (Chỉ dịch; không hỗ trợ Giải thích).",
+    "description": "Settings V2: options_engine_on_device_hint"
+  },
+  "options_engine_gemini_hint": {
+    "message": "Mô hình nhanh thông qua Google Gemini API (gemini-2.0-flash)。",
+    "description": "Settings V2: options_engine_gemini_hint"
+  },
+  "options_engine_openai_hint": {
+    "message": "Bản dịch chất lượng cao thông qua OpenAI API (gpt-5.4-mini)。",
+    "description": "Settings V2: options_engine_openai_hint"
+  },
+  "options_engine_deepseek_hint": {
+    "message": "Mô hình tương thích OpenAI tiết kiệm chi phí qua DeepSeek API (deepseek-v4-flash)。",
+    "description": "Settings V2: options_engine_deepseek_hint"
+  },
+  "options_engine_configure_action": {
+    "message": "Cấu hình khóa",
+    "description": "Settings V2: options_engine_configure_action"
+  },
+  "options_provider_status_configured": {
+    "message": "Đã cấu hình khóa",
+    "description": "Settings V2: options_provider_status_configured"
+  },
+  "options_provider_status_not_configured": {
+    "message": "Chưa lưu khóa",
+    "description": "Settings V2: options_provider_status_not_configured"
+  },
+  "options_provider_masked_empty": {
+    "message": "Chưa cấu hình khóa API",
+    "description": "Settings V2: options_provider_masked_empty"
+  },
+  "options_provider_test_btn": {
+    "message": "Kiểm tra kết nối",
+    "description": "Settings V2: options_provider_test_btn"
+  },
+  "options_provider_testing": {
+    "message": "Đang kiểm tra...",
+    "description": "Settings V2: options_provider_testing"
+  },
+  "options_provider_test_success": {
+    "message": "Kết nối thành công",
+    "description": "Settings V2: options_provider_test_success"
+  },
+  "options_provider_test_failed": {
+    "message": "Kết nối thất bại",
+    "description": "Settings V2: options_provider_test_failed"
+  },
+  "options_provider_edit_btn": {
+    "message": "Thay thế",
+    "description": "Settings V2: options_provider_edit_btn"
+  },
+  "options_provider_remove_btn": {
+    "message": "Xóa",
+    "description": "Settings V2: options_provider_remove_btn"
+  },
+  "options_provider_cancel_btn": {
+    "message": "Hủy",
+    "description": "Settings V2: options_provider_cancel_btn"
+  },
+  "options_provider_save_btn": {
+    "message": "Lưu khóa",
+    "description": "Settings V2: options_provider_save_btn"
+  },
+  "options_provider_key_saved": {
+    "message": "Đã lưu khóa",
+    "description": "Settings V2: options_provider_key_saved"
+  },
+  "options_provider_key_removed": {
+    "message": "Đã xóa khóa",
+    "description": "Settings V2: options_provider_key_removed"
+  },
+  "options_provider_show_key": {
+    "message": "Hiện khóa",
+    "description": "Settings V2: options_provider_show_key"
+  },
+  "options_provider_hide_key": {
+    "message": "Ẩn khóa",
+    "description": "Settings V2: options_provider_hide_key"
+  },
+  "options_tts_test_voice_btn": {
+    "message": "Nghe thử",
+    "description": "Settings V2: options_tts_test_voice_btn"
+  },
+  "options_tts_test_sample": {
+    "message": "Xin chào, đây là bản nghe thử giọng đọc.",
+    "description": "Settings V2: options_tts_test_sample"
+  },
+  "options_tts_voices_heading": {
+    "message": "Giọng đọc hệ thống đã cài đặt",
+    "description": "Settings V2: options_tts_voices_heading"
+  },
+  "options_privacy_local_storage_title": {
+    "message": "Chỉ lưu trữ cục bộ trong trình duyệt của bạn",
+    "description": "Settings V2: options_privacy_local_storage_title"
+  },
+  "options_privacy_local_storage_desc": {
+    "message": "Khóa API chỉ được lưu trong chrome.storage.local trên thiết bị của bạn. Chúng không bao giờ được đồng bộ hóa với bất kỳ tài khoản đám mây hoặc cơ sở dữ liệu từ xa nào.",
+    "description": "Settings V2: options_privacy_local_storage_desc"
+  },
+  "options_privacy_direct_requests_title": {
+    "message": "Lưu lượng truy cập trực tiếp đến nhà cung cấp",
+    "description": "Settings V2: options_privacy_direct_requests_title"
+  },
+  "options_privacy_direct_requests_desc": {
+    "message": "Khi sử dụng Gemini, OpenAI hoặc DeepSeek, các yêu cầu sẽ được gửi trực tiếp từ trình duyệt của bạn đến các điểm cuối chính thức của nhà cung cấp. Khóa của bạn không bao giờ đi qua máy chủ của nhà phát triển tiện ích.",
+    "description": "Settings V2: options_privacy_direct_requests_desc"
+  },
+  "options_privacy_no_tracking_title": {
+    "message": "Không có đo từ xa & theo dõi",
+    "description": "Settings V2: options_privacy_no_tracking_title"
+  },
+  "options_privacy_no_tracking_desc": {
+    "message": "Tiện ích không chứa bất kỳ tập lệnh phân tích, ghi nhật ký hoạt động của người dùng hoặc theo dõi nào. Những gì bạn dịch hoàn toàn là riêng tư.",
+    "description": "Settings V2: options_privacy_no_tracking_desc"
+  },
+  "options_engine_auto_name": {
+    "message": "Tự động",
+    "description": "Settings Shell V2: options_engine_auto_name"
+  },
+  "options_engine_setup_required": {
+    "message": "Cần thiết lập →",
+    "description": "Settings Shell V2: options_engine_setup_required"
+  },
+  "options_tts_current_voice_heading": {
+    "message": "Giọng đọc cho ngôn ngữ đích",
+    "description": "Settings Shell V2: options_tts_current_voice_heading"
+  },
+  "options_tts_current_voice_desc": {
+    "message": "Giọng đọc chính được sử dụng khi đọc to bản dịch.",
+    "description": "Settings Shell V2: options_tts_current_voice_desc"
+  },
+  "options_tts_manage_all_voices": {
+    "message": "Quản lý giọng đọc cho tất cả ngôn ngữ",
+    "description": "Settings Shell V2: options_tts_manage_all_voices"
+  },
+  "options_tts_manage_all_desc": {
+    "message": "Tùy chỉnh giọng đọc hệ thống cụ thể cho các ngôn ngữ đích khác.",
+    "description": "Settings Shell V2: options_tts_manage_all_desc"
+  },
+  "options_menu_btn_label": {
+    "message": "Chuyển đổi menu điều hướng",
+    "description": "Settings Shell V2: options_menu_btn_label"
+  },
+  "options_general_about_heading": {
+    "message": "Giới thiệu về AI Translate",
+    "description": "Settings Shell V2: options_general_about_heading"
+  },
+  "options_general_about_desc": {
+    "message": "Tiện ích mở rộng dịch web và học ngôn ngữ được hỗ trợ bởi AI.",
+    "description": "Settings Shell V2: options_general_about_desc"
+  },
+  "options_general_version_label": {
+    "message": "Phiên bản",
+    "description": "Settings Shell V2: options_general_version_label"
   }
 }

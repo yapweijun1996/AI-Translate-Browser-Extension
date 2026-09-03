@@ -12,10 +12,11 @@
 // Caching (SPEC §6 explain:: key) and UI rendering are NOT this file's job
 // — those are T-026 and T-025.
 
-// New cache/schema namespace for this project — no prior version to
-// migrate from, unlike the REFERENCE-SNIPPETS source project which was
-// already at v2 due to its own history.
-export const SCHEMA_VERSION = 1;
+// Cache/schema namespace for this project. Bump it when the payload contract
+// or default explanation backend changes so stale explanations are naturally
+// superseded without an explicit migration. Version 2 invalidates payloads
+// produced by the removed private gateway in favor of demo-fast.
+export const SCHEMA_VERSION = 2;
 
 /** REFERENCE-SNIPPETS §5, generalized from "PDF paragraph" to web content. */
 export function buildExplainPrompt({ phrase, contextParagraph, sourceLangName, targetLang }) {

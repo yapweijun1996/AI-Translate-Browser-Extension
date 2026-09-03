@@ -56,7 +56,7 @@ Rules:
 
 | Priority | Engine | Notes |
 |---|---|---|
-| Shipped default (trial) | Owner's GPT gateway (`https://gpt.yapweijun1996.com/v1/responses`) | Works out of the box, zero setup — this is the try-before-BYOK funnel. Owner-controlled, **daily token limit enforced server-side**, key revocable/rotatable at any time. Bundled key is XOR-obfuscated (seed `20260515`, scheme + cipher string in [REFERENCE-SNIPPETS §3](docs/REFERENCE-SNIPPETS.md); tool: [XOR-Cipher-Tool](https://github.com/yapweijun1996/XOR-Cipher-Tool)). Model: `gpt-5.4-mini`, `/v1/responses` streaming SSE, `reasoning.effort: "low"` for snappy translations. |
+| Shipped default (demo) | Owner's demo gateway (`https://gpt.yapweijun1996.com/demo`) | Works out of the box, zero setup — this is the try-before-BYOK funnel. The worker obtains a short-lived, Origin-bound `dmo_...` session token from `/demo/session` using project id `ai-translate`, then calls `/demo/v1/responses` with model `demo-fast`. No gateway key is bundled. |
 | Upgrade path (BYOK) | User-supplied key: OpenAI / DeepSeek / Gemini / Claude / DeepL | Configured in options page. Key stored in `chrome.storage.local`. Once set, replaces the trial gateway entirely. LLM engines also power "Explain". |
 | Alternative (free/private) | Chrome built-in Translator API + Language Detector API | On-device, free, private, no key, no quota. Chrome desktop 138+. Feature-detect; offer as a no-cost option for plain translation (cannot power "Explain"). |
 
@@ -88,11 +88,16 @@ Port the reference explain design ([REFERENCE-SNIPPETS §5](docs/REFERENCE-SNIPP
 
 ```json
 "permissions": ["storage", "contextMenus", "offscreen"],
-"host_permissions": []
+"host_permissions": [
+  "https://gpt.yapweijun1996.com/*",
+  "https://generativelanguage.googleapis.com/*",
+  "https://api.openai.com/*",
+  "https://api.deepseek.com/*"
+]
 ```
 
 - The content script is declared with `"matches": ["<all_urls>"]` — required for the core UX (selection must be detectable on any page without the user clicking the toolbar icon first). This triggers the "read data on all websites" install warning; the privacy policy must explain it (M5, see docs/store/PRIVACY-POLICY.md).
-- `host_permissions` stays empty — the content script match is sufficient; the service worker only calls translation APIs, which needs no host permission.
+- `host_permissions` is limited to the demo gateway and the three supported BYOK provider hosts because the service worker makes cross-origin `fetch()` calls to those APIs. These permissions are not used for page injection; the content script's declarative match handles that separately.
 - `offscreen` (added T-015): the on-device Translator/LanguageDetector engine needs a real Document, which the service worker cannot provide — see docs/ARCHITECTURE.md and docs/ENGINES.md "Engine 2".
 - `scripting` and `activeTab` were removed (T-031, 2026-07-03): neither was ever used — content scripts are injected purely declaratively via `content_scripts`, and the context menu's `chrome.tabs.sendMessage` (T-029) needs neither permission. Fewer permissions means a cleaner Web Store review and a simpler, honest privacy policy.
 - No remotely hosted code, no `eval` (MV3 / Chrome Web Store hard requirement).

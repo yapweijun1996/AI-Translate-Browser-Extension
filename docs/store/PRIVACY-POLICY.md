@@ -19,11 +19,11 @@ The only data this extension ever processes is:
 
 This data is sent to exactly one destination: **whichever translation engine you are currently using**, and only at the moment you request a translation or explanation — never automatically, never in the background, and never for text you haven't selected.
 
-### Engine 1 — Free trial (default, no setup)
+### Engine 1 — Free demo (default, no setup)
 
-- Your selected text and context are sent over HTTPS to the developer's translation gateway (`gpt.yapweijun1996.com`), which relays it to an AI language model to produce the result.
-- The gateway enforces a daily usage limit per installation. It tracks **usage counts only** (how many requests, to enforce the daily limit) — it does **not** store the content of your requests or the translations/explanations it returns. Once your request is answered, the text itself is not retained.
-- When the daily limit is reached, the extension does not silently fail — it shows you the option to add your own API key (below) or try again the next day.
+- Before the first request, the extension asks the developer's demo gateway (`gpt.yapweijun1996.com/demo/session`) for a short-lived, Origin-bound session token. No API key is bundled or sent.
+- Your selected text and context are then sent over HTTPS to `gpt.yapweijun1996.com/demo/v1/responses`, which relays them to an AI language model to produce the result. The request uses the gateway's public `demo-fast` alias.
+- The gateway may enforce a usage limit for demo sessions. The extension keeps the temporary token only in service-worker memory and requests a new one when it expires. When the demo limit is reached, the extension shows the option to add your own API key (below) or try again later.
 
 ### Engine 2 — On-device (private, no network)
 
@@ -35,7 +35,7 @@ This data is sent to exactly one destination: **whichever translation engine you
 
 - If you add your own API key for Gemini, OpenAI, or DeepSeek in Settings, your selected text and context are sent **directly from your browser to that provider's own API** (`generativelanguage.googleapis.com`, `api.openai.com`, or `api.deepseek.com` respectively), using your own key.
 - The developer of this extension never sees this traffic — it goes straight from your browser to the provider you chose. Your data is subject to that provider's own privacy policy and data-retention practices, not the developer's. Review the provider's policy directly if this matters to you.
-- Once you've added a key for a provider, the free trial gateway is no longer used at all.
+- Once you've added a key for a provider, the free demo gateway is no longer used at all.
 
 ## What is stored, and where
 

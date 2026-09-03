@@ -20,7 +20,7 @@ M1 skeleton done — MV3 extension builds via Vite + CRXJS (`npm run build` → 
 
 - Default: Chrome's built-in on-device **Translator API** + **Language Detector API** — free, private (text never leaves the device), no API key, Chrome desktop 138+ only.
 - Optional, user-supplied API key: DeepL, Google Cloud Translate, OpenAI, Gemini, Claude — for higher quality, cross-browser support, or nuanced/LLM-style translation.
-- Trial → BYOK funnel (owner-authorized): the extension ships with the owner's own daily-rate-limited GPT gateway key (`gpt.yapweijun1996.com`, XOR-obfuscated, seed `20260515`, scheme + cipher in `docs/REFERENCE-SNIPPETS.md` §3) as the zero-setup default. On daily-limit error, show a BYOK upsell prompting the user to configure their own OpenAI/DeepSeek/Gemini key. See SPEC.md §4 + §9.
+- Demo → BYOK funnel (owner-authorized): the extension uses the owner's origin-checked demo gateway (`gpt.yapweijun1996.com/demo`) as the zero-setup default. It obtains a short-lived `dmo_...` session token using project id `ai-translate`; no gateway key is bundled. On quota error, show a BYOK upsell prompting the user to configure their own OpenAI/DeepSeek/Gemini key. See SPEC.md §4 + §9.
 - Never bundle any other provider's key. Store user-supplied keys in `chrome.storage.local`.
 
 ## Conventions

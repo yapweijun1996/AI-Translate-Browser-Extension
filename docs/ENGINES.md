@@ -19,14 +19,14 @@ export const adapter = {
 
 Registry (`background/engines/registry.js`) resolves the active adapter from settings, with fallback order: user-selected → trial gateway → on-device.
 
-## Engine 1 — Trial gateway (shipped default)
+## Engine 1 — Demo gateway (shipped default)
 
-- Endpoint: `https://gpt.yapweijun1996.com/v1/responses` (OpenAI-compatible `/v1/responses`, SSE streaming).
-- Model: `gpt-5.4-mini`. Always pass `reasoning: {effort: "low"}` explicitly — the gateway's own default is `xhigh`, which drains quota.
-- Explain (T-024): `capabilities().explain` is `true` — the same `callGateway()` used for translate is reused with the Explain prompt (`maxOutputTokens: 1600`) and the shared parser (see "Prompts" below).
-- Auth: `Bearer` key bundled as an **XOR cipher string** (seed `20260515`). Port `decryptKey()` + the SSE parse loop from [REFERENCE-SNIPPETS §3](REFERENCE-SNIPPETS.md) unchanged (the cipher string is there too). The plaintext key must never appear in the repo, logs, or error messages.
-- Why bundling is OK here (and only here): the gateway is owner-controlled, enforces a **daily token limit server-side**, and the key can be rotated/revoked anytime. This is the try-before-BYOK funnel (SPEC §4).
-- Streaming is required — it avoids Cloudflare's 100s edge timeout on long outputs.
+- Session endpoint: `https://gpt.yapweijun1996.com/demo/session` (POST, no Authorization header).
+- Translation endpoint: `https://gpt.yapweijun1996.com/demo/v1/responses`, model `demo-fast`.
+- The worker sends `{project_id: "ai-translate"}` to obtain a short-lived `dmo_...` token, then sends it as `Authorization: Bearer dmo_...`. The gateway validates the browser-supplied Origin; the project id and exact extension Origin must be registered at the gateway.
+- No gateway key is bundled. The token is held only in service-worker memory and refreshed after expiry or a 401 response.
+- The endpoint is non-streaming, so the adapter extracts text from the Responses API's `output_text`/`output` response shape.
+- Explain (T-024): `capabilities().explain` is `true` — the same demo endpoint is reused with the Explain prompt and shared parser (see "Prompts" below).
 
 ### Quota error → upsell (the important part)
 

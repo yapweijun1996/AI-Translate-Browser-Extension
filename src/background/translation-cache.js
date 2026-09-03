@@ -5,11 +5,11 @@
 
 import { get, set, del } from 'idb-keyval';
 
-// Bump whenever a translate prompt (trial-gateway.js / gemini.js / openai.js
-// / deepseek.js buildTranslatePrompt) changes — old cache entries stop
-// matching new keys and are naturally superseded, no explicit migration
-// needed (REFERENCE-SNIPPETS §6).
-const PROMPT_VERSION = 1;
+// Bump whenever a translate prompt or the default gateway/model changes — old
+// cache entries stop matching new keys and are naturally superseded, no
+// explicit migration needed (REFERENCE-SNIPPETS §6). Version 2 invalidates
+// entries produced by the removed private gateway in favor of demo-fast.
+const PROMPT_VERSION = 2;
 
 // "A few thousand entries" per SPEC §6.
 const CACHE_LIMIT = 3000;

@@ -38,7 +38,7 @@ function walk(dir, exts) {
 }
 
 function stripComments(src) {
-  return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/\/\/.*$/gm, '');
+  return src.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
 }
 
 // --- 1. Load locale message files ---
@@ -117,15 +117,15 @@ const uiDirs = ['content', 'popup', 'options'].map((d) => path.join(ROOT, 'src',
 for (const dir of uiDirs) {
   for (const file of walk(dir, ['.js'])) {
     const rawSrc = fs.readFileSync(file, 'utf8');
+    const rawLines = rawSrc.split('\n');
     const src = stripComments(rawSrc);
-    const lines = src.split('\n');
     let m;
     stringLitRe.lastIndex = 0;
     while ((m = stringLitRe.exec(src))) {
       const val = m[1] !== undefined ? m[1] : m[2];
       if (!looksLikeSentence(val)) continue;
       const lineNo = src.slice(0, m.index).split('\n').length;
-      const lineText = lines[lineNo - 1] || '';
+      const lineText = rawLines[lineNo - 1] || '';
       if (/console\.(log|warn|error|debug|info)\s*\(/.test(lineText)) continue;
       if (SUPPRESS_RE.test(lineText)) continue;
       errors.push(`${path.relative(ROOT, file)}:${lineNo} looks like a hardcoded UI string: ${JSON.stringify(val)}`);

@@ -43,5 +43,6 @@ export function getShadowRoot() {
  * @returns {boolean}
  */
 export function isInsideHost(node) {
-  return !!host && !!node && host.contains(node);
+  if (!host || !node) return false;
+  return host.contains(node) || (shadow !== null && shadow.contains(node));
 }
