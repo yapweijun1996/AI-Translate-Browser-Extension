@@ -1,0 +1,13 @@
+exclude:
+  - listing-en.md
+  - listing-ja.md
+  - listing-ko.md
+  - listing-ms.md
+  - listing-vi.md
+  - listing-zh_CN.md
+  - privacy-policy-ja.md
+  - privacy-policy-ko.md
+  - privacy-policy-ms.md
+  - privacy-policy-vi.md
+  - privacy-policy-zh_CN.md
+  - SUBMISSION-NOTES.md

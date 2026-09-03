@@ -1,3 +1,7 @@
+---
+permalink: /privacy-policy/
+---
+
 # Privacy Policy — AI Translate
 
 **Last updated: 2026-07-03**
@@ -18,6 +22,10 @@ The only data this extension ever processes is:
 - **Your target language** and, for Explain, a lightweight local guess at the source language (a quick, on-device heuristic based on the script/characters used — this never leaves your browser).
 
 This data is sent to exactly one destination: **whichever translation engine you are currently using**, and only at the moment you request a translation or explanation — never automatically, never in the background, and never for text you haven't selected.
+
+## Chrome Web Store Limited Use compliance
+
+AI Translate's use of data received from Chrome APIs complies with the Chrome Web Store User Data Policy, including the Limited Use requirements. The extension uses selected text only to provide the translation or explanation requested by the user.
 
 ### Engine 1 — Free demo (default, no setup)
 
