@@ -1,6 +1,6 @@
 # Dasar Privasi — AI Translate
 
-**Kemas kini terakhir: 2026-07-03**
+**Kemas kini terakhir: 2026-09-03**
 
 Ini ialah terjemahan rujukan Bahasa Melayu bagi dasar privasi sambungan pelayar AI Translate. Versi Bahasa Inggeris (`PRIVACY-POLICY.md`) adalah versi rasmi; sekiranya terdapat percanggahan, versi Bahasa Inggeris diguna pakai.
 
@@ -17,11 +17,11 @@ Satu-satunya data yang diproses oleh sambungan ini ialah:
 
 Data ini dihantar ke satu destinasi sahaja: **enjin terjemahan yang sedang anda gunakan**, dan hanya pada saat anda meminta terjemahan atau penerangan — tidak pernah secara automatik, tidak pernah di latar belakang, dan tidak pernah untuk teks yang belum anda pilih.
 
-### Enjin 1 — Demo percuma (lalai, tiada persediaan)
+### Enjin 1 — Get laluan demo (lalai, tiada persediaan)
 
-- Sebelum permintaan pertama, sambungan mendapatkan token sesi demo yang singkat dan terikat pada Origin daripada get laluan demo pembangun (`gpt.yapweijun1996.com/demo/session`). Tiada kunci API disertakan atau dihantar.
-- Teks dan konteks yang anda pilih dihantar melalui HTTPS ke `gpt.yapweijun1996.com/demo/v1/responses` dan diteruskan kepada model bahasa AI. Token demo hanya disimpan dalam memori pekerja perkhidmatan dan diperbaharui apabila tamat tempoh.
-- Apabila had demo dicapai, sambungan tidak gagal secara senyap — ia menunjukkan pilihan untuk menambah kunci API anda sendiri (di bawah) atau cuba lagi kemudian.
+- Apabila anda menggunakan get laluan demo, teks dan konteks yang anda pilih dihantar melalui HTTPS ke get laluan pembangun (`gpt.yapweijun1996.com/demo`) dan diteruskan kepada perkhidmatan AI huluan untuk menghasilkan terjemahan atau penerangan.
+- Projek OpenAI yang sedang digunakan oleh get laluan ini telah mengaktifkan perkongsian input dan output dengan OpenAI. Oleh itu, kandungan yang dihantar melalui get laluan demo mungkin dikongsi dengan OpenAI dan mungkin digunakan untuk menambah baik atau melatih model OpenAI. Ini berbeza daripada dasar lalai API OpenAI, yang tidak menggunakan data API untuk latihan melainkan pelanggan memilih untuk menyertainya secara nyata. Jangan hantar maklumat sulit, peribadi atau sensitif yang anda tidak mahu diproses oleh perkhidmatan ini.
+- Perkhidmatan demo mungkin tertakluk kepada had harian, kadar atau operasi, dan ketersediaannya boleh berubah. Jika perkhidmatan tidak tersedia, sambungan boleh menawarkan kunci API anda sendiri, terjemahan dalam peranti jika tersedia, atau percubaan semula kemudian.
 
 ### Enjin 2 — Dalam peranti (persendirian, tiada rangkaian)
 
@@ -43,7 +43,7 @@ Data ini dihantar ke satu destinasi sahaja: **enjin terjemahan yang sedang anda 
 | Pilihan enjin anda, bahasa sasaran | `chrome.storage.local` (tempatan sahaja) | Tidak |
 | Cache terjemahan/penerangan terkini (untuk mengelak permintaan berulang bagi teks yang sama) | IndexedDB (pelayar anda sahaja) | Tidak — cache ini tidak pernah meninggalkan peranti anda |
 
-Tiada apa yang disimpan oleh sambungan ini disegerakkan ke mana-mana pelayan pembangun, dan tiada apa dikongsi atau dijual kepada pihak ketiga.
+Data yang disimpan secara tempatan oleh sambungan ini tidak disegerakkan ke pelayan yang dikendalikan pembangun. Pendedahan tentang enjin jauh di atas tetap terpakai: kandungan terpilih yang dihantar ke get laluan demo atau pembekal diproses mengikut dasar enjin tersebut. Sambungan ini tidak menjual data atau menggunakannya untuk pengiklanan.
 
 ## Apa yang TIDAK dilakukan oleh sambungan ini
 

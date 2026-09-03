@@ -61,10 +61,10 @@ Rules:
 | Alternative (free/private) | Chrome built-in Translator API + Language Detector API | On-device, free, private, no key, no quota. Chrome desktop 138+. Feature-detect; offer as a no-cost option for plain translation (cannot power "Explain"). |
 
 Trial → BYOK funnel (product decision, 2026-07-03):
-- The extension ships with the owner's gateway key as the working default so end users can **try immediately with zero setup**. This is owner-authorized: the gateway enforces a daily token limit server-side, so key extraction/abuse is bounded and the key can be rotated or killed at any time.
+- The extension uses the owner's demo gateway as the working default so end users can **try immediately with zero setup**. No gateway key is bundled: the gateway issues short-lived, Origin-bound `dmo_...` session tokens and enforces its usage limits server-side, so access can be rotated or revoked without publishing a credential in the extension.
 - When the gateway returns its **daily-limit/quota error**, the extension must NOT show a dead-end error. It shows a friendly upsell alert: "今日免费额度已用完" → explain the free trial quota is exhausted for today, and offer two buttons: **"Set up your own API key"** (opens options page, BYOK) and **"Try again tomorrow"** (dismiss). If the on-device Chrome Translator API is available, also offer it as a free fallback for plain translation.
 - Once the user configures BYOK, the trial gateway is no longer used for that user (their key, their quota, no shared limit).
-- Reuse the reference gateway client (SSE streaming parse, `decryptKey()`) as-is — [REFERENCE-SNIPPETS §3](docs/REFERENCE-SNIPPETS.md).
+- Use the current demo gateway client: POST `/demo/session` for a short-lived token, then POST `/demo/v1/responses` with the `demo-fast` alias and the token as a bearer credential. The current endpoint is non-streaming; the extension does not bundle or decrypt a gateway key. See [REFERENCE-SNIPPETS §3](docs/REFERENCE-SNIPPETS.md) and [docs/ENGINES.md](docs/ENGINES.md).
 - "Explain" requires an LLM engine; if the user's only working engine is on-device Translator, hide or disable the Explain button with a hint to configure an LLM key.
 
 ## 5. Explain feature

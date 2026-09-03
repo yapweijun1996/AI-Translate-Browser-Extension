@@ -4,7 +4,7 @@ permalink: /privacy-policy/
 
 # Privacy Policy — AI Translate
 
-**Last updated: 2026-07-03**
+**Last updated: 2026-09-03**
 
 This is the canonical (English) privacy policy for the AI Translate browser extension. Translated versions for reference are in this same folder (`privacy-policy-<locale>.md`); in case of any conflict, this English version governs.
 
@@ -27,11 +27,11 @@ This data is sent to exactly one destination: **whichever translation engine you
 
 AI Translate's use of data received from Chrome APIs complies with the Chrome Web Store User Data Policy, including the Limited Use requirements. The extension uses selected text only to provide the translation or explanation requested by the user.
 
-### Engine 1 — Free demo (default, no setup)
+### Engine 1 — Demo gateway (default, no setup)
 
-- Before the first request, the extension asks the developer's demo gateway (`gpt.yapweijun1996.com/demo/session`) for a short-lived, Origin-bound session token. No API key is bundled or sent.
-- Your selected text and context are then sent over HTTPS to `gpt.yapweijun1996.com/demo/v1/responses`, which relays them to an AI language model to produce the result. The request uses the gateway's public `demo-fast` alias.
-- The gateway may enforce a usage limit for demo sessions. The extension keeps the temporary token only in service-worker memory and requests a new one when it expires. When the demo limit is reached, the extension shows the option to add your own API key (below) or try again later.
+- When you use the demo gateway, your selected text and context are sent over HTTPS to the developer's gateway (`gpt.yapweijun1996.com/demo`) and relayed to an upstream AI service to produce the translation or explanation.
+- The OpenAI project currently used by this gateway has input and output sharing with OpenAI enabled. Therefore, content submitted through the demo gateway may be shared with OpenAI and may be used to improve or train OpenAI models. This differs from the default OpenAI API data policy, under which API data is not used for training unless the customer explicitly opts in. Do not submit confidential, personal, or sensitive information that you do not want processed by these services.
+- The demo service may be subject to daily, rate, or operational limits, and its availability may change. If it is unavailable, the extension can offer your own API key, on-device translation when available, or a later retry.
 
 ### Engine 2 — On-device (private, no network)
 
@@ -53,7 +53,7 @@ AI Translate's use of data received from Chrome APIs complies with the Chrome We
 | Your engine choice, target language | `chrome.storage.local` (your browser only) | No |
 | A cache of recent translations/explanations (to avoid re-requesting the same text) | IndexedDB (your browser only) | No — this cache never leaves your device |
 
-Nothing this extension stores is synced to any developer-run server, and nothing is shared with or sold to third parties.
+Nothing this extension stores locally is synced to a developer-run server. This does not override the remote-engine disclosures above: selected content sent to the demo gateway or a provider is processed under that engine's policies. The extension does not sell data or use it for advertising.
 
 ## What this extension does NOT do
 

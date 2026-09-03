@@ -1,6 +1,6 @@
 # Chính sách quyền riêng tư — AI Translate
 
-**Cập nhật lần cuối: 2026-07-03**
+**Cập nhật lần cuối: 2026-09-03**
 
 Đây là bản dịch tham khảo tiếng Việt của chính sách quyền riêng tư cho tiện ích mở rộng trình duyệt AI Translate. Bản tiếng Anh (`PRIVACY-POLICY.md`) là bản chính thức; nếu có mâu thuẫn, bản tiếng Anh sẽ được ưu tiên.
 
@@ -17,11 +17,11 @@ Dữ liệu duy nhất mà tiện ích này xử lý là:
 
 Dữ liệu này chỉ được gửi đến đúng một nơi: **công cụ dịch bạn đang sử dụng**, và chỉ vào thời điểm bạn yêu cầu dịch hoặc giải thích — không bao giờ tự động, không bao giờ chạy ngầm, và không bao giờ áp dụng cho văn bản bạn chưa chọn.
 
-### Công cụ 1 — Bản demo miễn phí (mặc định, không cần thiết lập)
+### Công cụ 1 — Cổng demo (mặc định, không cần thiết lập)
 
-- Trước yêu cầu đầu tiên, tiện ích nhận một mã phiên demo ngắn hạn, được liên kết với Origin, từ cổng demo của nhà phát triển (`gpt.yapweijun1996.com/demo/session`). Không có khóa API nào được tích hợp hoặc gửi đi.
-- Văn bản và ngữ cảnh bạn chọn được gửi qua HTTPS đến `gpt.yapweijun1996.com/demo/v1/responses`, sau đó được chuyển tiếp đến một mô hình ngôn ngữ AI. Mã phiên demo chỉ được giữ trong bộ nhớ của service worker và sẽ được cấp lại khi hết hạn.
-- Khi đạt giới hạn demo, tiện ích không âm thầm báo lỗi — nó hiển thị cho bạn tùy chọn thêm khóa API riêng (bên dưới) hoặc thử lại sau.
+- Khi sử dụng cổng demo, văn bản và ngữ cảnh bạn chọn được gửi qua HTTPS đến cổng của nhà phát triển (`gpt.yapweijun1996.com/demo`) và được chuyển tiếp đến một dịch vụ AI thượng nguồn để tạo bản dịch hoặc phần giải thích.
+- Dự án OpenAI hiện được cổng này sử dụng đã bật chia sẻ dữ liệu đầu vào và đầu ra với OpenAI. Vì vậy, nội dung gửi qua cổng demo có thể được chia sẻ với OpenAI và có thể được dùng để cải thiện hoặc huấn luyện các mô hình OpenAI. Điều này khác với chính sách mặc định của OpenAI API, theo đó dữ liệu API không được dùng để huấn luyện trừ khi khách hàng chủ động chọn tham gia. Vui lòng không gửi thông tin bí mật, thông tin cá nhân hoặc thông tin nhạy cảm mà bạn không muốn các dịch vụ này xử lý.
+- Dịch vụ demo có thể chịu các giới hạn hằng ngày, giới hạn tốc độ hoặc giới hạn vận hành, và khả năng cung cấp có thể thay đổi. Nếu dịch vụ không khả dụng, tiện ích có thể cung cấp tùy chọn dùng khóa API riêng, dịch trên thiết bị nếu có, hoặc thử lại sau.
 
 ### Công cụ 2 — Trên thiết bị (riêng tư, không cần mạng)
 
@@ -43,7 +43,7 @@ Dữ liệu này chỉ được gửi đến đúng một nơi: **công cụ d�
 | Lựa chọn công cụ, ngôn ngữ đích của bạn | `chrome.storage.local` (chỉ cục bộ) | Không |
 | Bộ nhớ đệm các bản dịch/giải thích gần đây (để tránh yêu cầu lại cùng một văn bản) | IndexedDB (chỉ trên trình duyệt của bạn) | Không — bộ nhớ đệm này không bao giờ rời khỏi thiết bị của bạn |
 
-Không có dữ liệu nào mà tiện ích này lưu trữ được đồng bộ hóa với bất kỳ máy chủ nào của nhà phát triển, và không có gì được chia sẻ hoặc bán cho bên thứ ba.
+Dữ liệu được tiện ích này lưu trữ cục bộ không được đồng bộ hóa với máy chủ do nhà phát triển vận hành. Các thông tin về công cụ từ xa ở trên vẫn được áp dụng: nội dung đã chọn gửi đến cổng demo hoặc nhà cung cấp sẽ được xử lý theo chính sách của công cụ đó. Tiện ích không bán dữ liệu và không dùng dữ liệu cho quảng cáo.
 
 ## Những điều tiện ích này KHÔNG làm
 
