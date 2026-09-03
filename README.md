@@ -54,13 +54,13 @@
 You can install AI Translate in under 1 minute without needing any build tools:
 
 1. Go to the [**Releases**](../../releases) tab and download the latest `ai-translate-extension-v*.zip`.
-2. Unzip the downloaded file to a local folder.
+2. Extract the downloaded ZIP. It contains a clearly named folder such as `ai-translate-extension-v0.1.1`.
 3. Open Google Chrome (or Edge / Brave) and navigate to:
    ```text
    chrome://extensions
    ```
 4. Toggle on **Developer mode** in the top right corner.
-5. Click **Load unpacked** (加载已解压的扩展程序) in the top left and select the unzipped folder.
+5. Click **Load unpacked** (加载已解压的扩展程序) in the top left and select the extracted folder containing `manifest.json`.
 6. Done! Select text on any web page to start translating.
 
 ---
